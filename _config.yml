@@ -1,0 +1,9 @@
+title: DreamForge Studios
+author: Roberta
+description: Game Development and Creative Projects
+theme: null
+markdown: kramdown
+baseurl: ""
+url: "https:// https://scriptureexamined.github.io"
+plugins:
+  - jekyll-seo-tag
