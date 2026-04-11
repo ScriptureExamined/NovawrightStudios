@@ -1,0 +1,126 @@
+---
+layout: default
+title: Home
+---
+
+<section class="hero">
+  <div class="container">
+    <h1>Unleash Your Imagination</h1>
+    <a href="{{ '/games-n-things.html' | relative_url }}" class="cta-button"
+      >Explore Our Games</a
+    >
+  </div>
+</section>
+
+<section class="home-feature">
+  <div class="container">
+    <h1>What Happens When Time Breaks?</h1>
+    <h2>Project: ECHO</h2>
+
+    <p>
+      We’re deep in development on a new puzzle-adventure game that’s unlike
+      anything we’ve attempted before. It’s experimental. It's ambitious. And
+      yes, it bends the rules of time in ways we’ve never seen done quite like
+      this.
+    </p>
+
+    <p>
+      At its core, this game is about consequences—not just the kind that unfold
+      in the future, but the kind that echo backward. What if cause and effect
+      weren’t so linear? What if your past self could help your present self
+      escape an impossible room… or trap you in it forever?
+    </p>
+
+    <p>
+      Our protagonist—unnamed for now—wakes to find the world has… slipped. Time
+      doesn’t flow the way it used to. Whole sections of the environment blink
+      between states, memories don’t align, and what was isn't always what will
+      be. Yet within the chaos, there's an opportunity: to experiment, to
+      observe, to understand.
+    </p>
+
+    <p>
+      This is not a time travel story in the traditional sense. There’s no
+      hopping into a machine and punching in coordinates. Instead, we’re
+      exploring the texture of time—the folds, loops, and inconsistencies that
+      make it feel alive.
+    </p>
+
+    <p>
+      From a design perspective, we're pushing ourselves to rethink how puzzles
+      can work when time isn't fixed. We’ve prototyped systems where your past
+      actions replay and interact with your present decisions, where the
+      environment ages or rejuvenates based on your input, and where a single
+      moment—anchored properly—can become your greatest tool or your worst
+      enemy.
+    </p>
+
+    <p><strong>We’re calling it “Project Echo” for now.</strong></p>
+
+    <p>
+      It’s still early, but the pieces are clicking into place—both literally
+      and metaphorically. We’ll share more as the game evolves, but for now,
+      we’ll leave you with a question:
+    </p>
+
+    <blockquote>
+      <p>
+        If you could rewind a mistake, would you still be the one who made it?
+      </p>
+    </blockquote>
+
+    <p>Stay curious.<br />– The Dev Team</p>
+  </div>
+</section>
+
+<section class="home-blog-roll">
+  <div class="container">
+    <h1>Latest from Games 'N Things</h1>
+
+    <ul class="category-list">
+      {% assign category_order = "Announcements|Concept
+      Art|Development|Events|General|Studio News|Tutorials" | split: "|" %} {%
+      for cat in category_order %} {% assign matching_posts =
+      site.categories[cat] %}
+      <li>
+        {% if matching_posts and matching_posts.size > 0 %}
+        <a
+          href="{{ '/categories/' | append: cat | slugify | append: '.html' | relative_url }}"
+          >{{ cat }}</a
+        >
+        {% else %}
+        <span>{{ cat }}</span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% for post in site.posts %}
+    <article class="NewsSummary">
+      <div class="NewsSummaryPostdate">
+        {{ post.date | date: "%b %-d, %Y" }}
+      </div>
+
+      <div class="NewsSummaryPostname">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </div>
+
+      {% if post.categories and post.categories.size > 0 %}
+      <p>Category: {{ post.categories[0] }}</p>
+      {% endif %}
+
+      <p>Posted by: {{ post.author | default: site.author }}</p>
+
+      <div class="NewsSummaryContent">
+        {% if post.excerpt %} {{ post.excerpt }} {% else %}
+        <p>{{ post.content | strip_html | truncatewords: 60 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="NewsSummaryMorelink">
+        <a href="{{ post.url | relative_url }}">More</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
