@@ -1,0 +1,71 @@
+---
+layout: default
+title: Games 'N Things
+---
+
+<section class="section page-intro blog-intro">
+  <div class="container">
+    <div class="section-header centered">
+      <div class="section-label">Blog</div>
+      <h1 class="section-title">Welcome to Our Blog</h1>
+      <p class="section-desc">
+        The official blog of DreamForge Studios. Get the latest news,
+        development insights, and a front-row seat to the making of our games.
+      </p>
+    </div>
+
+    {% assign category_order = "General|Announcements|Studio News|Concept
+    Art|Events|Tutorials|Development|Portfolio" | split: "|" %}
+    <div class="blog-categories-wrap">
+      <ul class="blog-categories">
+        {% for cat in category_order %} {% assign matching_posts =
+        site.categories[cat] %}
+        <li>
+          {% if matching_posts and matching_posts.size > 0 %}
+          <a
+            href="{{ '/categories/' | append: cat | slugify | append: '.html' | relative_url }}"
+          >
+            {{ cat }}
+          </a>
+          {% else %}
+          <span>{{ cat }}</span>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="blog-post-list">
+      {% for post in site.posts %}
+      <article class="post-card">
+        <div class="post-meta-top">
+          <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+        </div>
+
+        <h2 class="post-title">
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        </h2>
+
+        <div class="post-meta">
+          {% if post.categories and post.categories.size > 0 %}
+          <span class="post-category">Category: {{ post.categories[0] }}</span>
+          {% endif %}
+          <span class="post-author"
+            >Posted by: {{ post.author | default: site.author }}</span
+          >
+        </div>
+
+        <div class="post-excerpt">
+          {% if post.excerpt %} {{ post.excerpt }} {% else %}
+          <p>{{ post.content | strip_html | truncatewords: 60 }}</p>
+          {% endif %}
+        </div>
+
+        <div class="post-more">
+          <a href="{{ post.url | relative_url }}">More</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
