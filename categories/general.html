@@ -1,0 +1,45 @@
+---
+layout: default
+title: General
+---
+
+<section class="section page-intro blog-intro">
+  <div class="container">
+    <div class="section-header centered">
+      <div class="section-label">Category</div>
+      <h1 class="section-title">General</h1>
+      <p class="section-desc">Posts filed under General.</p>
+    </div>
+
+    <div class="blog-post-list">
+      {% for post in site.categories["General"] %}
+      <article class="post-card">
+        <div class="post-meta-top">
+          <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+        </div>
+
+        <h2 class="post-title">
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        </h2>
+
+        <div class="post-meta">
+          <span class="post-category">Category: General</span>
+          <span class="post-author"
+            >Posted by: {{ post.author | default: site.author }}</span
+          >
+        </div>
+
+        <div class="post-excerpt">
+          {% if post.excerpt %} {{ post.excerpt }} {% else %}
+          <p>{{ post.content | strip_html | truncatewords: 60 }}</p>
+          {% endif %}
+        </div>
+
+        <div class="post-more">
+          <a href="{{ post.url | relative_url }}">More</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
