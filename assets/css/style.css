@@ -510,3 +510,27 @@ a:hover {
         right: -260px;
     }
 }
+
+.page-content {
+    padding: 40px 0 60px;
+}
+
+.page-content h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.page-content p {
+    line-height: 1.7;
+    max-width: 800px;
+}
+
+.flex-item h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #00BFFF;
+}
+
+.flex-item p {
+    line-height: 1.6;
+}
