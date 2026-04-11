@@ -618,7 +618,3 @@ Part 2 will build the actual maze generation loop:
 - using valid neighbors
 - carving paths
 - backtracking when stuck
-
-## Section Heading
-
-More text here.
