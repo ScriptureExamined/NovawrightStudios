@@ -3,7 +3,7 @@ author: Roberta
 description: Game Development and Creative Projects
 theme: null
 markdown: kramdown
-baseurl: ""
+baseurl: "/NovawrightStudios"
 url: "https://https://scriptureexamined.github.io"
 plugins:
   - jekyll-seo-tag
