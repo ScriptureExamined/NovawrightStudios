@@ -534,3 +534,82 @@ a:hover {
 .flex-item p {
     line-height: 1.6;
 }
+
+.page-content {
+    padding: 40px 0 60px;
+}
+
+.page-content h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.page-content p {
+    line-height: 1.7;
+    max-width: 800px;
+}
+
+.contact-form {
+    width: 50%;
+    margin: 0 auto 50px;
+}
+
+.contact-form label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #444;
+    background-color: #333;
+    color: #E0E0E0;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.contact-form textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.contact-form input[type="submit"] {
+    background-color: #00BFFF;
+    color: #1E1E1E;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.contact-form input[type="submit"]:hover {
+    background-color: #008080;
+}
+
+.visit-block {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.visit-block h2 {
+    margin-bottom: 15px;
+    color: #00BFFF;
+}
+
+.hidden-botcheck {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .contact-form {
+        width: 100%;
+    }
+}
