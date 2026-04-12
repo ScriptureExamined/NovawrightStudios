@@ -18,11 +18,7 @@ For years, the dream of many indie developers was to build the next massive hit.
 
 The ambition is understandable. Games are a creative medium, and once you start imagining possibilities, scope expands quickly.
 
-But over the past decade, a different pattern has emerged.
-
-The games that consistently succeed aren’t the biggest ones.
-
-They’re the most focused.
+But over the past decade, a different pattern has emerged. The games that consistently succeed aren’t the biggest ones. They’re the most focused.
 
 ---
 
@@ -43,9 +39,7 @@ But every additional system introduces complexity.
 
 For solo developers or small teams, that complexity multiplies fast.
 
-Many indie projects don’t fail because the idea was bad.
-
-They fail because the scope became unmanageable.
+Many indie projects don’t fail because the idea was bad. They fail because the scope became unmanageable.
 
 Meanwhile, successful games tend to do the opposite:
 
@@ -55,9 +49,7 @@ They start small—and refine relentlessly.
 
 ## The Power of a Clear Core Loop
 
-The most successful indie games are built around a simple but compelling core loop.
-
-A core loop is the repeated cycle of actions players perform.
+The most successful indie games are built around a simple but compelling core loop. A core loop is the repeated cycle of actions players perform.
 
 Examples:
 
@@ -65,9 +57,7 @@ Examples:
 - Solve → Learn → Apply → Advance
 - Fight → Improve → Unlock → Repeat
 
-When a loop is strong, each action reinforces the next.
-
-But when too many systems are layered on top, that loop becomes harder to understand.
+When a loop is strong, each action reinforces the next. But when too many systems are layered on top, that loop becomes harder to understand.
 
 - players lose clarity
 - the experience becomes diluted
@@ -78,9 +68,7 @@ A focused game protects the core loop instead of burying it.
 
 ## Focus Creates Identity
 
-Smaller games succeed because focus creates a clear identity.
-
-Players can describe them easily.
+Smaller games succeed because focus creates a clear identity. Players can describe them easily.
 
 Think about how many successful indie games can be summarized in one sentence:
 
@@ -90,9 +78,7 @@ Think about how many successful indie games can be summarized in one sentence:
 
 The clearer the concept, the easier it is for players to understand why they should care.
 
-Focus is not just a development advantage.
-
-It’s a marketing advantage.
+Focus is not just a development advantage. It’s a marketing advantage.
 
 ---
 
@@ -105,11 +91,7 @@ When you can only implement a limited number of systems:
 - every mechanic must justify itself
 - every feature must support the core experience
 
-Instead of spreading effort across many ideas, you refine the important ones.
-
-Depth replaces breadth.
-
-And players feel that difference.
+Instead of spreading effort across many ideas, you refine the important ones. Depth replaces breadth. And players feel that difference.
 
 ---
 
@@ -125,17 +107,13 @@ Large systems slow everything down.
 
 One change can ripple across multiple systems, making testing and balancing more complex.
 
-Focused games stay agile.
-
-And agility is what leads to better gameplay.
+Focused games stay agile. And agility is what leads to better gameplay.
 
 ---
 
 ## A Lesson From Building Project Echo
 
-While working on Project Echo, this principle has become very clear.
-
-The core idea—time manipulation combined with puzzle solving—is strong on its own.
+While working on Project Echo, this principle has become very clear. The core idea, time manipulation combined with puzzle solving, is strong on its own.
 
 But it’s easy to imagine additional systems:
 
@@ -144,29 +122,21 @@ But it’s easy to imagine additional systems:
 - branching narrative
 - exploration layers
 
-None of these are inherently bad.
-
-But each one risks pulling attention away from the core experience.
+None of these are inherently bad. But each one risks pulling attention away from the core experience.
 
 So development now follows a simple rule:
 
 **Does this mechanic strengthen the time-manipulation puzzle loop?**
 
-If the answer is no—or even “maybe”—it doesn’t belong.
+If the answer is no, or even “maybe”, it doesn’t belong.
 
-That discipline is difficult.
-
-But it also makes decisions easier.
+That discipline is difficult. But it also makes decisions easier.
 
 ---
 
 ## The Industry Trend Toward Tight Design
 
-You can see this pattern across the indie landscape.
-
-The standout games aren’t massive.
-
-They’re tight.
+You can see this pattern across the indie landscape. The standout games aren’t massive. They’re tight.
 
 They deliver:
 
@@ -174,9 +144,7 @@ They deliver:
 - a cohesive design
 - a strong central idea
 
-Players don’t necessarily want more hours.
-
-They want better hours.
+Players don’t necessarily want more hours. They want better hours.
 
 A well-designed five-hour game can be far more impactful than a bloated thirty-hour one.
 
@@ -208,9 +176,7 @@ Lessons that only come from finishing.
 
 ## Focus Is a Creative Skill
 
-There’s a misconception that reducing scope limits creativity.
-
-In reality, it enhances it.
+There’s a misconception that reducing scope limits creativity. In reality, it enhances it.
 
 Focus forces you to explore one idea deeply:
 
@@ -218,19 +184,13 @@ Focus forces you to explore one idea deeply:
 - experiment with variations
 - push systems to their full potential
 
-Instead of scattering attention, you concentrate it.
-
-And creativity thrives under that constraint.
+Instead of scattering attention, you concentrate it. And creativity thrives under that constraint.
 
 ---
 
 ## Final Thought
 
-The indie space is more competitive than ever.
-
-Thousands of games release each year.
-
-In that environment, trying to build the biggest game rarely leads to success.
+The indie space is more competitive than ever. Thousands of games release each year. In that environment, trying to build the biggest game rarely leads to success.
 
 Building the clearest game does.
 
@@ -241,9 +201,7 @@ Building the clearest game does.
 
 Those consistently outperform unfocused ambition.
 
-The challenge isn’t coming up with ideas.
-
-It’s choosing which ones deserve to survive.
+The challenge isn’t coming up with ideas. It’s choosing which ones deserve to survive.
 
 The strongest games aren’t the ones with the most features.
 
