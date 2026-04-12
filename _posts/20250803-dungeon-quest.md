@@ -5,7 +5,6 @@ date: 2025-08-02
 author: Roberta
 categories: [Portfolio]
 excerpt: >
-  Summary:
 A retro-futuristic dungeon crawler meets a living maze. Dive into the design of Dungeon Quest — a unique blend of Microsoft’s Maze screensaver, classic Sokoban puzzles, and modern dungeon exploration.
 ---
 
