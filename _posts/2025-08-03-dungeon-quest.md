@@ -12,7 +12,7 @@ excerpt: >
 
 Dungeon Quest is a game where your **brain and your reflexes** are put to the test.
 
-Inspired by the hypnotic movement of the Windows 95 Maze screensaver, this is more than a trip down memory lane—it’s a full-blown puzzle dungeon crawler with Sokoban-style mechanics reimagined for modern players.
+Inspired by the hypnotic movement of the Windows 95 Maze screensaver, this is more than a trip down memory lane, it’s a full-blown puzzle dungeon crawler with Sokoban-style mechanics reimagined for modern players.
 
 ---
 
