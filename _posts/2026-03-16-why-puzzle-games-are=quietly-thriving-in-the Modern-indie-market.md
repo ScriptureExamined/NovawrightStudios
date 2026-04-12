@@ -16,9 +16,7 @@ When people talk about the modern gaming industry, the conversation usually revo
 - competitive multiplayer titles
 - cinematic narrative experiences
 
-These genres dominate headlines and marketing budgets.
-
-But beneath the surface, another genre has been steadily thriving—especially in the indie space:
+These genres dominate headlines and marketing budgets. But beneath the surface, another genre has been steadily thriving—especially in the indie space:
 
 **Puzzle games.**
 
@@ -36,11 +34,7 @@ And perhaps most importantly for independent developers, they offer something in
 
 ## The Advantage of Mechanic-Driven Design
 
-At their core, puzzle games are built around a single idea—a mechanic.
-
-Unlike content-heavy genres that rely on scale, puzzle games create depth through interaction.
-
-A single well-designed mechanic can generate dozens—or even hundreds—of unique challenges.
+At their core, puzzle games are built around a single idea, a mechanic. Unlike content-heavy genres that rely on scale, puzzle games create depth through interaction. A single well-designed mechanic can generate dozens—or even hundreds—of unique challenges.
 
 A strong puzzle structure typically looks like this:
 
@@ -68,13 +62,9 @@ Each level is essentially asking the player:
 
 > “Do you understand the rules well enough to solve this?”
 
-The reward isn’t loot or progression.
+The reward isn’t loot or progression. It’s understanding.
 
-It’s understanding.
-
-That moment—when a player suddenly sees the solution they missed—is the payoff.
-
-And because that feeling is universal, puzzle games often have remarkable staying power.
+That moment, when a player suddenly sees the solution they missed, is the payoff. And because that feeling is universal, puzzle games often have remarkable staying power.
 
 ---
 
@@ -96,7 +86,7 @@ Instead, they prioritize:
 - readability
 - interaction
 
-This allows small teams—or even solo developers—to build complete experiences without massive asset pipelines.
+This allows small teams, or even solo developers, to build complete experiences without massive asset pipelines.
 
 ---
 
@@ -107,17 +97,13 @@ Puzzle design benefits from fast feedback.
 - a level either works or it doesn’t
 - a mechanic is either understood or it isn’t
 
-This clarity allows rapid iteration.
-
-Smaller teams often have an advantage here—they can test, adjust, and refine much faster than large studios.
+This clarity allows rapid iteration. Smaller teams often have an advantage here. They can test, adjust, and refine much faster than large studios.
 
 ---
 
 ### 3. Distinctive Identity
 
-Puzzle games often revolve around unique mechanics.
-
-That makes them easy to communicate.
+Puzzle games often revolve around unique mechanics. That makes them easy to communicate.
 
 If a game introduces something players haven’t seen before, curiosity alone can drive attention.
 
@@ -127,9 +113,7 @@ A simple idea can become a powerful marketing hook.
 
 ## The Challenge of Designing Good Puzzles
 
-Puzzle design is not easy.
-
-In fact, it may be harder than many other systems.
+Puzzle design is not easy. In fact, it may be harder than many other systems.
 
 The challenge lies in balancing:
 
@@ -151,21 +135,15 @@ They teach through experience.
 
 ## Teaching Without Words
 
-One of the most elegant aspects of puzzle design is environmental teaching.
-
-Instead of tutorials, the game teaches through level design:
+One of the most elegant aspects of puzzle design is environmental teaching. Instead of tutorials, the game teaches through level design:
 
 - a simple level demonstrates a rule
 - a harder level explores variation
 - later levels combine rules in new ways
 
-Players gradually internalize the system.
+Players gradually internalize the system. By the time complex challenges appear, they already have the tools, they just need to apply them.
 
-By the time complex challenges appear, they already have the tools—they just need to apply them.
-
-This approach respects the player’s intelligence.
-
-It turns learning into discovery.
+This approach respects the player’s intelligence. It turns learning into discovery.
 
 ---
 
@@ -173,24 +151,18 @@ It turns learning into discovery.
 
 While developing Project Echo, these principles have become increasingly important.
 
-The core idea—time manipulation in puzzle design—opens up many possibilities.
+The core idea, time manipulation in puzzle design, opens up many possibilities.
 
-But the real challenge isn’t inventing mechanics.
-
-It’s teaching them clearly.
+But the real challenge isn’t inventing mechanics. It’s teaching them clearly.
 
 Each puzzle must do two things:
 
 - present a challenge
 - reinforce understanding of the system
 
-If it only challenges, players struggle.
+If it only challenges, players struggle. If it reinforces understanding, the game builds a shared language between designer and player.
 
-If it reinforces understanding, the game builds a shared language between designer and player.
-
-Over time, puzzles shift from guessing to reasoning.
-
-That’s where the best puzzle experiences live.
+Over time, puzzles shift from guessing to reasoning, and that’s where the best puzzle experiences live.
 
 ---
 
@@ -204,15 +176,9 @@ Players can sense when a puzzle is:
 - fair
 - thoughtfully constructed
 
-That builds trust.
+That builds trust. Once players trust the system, they become more willing to engage with difficulty. They know the solution exists. They just haven’t found it yet.
 
-Once players trust the system, they become more willing to engage with difficulty.
-
-They know the solution exists.
-
-They just haven’t found it yet.
-
-That shift—from frustration to determination—is powerful.
+That shift from frustration to determination is powerful.
 
 ---
 
