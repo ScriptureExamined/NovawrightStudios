@@ -894,3 +894,21 @@ a:hover {
         font-size: 0.95rem;
     }
 }
+
+.newsletter-optin {
+    margin-top: 18px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.6;
+    cursor: pointer;
+    color: #E0E0E0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
