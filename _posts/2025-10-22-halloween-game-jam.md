@@ -5,7 +5,6 @@ date: 2025-10-22
 author: Roberta
 categories: [Events]
 excerpt: >
-  Summary:
 Check out my submission to the GameDev.tv 2025 Halloween game jam.
 ---
 
