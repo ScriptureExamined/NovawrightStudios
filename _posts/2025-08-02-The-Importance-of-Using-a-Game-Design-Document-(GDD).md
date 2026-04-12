@@ -51,7 +51,7 @@ Without answering these early on, your game risks becoming directionless or inco
 
 ### 2. Efficient Communication
 
-If you’re working with others—designers, programmers, artists, audio engineers, or QA testers—a GDD ensures everyone is on the same page.
+If you’re working with others (designers, programmers, artists, audio engineers, or QA testers), a GDD ensures everyone is on the same page.
 
 It avoids misinterpretations and wasted work by clearly defining:
 
@@ -135,7 +135,7 @@ A comprehensive GDD typically covers:
 
 You don’t need a perfect template, and your GDD doesn’t need to be flawless.
 
-What matters is that it exists—and that you use it.
+What matters is that it exists, and that you use it.
 
 Whether you're building a quick prototype or a full-scale game, your GDD becomes the compass that keeps development on track.
 
