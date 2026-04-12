@@ -11,6 +11,18 @@ title: Studio News
       <p class="section-desc">Posts filed under Studio News.</p>
     </div>
 
+    <div
+      class="hero-actions"
+      style="justify-content: center; margin-bottom: 24px"
+    >
+      <a
+        href="{{ '/games-n-things.html' | relative_url }}"
+        class="btn btn-outline"
+      >
+        ← Back to Blog
+      </a>
+    </div>
+
     <div class="blog-post-list">
       {% for post in site.categories["Studio News"] %}
       <article class="post-card">
