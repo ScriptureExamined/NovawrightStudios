@@ -86,9 +86,9 @@ title: Home
       site.categories[cat] %}
       <li>
         {% if matching_posts and matching_posts.size > 0 %}
-        <a
-          href="{{ '/categories/' | append: (cat | slugify) | append: '.html' | relative_url }}"
-        >
+        <a href="{{ site.baseurl }}/categories/{{ cat | slugify }}.html">
+  {{ cat }}
+</a>
           {{ cat }}
         </a>
         {% else %}
