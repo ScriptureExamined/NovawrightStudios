@@ -80,23 +80,20 @@ title: Home
     <h1>Latest from Games 'N Things</h1>
 
     <ul class="category-list">
-      {% assign category_order = "Announcements|Concept
-      Art|Development|Events|General|Studio News|Tutorials" | split: "|" %} {%
-      for cat in category_order %} {% assign matching_posts =
-      site.categories[cat] %}
-      <li>
-        {% if matching_posts and matching_posts.size > 0 %}
-        <a
-          href="{{ '/categories/' | append: (cat | slugify) | append: '.html' | relative_url }}"
-        >
+  {% assign category_order = "Announcements|Concept Art|Development|Events|General|Studio News|Tutorials|Portfolio" | split: "|" %}
+  {% for cat in category_order %}
+    {% assign matching_posts = site.categories[cat] %}
+    <li>
+      {% if matching_posts and matching_posts.size > 0 %}
+        <a href="{{ '/categories/' | append: (cat | slugify) | append: '.html' | relative_url }}">
           {{ cat }}
         </a>
-        {% else %}
+      {% else %}
         <span>{{ cat }}</span>
-        {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
 
     {% for post in site.posts %}
     <article class="NewsSummary">
