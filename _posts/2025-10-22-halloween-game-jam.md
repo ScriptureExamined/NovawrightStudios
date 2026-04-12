@@ -10,7 +10,7 @@ excerpt: >
 
 # GameDev.tv Halloween 2025 Game Jam
 
-The GameDev.tv Halloween 2025 game jam ran for 10 days—but I only had about 3 days to put something together.
+The GameDev.tv Halloween 2025 game jam ran for 10 days, but I only had about 3 days to put something together.
 
 This was also my **first game jam using Unity**, so there was definitely a learning curve involved.
 
@@ -79,7 +79,7 @@ You can check out the submission here:
 
 ## Final Thoughts
 
-For a first jam—especially with limited time and a new engine—I’m calling this a win.
+For a first jam, especially with limited time and a new engine, I’m calling this a win.
 
 It may not be polished, but it exists, and that’s the hardest part.
 
