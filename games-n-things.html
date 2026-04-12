@@ -23,7 +23,7 @@ title: Games 'N Things
         <li>
           {% if matching_posts and matching_posts.size > 0 %}
           <a
-            href="{{ '/categories/' | append: cat | slugify | append: '.html' | relative_url }}"
+            href="{{ '/categories/' | append: (cat | slugify) | append: '.html' | relative_url }}"
           >
             {{ cat }}
           </a>
