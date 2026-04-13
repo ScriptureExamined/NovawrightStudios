@@ -114,28 +114,22 @@ load_web3: true
             class="hero-actions"
             style="justify-content: center; margin-top: 24px"
           >
-            <button type="submit" class="btn btn-primary">Send Message</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary">
+              Send Message
+            </button>
             <a href="index.html" class="btn btn-outline">Back to Home</a>
+          </div>
+
+          <div id="newsletter-after-submit" class="newsletter-after-submit">
+            <div class="newsletter-inline-copy">
+              Want updates too? Subscribe below.
+            </div>
+            <div class="newsletter-form">
+              <div class="ml-embedded" data-form="vDCP03"></div>
+            </div>
           </div>
         </form>
       </div>
     </div>
   </div>
 </section>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const checkbox = document.getElementById("newsletter_optin");
-    const panel = document.getElementById("newsletter-signup-panel");
-
-    function toggleNewsletterPanel() {
-      if (!checkbox || !panel) return;
-      panel.style.display = checkbox.checked ? "block" : "none";
-    }
-
-    toggleNewsletterPanel();
-    if (checkbox) {
-      checkbox.addEventListener("change", toggleNewsletterPanel);
-    }
-  });
-</script>
