@@ -952,3 +952,17 @@ a:hover {
 .newsletter-form {
     margin-top: 20px;
 }
+
+.newsletter-signup-panel {
+    display: none;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.newsletter-inline-copy {
+    margin-bottom: 14px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    text-align: center;
+}
