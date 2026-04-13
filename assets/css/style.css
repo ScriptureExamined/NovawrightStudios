@@ -966,3 +966,32 @@ a:hover {
     font-size: 0.95rem;
     text-align: center;
 }
+
+.newsletter-divider {
+    margin: 40px 0 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.newsletter-followup {
+    margin-top: 32px;
+}
+
+.embeddable-buttondown-form {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.embeddable-buttondown-form .form-label {
+    display: block;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.embeddable-buttondown-form p a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+}
+
+.embeddable-buttondown-form p a:hover {
+    color: var(--text-primary);
+}
