@@ -912,3 +912,21 @@ a:hover {
     margin-top: 3px;
     flex-shrink: 0;
 }
+
+.site-branding {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.site-logo {
+    height: 50px;
+    width: auto;
+}
+
+.site-title {
+    color: #3aa0ff;
+    /* clean blue */
+    font-weight: 600;
+    font-size: 1.2rem;
+}
