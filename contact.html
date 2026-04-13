@@ -134,14 +134,54 @@ load_web3: true
           </div>
 
           <div class="newsletter-form" style="margin-top: 24px">
-            <div class="ml-embedded" data-form="vDCP03"></div>
+            <form
+              action="https://buttondown.com/api/emails/embed-subscribe/stannellc"
+              method="post"
+              target="popupwindow"
+              onsubmit="
+                window.open('https://buttondown.com/stannellc', 'popupwindow')
+              "
+              class="embeddable-buttondown-form"
+            >
+              <label class="form-label" for="bd-email">Enter your email</label>
+              <input
+                type="email"
+                name="email"
+                id="bd-email"
+                class="form-input"
+                required
+              />
+
+              <div
+                class="hero-actions"
+                style="justify-content: center; margin-top: 20px"
+              >
+                <input
+                  type="submit"
+                  value="Subscribe"
+                  class="btn btn-primary"
+                />
+              </div>
+
+              <p
+                style="margin-top: 16px; text-align: center; font-size: 0.9rem"
+              >
+                <a
+                  href="https://buttondown.com/refer/stannellc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Powered by Buttondown.
+                </a>
+              </p>
+            </form>
           </div>
 
           <div
             class="hero-actions"
             style="justify-content: center; margin-top: 24px"
           >
-            <a href="thanks.html" class="btn btn-primary">Continue</a>
+            <a href="thanks.html" class="btn btn-outline">Continue</a>
           </div>
         </div>
       </div>
