@@ -393,6 +393,7 @@ a:hover {
 .home-feature,
 .home-blog-roll {
     padding: 20px 0 30px;
+    margin: 0 auto;
 }
 
 .home-feature h1,
