@@ -1019,3 +1019,15 @@ a:hover {
 .hero-content {
     max-width: 500px;
 }
+
+@media (max-width: 768px) {
+    .hero-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-logo-placeholder {
+        width: 160px;
+        height: 160px;
+    }
+}
