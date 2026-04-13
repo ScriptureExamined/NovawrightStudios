@@ -26,19 +26,15 @@ load_web3: true
         </div>
 
         <form
+          id="unified-contact-form"
+          class="contact-form"
           action="https://api.web3forms.com/submit"
           method="POST"
-          class="contact-form"
         >
           <input
             type="hidden"
             name="access_key"
             value="21842a89-fa6e-402f-a7e9-dd2214a15b74"
-          />
-          <input
-            type="hidden"
-            name="redirect"
-            value="https://novawrightstudios.com/thanks.html"
           />
           <input
             type="hidden"
@@ -50,8 +46,9 @@ load_web3: true
             name="from_name"
             value="NovaWright Studios Contact Form"
           />
-          <input type="checkbox" name="botcheck" style="display: none" />
           <input type="hidden" name="from_page" value="contact" />
+          <input type="checkbox" name="botcheck" style="display: none" />
+          <input type="hidden" name="newsletter_optin" value="No" />
 
           <div class="form-group">
             <label class="form-label" for="name">Name</label>
@@ -87,13 +84,10 @@ load_web3: true
           </div>
 
           <div class="form-group newsletter-optin">
-            <input type="hidden" name="newsletter_optin" value="No" />
-
-            <label class="checkbox-label" for="newsletter_optin">
+            <label class="checkbox-label" for="newsletter_optin_checkbox">
               <input
                 type="checkbox"
-                id="newsletter_optin"
-                name="newsletter_optin"
+                id="newsletter_optin_checkbox"
                 value="Yes"
               />
               Yes, I would like to receive occasional email updates and
@@ -105,37 +99,51 @@ load_web3: true
             class="hero-actions"
             style="justify-content: center; margin-top: 24px"
           >
-            <button type="submit" class="btn btn-primary">Send Message</button>
+            <button type="submit" id="submit-btn" class="btn btn-primary">
+              Send Message
+            </button>
             <a href="index.html" class="btn btn-outline">Back to Home</a>
           </div>
 
-          <div id="newsletter-signup-panel" class="newsletter-signup-panel">
-            <div class="newsletter-inline-copy">
-              Please confirm your subscription below.
-            </div>
-            <div class="newsletter-form">
-              <div class="ml-embedded" data-form="vDCP03"></div>
-            </div>
-          </div>
+          <div
+            id="form-result"
+            style="
+              margin-top: 20px;
+              text-align: center;
+              display: none;
+              font-weight: 500;
+            "
+          ></div>
         </form>
-        <!--<div
-          class="hero-actions"
-          style="justify-content: center; margin-top: 24px"
-        >
-          <button type="submit" id="submitBtn" class="btn btn-primary">
-            Send Message
-          </button>
-          <a href="index.html" class="btn btn-outline">Back to Home</a>
-        </div>-->
 
-        <!--<div id="newsletter-after-submit" class="newsletter-after-submit">
-          <div class="newsletter-inline-copy">
-            Want updates too? Subscribe below.
+        <div
+          id="newsletter-followup"
+          class="newsletter-followup"
+          style="display: none"
+        >
+          <div class="newsletter-divider"></div>
+
+          <div class="feature-main center-text">
+            <div class="feature-title" style="font-size: 28px">
+              One More Step
+            </div>
+            <span class="feature-subtitle" style="display: block">
+              Your message was sent. To finish subscribing, please confirm your
+              newsletter signup below.
+            </span>
           </div>
-          <div class="newsletter-form">
+
+          <div class="newsletter-form" style="margin-top: 24px">
             <div class="ml-embedded" data-form="vDCP03"></div>
           </div>
-        </div>-->
+
+          <div
+            class="hero-actions"
+            style="justify-content: center; margin-top: 24px"
+          >
+            <a href="thanks.html" class="btn btn-primary">Continue</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
