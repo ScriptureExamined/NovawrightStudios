@@ -995,3 +995,27 @@ a:hover {
 .embeddable-buttondown-form p a:hover {
     color: var(--text-primary);
 }
+
+.hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+/* LEFT SIDE (placeholder for now) */
+.hero-logo-placeholder {
+    width: 220px;
+    height: 220px;
+    border: 2px dashed #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    font-size: 14px;
+}
+
+/* RIGHT SIDE */
+.hero-content {
+    max-width: 500px;
+}
