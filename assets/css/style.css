@@ -1014,6 +1014,7 @@ a:hover {
     color: #777;
     font-size: 14px;
     margin-left: -40px;
+    flex-shrink: 0;
 }
 
 /* RIGHT SIDE */
