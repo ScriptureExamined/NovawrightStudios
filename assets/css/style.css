@@ -997,7 +997,6 @@ a:hover {
 }
 
 .hero-inner {
-    padding-left: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1014,6 +1013,7 @@ a:hover {
     justify-content: center;
     color: #777;
     font-size: 14px;
+    margin-left: -40px;
 }
 
 /* RIGHT SIDE */
