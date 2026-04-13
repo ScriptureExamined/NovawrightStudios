@@ -997,6 +997,7 @@ a:hover {
 }
 
 .hero-inner {
+    padding-left: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1030,4 +1031,10 @@ a:hover {
         width: 160px;
         height: 160px;
     }
+}
+
+.hero-logo img {
+    width: 100%;
+    height: auto;
+    max-width: 260px;
 }
