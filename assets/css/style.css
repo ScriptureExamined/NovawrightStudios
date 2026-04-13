@@ -916,17 +916,18 @@ a:hover {
 .site-branding {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .site-logo {
-    height: 50px;
+    height: 52px;
     width: auto;
+    display: block
 }
 
 .site-title {
-    color: #3aa0ff;
-    /* clean blue */
-    font-weight: 600;
+    color: #2f6dff;
+    font-weight: 700;
     font-size: 1.2rem;
+    line-height: 1;
 }
