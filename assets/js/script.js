@@ -42,11 +42,15 @@ document.addEventListener("keydown", function (event) {
 
     function toggleNewsletterPanel() {
       if (!checkbox || !panel) return;
-      panel.style.display = checkbox.checked ? "block" : "none";
+
+      if (checkbox.checked) {
+        panel.style.display = "block";
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        panel.style.display = "none";
+      }
     }
 
     toggleNewsletterPanel();
-    if (checkbox) {
-      checkbox.addEventListener("change", toggleNewsletterPanel);
-    }
+    checkbox.addEventListener("change", toggleNewsletterPanel);
   });
