@@ -52,6 +52,8 @@ function initUnifiedContactForm() {
     return;
   }
 
+  newsletterFollowup.style.display = "none";
+
   contactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -78,9 +80,14 @@ function initUnifiedContactForm() {
       const data = await response.json();
 
       if (response.ok) {
+        const wantsNewsletter = newsletterCheckbox.checked;
+
         formResult.textContent = "Your message has been sent.";
 
-        if (newsletterCheckbox.checked) {
+        contactForm.reset();
+        hiddenNewsletterField.value = "No";
+
+        if (wantsNewsletter) {
           newsletterFollowup.style.display = "block";
           newsletterFollowup.scrollIntoView({
             behavior: "smooth",
