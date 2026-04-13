@@ -1014,9 +1014,9 @@ a:hover {
     justify-content: center;
     color: #777;
     font-size: 14px;
-    margin-left: -120px;
+    margin-left: 0;
     flex-shrink: 0;
-    position: relative;
+    transform: translateX(-120px);
 }
 
 /* RIGHT SIDE */
