@@ -931,3 +931,11 @@ a:hover {
     font-size: 1.2rem;
     line-height: 1;
 }
+
+.hero-logo {
+    display: block;
+    max-width: 420px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 24px;
+}
