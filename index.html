@@ -5,7 +5,6 @@ title: Home
 
 <section class="hero">
   <div class="container hero-inner">
-    <!-- LEFT -->
     <div class="hero-left">
       <img
         src="{{ '/assets/images/logo-hero.png' | relative_url }}"
@@ -14,16 +13,16 @@ title: Home
       />
     </div>
 
-    <!-- RIGHT -->
     <div class="hero-right">
-  <div class="hero-text-block">
-    <h1>Unleash Your Imagination</h1>
+      <div class="hero-text-block">
+        <h1>Unleash Your Imagination</h1>
 
-    <a href="{{ '/portfolio.html' | relative_url }}" class="cta-button">
-      Explore Our Games
-    </a>
+        <a href="{{ '/portfolio.html' | relative_url }}" class="cta-button">
+          Explore Our Games
+        </a>
+      </div>
+    </div>
   </div>
-</div>
 </section>
 
 <section class="home-feature">
@@ -91,15 +90,16 @@ title: Home
   <div class="container">
     <h1>Latest from Games 'N Things</h1>
 
-    {% assign latest_post = site.posts.first %}
-    {% if latest_post %}
+    {% assign latest_post = site.posts.first %} {% if latest_post %}
     <article class="NewsSummary">
       <div class="NewsSummaryPostdate">
         {{ latest_post.date | date: "%b %-d, %Y" }}
       </div>
 
       <div class="NewsSummaryPostname">
-        <a href="{{ latest_post.url | relative_url }}">{{ latest_post.title }}</a>
+        <a href="{{ latest_post.url | relative_url }}"
+          >{{ latest_post.title }}</a
+        >
       </div>
 
       {% if latest_post.categories and latest_post.categories.size > 0 %}
@@ -109,10 +109,8 @@ title: Home
       <p>Posted by: {{ latest_post.author | default: site.author }}</p>
 
       <div class="NewsSummaryContent">
-        {% if latest_post.excerpt %}
-          {{ latest_post.excerpt }}
-        {% else %}
-          <p>{{ latest_post.content | strip_html | truncatewords: 60 }}</p>
+        {% if latest_post.excerpt %} {{ latest_post.excerpt }} {% else %}
+        <p>{{ latest_post.content | strip_html | truncatewords: 60 }}</p>
         {% endif %}
       </div>
 
@@ -128,15 +126,17 @@ title: Home
   <div class="container">
     <h1>Featured Post</h1>
 
-    {% assign featured_post = site.posts | where: "featured", true | first %}
-    {% if featured_post %}
+    {% assign featured_post = site.posts | where: "featured", true | first %} {%
+    if featured_post %}
     <article class="NewsSummary">
       <div class="NewsSummaryPostdate">
         {{ featured_post.date | date: "%b %-d, %Y" }}
       </div>
 
       <div class="NewsSummaryPostname">
-        <a href="{{ featured_post.url | relative_url }}">{{ featured_post.title }}</a>
+        <a href="{{ featured_post.url | relative_url }}"
+          >{{ featured_post.title }}</a
+        >
       </div>
 
       {% if featured_post.categories and featured_post.categories.size > 0 %}
@@ -146,10 +146,8 @@ title: Home
       <p>Posted by: {{ featured_post.author | default: site.author }}</p>
 
       <div class="NewsSummaryContent">
-        {% if featured_post.excerpt %}
-          {{ featured_post.excerpt }}
-        {% else %}
-          <p>{{ featured_post.content | strip_html | truncatewords: 60 }}</p>
+        {% if featured_post.excerpt %} {{ featured_post.excerpt }} {% else %}
+        <p>{{ featured_post.content | strip_html | truncatewords: 60 }}</p>
         {% endif %}
       </div>
 
