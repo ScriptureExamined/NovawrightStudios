@@ -720,21 +720,35 @@ a:hover {
                     width: 100%;
         }
 
-    .hero-inner {
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .hero-left,
-    .hero-right {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .hero-text-block {
-        align-items: center;
-        text-align: center;
-    }
+        .hero-inner {
+            grid-template-columns: 1fr;
+            row-gap: 24px;
+        }
+    
+        .hero-left,
+        .hero-right {
+            width: 100%;
+            justify-content: center;
+        }
+    
+        .hero-right {
+            text-align: center;
+        }
+    
+        .hero-text-block {
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+    
+        .hero-right h1 {
+            white-space: normal;
+            font-size: 1.8rem;
+        }
+    
+        .hero-text-block .cta-button {
+            align-self: center;
+        }
 
     .hero-right h1 {
         white-space: normal;
