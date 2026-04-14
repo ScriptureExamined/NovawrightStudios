@@ -1064,3 +1064,19 @@ a:hover {
 .hero-right {
     min-height: 180px;
 }
+
+.hero-left {
+    flex: 1;
+}
+
+.hero-right {
+    flex: 1;
+}
+
+.hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    /* increase this */
+}
+
