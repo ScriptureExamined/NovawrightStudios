@@ -1012,7 +1012,6 @@ a:hover {
     align-items: center;
     justify-content: center;
     min-height: 250px;
-    border: 2px dashed #555;
 }
 
 .hero-right {
@@ -1046,10 +1045,6 @@ a:hover {
     .hero-right {
         width: 100%;
     }
-}
-
-.hero-right {
-    border: 2px dashed #444;
 }
 
 .hero-right h1 {
