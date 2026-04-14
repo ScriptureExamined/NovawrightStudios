@@ -212,7 +212,7 @@ a:hover {
 /* Desktop spacing */
 @media (min-width: 1025px) {
     .home-feature .container {
-        padding-left: 180px;
+        padding-left: 170px;
         padding-right: 20px;
     }
 }
