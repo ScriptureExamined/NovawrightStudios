@@ -1059,3 +1059,8 @@ a:hover {
     padding-top: 20px;
     margin-top: 0;
 }
+
+.hero-left,
+.hero-right {
+    min-height: 180px;
+}
