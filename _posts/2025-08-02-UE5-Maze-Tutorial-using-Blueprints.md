@@ -57,8 +57,8 @@ Inside `MazeCell`, add these variables:
 - `Visited` — Boolean
 - `IsWall` — Boolean
 
-<a href="{{ '/assets/images/blog/MazeCellStruct.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/MazeCellStruct.png' | relative_url }}" alt="MazeCell structure screenshot" class="post-image">
+<a href="{{ '/assets/images/blog/Start.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Start.png' | relative_url }}" alt="MazeCell structure screenshot" class="post-image">
 </a>
 
 ---
@@ -81,8 +81,8 @@ Set these to **Instance Editable** so you can change them in the Details panel l
 
 Make sure `Grid` is an **array** of `MazeCell`, not a single struct.
 
-<a href="{{ '/assets/images/blog/BP_MazeGeneratorVariables.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/BP_MazeGeneratorVariables.png' | relative_url }}" alt="BP_MazeGenerator variables panel screenshot showing GridWidth, GridHeight, TileSize, and Grid as MazeCell Array" class="post-image">
+<a href="{{ '/assets/images/blog/Step 1.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 1.png' | relative_url }}" alt="BP_MazeGenerator variables panel screenshot showing GridWidth, GridHeight, TileSize, and Grid as MazeCell Array" class="post-image">
 </a>
 
 ---
@@ -107,8 +107,8 @@ Inside `InitializeGrid`:
 
 This ensures the array starts empty each time the grid is rebuilt.
 
-<a href="{{ '/assets/images/blog/Screenshot-showing-InitializeGrid-Grid-Clear.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Screenshot-showing-InitializeGrid-Grid-Clear.png' | relative_url }}" alt="Screenshot showing InitializeGrid  Grid  Clear" class="post-image">
+<a href="{{ '/assets/images/blog/Step 2.1.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 2.1.png' | relative_url }}" alt="Screenshot showing InitializeGrid  Grid  Clear" class="post-image">
 </a>
 
 ---
@@ -133,8 +133,8 @@ From the outer loop’s `Loop Body`, add another `ForLoop` for X.
 
 This gives us a full 2D grid.
 
-<a href="{{ '/assets/images/blog/Nested-ForLoop-setup-inside-InitializeGrid.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Nested-ForLoop-setup-inside-InitializeGrid.png' | relative_url }}" alt="Screenshot showing Nested ForLoop setup inside InitializeGrid" class="post-image">
+<a href="{{ '/assets/images/blog/Step 2.2.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 2.2.png' | relative_url }}" alt="Screenshot showing Nested ForLoop setup inside InitializeGrid" class="post-image">
 </a>
 
 ---
@@ -155,8 +155,8 @@ Set it like this:
 
 That means every cell starts as an unvisited wall.
 
-<a href="{{ '/assets/images/blog/Make-MazeCell-with-X-Y-Visited false-IsWall-true.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Make-MazeCell-with-X-Y-Visited false-IsWall-true.png' | relative_url }}" alt="Screenshot showing Make MazeCell with X, Y, Visited false, IsWall true" class="post-image">
+<a href="{{ '/assets/images/blog/Step 2.3.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 2.3.png' | relative_url }}" alt="Screenshot showing Make MazeCell with X, Y, Visited false, IsWall true" class="post-image">
 </a>
 
 ---
@@ -176,8 +176,8 @@ Connect:
 
 At the end of this function, the Grid array will contain every cell in the maze.
 
-<a href="{{ '/assets/images/blog/Make-MazeCell-connected-into-Add-node-targeting-Grid.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Make-MazeCell-connected-into-Add-node-targeting-Grid.png' | relative_url }}" alt="Screenshot showing Make MazeCell connected into Add node targeting Grid" class="post-image">
+<a href="{{ '/assets/images/blog/Step 2.4.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 2.4.png' | relative_url }}" alt="Screenshot showing Make MazeCell connected into Add node targeting Grid" class="post-image">
 </a>
 
 ---
@@ -213,8 +213,8 @@ In Blueprint:
 - add `X`
 - connect the result to the Return Node
 
-<a href="{{ '/assets/images/blog/GetIndex-function-using-X-plus-(YxGridWidth).png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/GetIndex-function-using-X-plus-(YxGridWidth).png' | relative_url }}" alt="Screenshot showing GetIndex function using X + (Y * GridWidth)" class="post-image">
+<a href="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}" alt="Screenshot showing GetIndex function using X + (Y * GridWidth)" class="post-image">
 </a>
 
 ---
@@ -269,8 +269,8 @@ Inside the function, create these **Local Variables**:
 
 Use local variables here. Do not make these regular Blueprint variables.
 
-<a href="{{ '/assets/images/blog/Local-variables-inside-GetValidNeighbors.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Local-variables-inside-GetValidNeighbors.png' | relative_url }}" alt="Screenshot showing Local variables inside GetValidNeighbors" class="post-image">
+<a href="{{ '/assets/images/blog/Step 4.1.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 4.1.png' | relative_url }}" alt="Screenshot showing Local variables inside GetValidNeighbors" class="post-image">
 </a>
 
 ---
