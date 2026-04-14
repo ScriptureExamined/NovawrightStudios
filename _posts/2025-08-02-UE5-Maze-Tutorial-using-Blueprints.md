@@ -176,9 +176,9 @@ Connect:
 
 At the end of this function, the Grid array will contain every cell in the maze.
 
-### Screenshot Placeholder
-
-**[Screenshot: Make MazeCell connected into Add node targeting Grid]**
+<a href="{{ '/assets/images/blog/Make-MazeCell-connected-into-Add-node-targeting-Grid.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Make-MazeCell-connected-into-Add-node-targeting-Grid.png' | relative_url }}" alt="Screenshot showing Make MazeCell connected into Add node targeting Grid" class="post-image">
+</a>
 
 ---
 
@@ -213,9 +213,9 @@ In Blueprint:
 - add `X`
 - connect the result to the Return Node
 
-### Screenshot Placeholder
-
-**[Screenshot: GetIndex function using X + (Y * GridWidth)]**
+<a href="{{ '/assets/images/blog/GetIndex-function-using-X-plus-(YxGridWidth).png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/GetIndex-function-using-X-plus-(YxGridWidth).png' | relative_url }}" alt="Screenshot showing GetIndex function using X + (Y * GridWidth)" class="post-image">
+</a>
 
 ---
 
