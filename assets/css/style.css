@@ -108,11 +108,15 @@ a:hover {
     justify-content: center;
     align-items: center;
     column-gap: 60px;
+    min-height: 320px;
 }
 
 .hero-left,
 .hero-right {
     min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero-left {
