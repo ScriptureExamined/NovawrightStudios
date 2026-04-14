@@ -65,8 +65,6 @@ Inside `MazeCell`, add these variables:
   >
 </a>
 
-![Example]({{ "/assets/images/blog/Screenshot 2026-04-08 112134.png" | relative_url }})
-
 ---
 
 # Step 1 — Add the Main Variables
