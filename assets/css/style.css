@@ -791,3 +791,25 @@ a:hover {
         width: 100%;
     }
 }
+
+.home-feature .container {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.home-feature .container {
+    box-sizing: border-box;
+}
+
+@media (min-width: 769px) {
+    .home-feature .container {
+        padding-left: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .home-feature .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
