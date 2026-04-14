@@ -1034,6 +1034,7 @@ a:hover {
     height: auto;
     max-width: 260px;
     display: block;
+    text-align: left;
 }
 
 @media (max-width: 768px) {
