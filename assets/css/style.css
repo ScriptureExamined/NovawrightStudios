@@ -194,7 +194,7 @@ a:hover {
 
 /* Target the container ONLY inside the home-feature section */
 .home-feature .container {
-    padding-left: 150px; /* Adjust this number to shift the text further right */
+    padding-left: 165px; /* Adjust this number to shift the text further right */
     box-sizing: border-box; /* Ensures the padding doesn't make the section wider than the screen */
 }
 
