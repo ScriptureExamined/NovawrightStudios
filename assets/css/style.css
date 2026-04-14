@@ -1048,3 +1048,7 @@ a:hover {
 .hero-right {
     border: 2px dashed #444;
 }
+
+.hero-right h1 {
+    white-space: nowrap;
+}
