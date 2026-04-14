@@ -1006,8 +1006,36 @@ a:hover {
     width: 50%;
 }
 
+.hero-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-left {
+    border: 2px dashed #555;
+    min-height: 250px;
+}
+
 .hero-logo img {
     width: 750px;
     height: auto;
     max-width: 260px;
+}
+
+@media (max-width: 768px) {
+    .hero-inner {
+        flex-direction: column;
+    }
+
+    .hero-left,
+    .hero-right {
+        width: 100%;
+    }
 }
