@@ -1033,6 +1033,7 @@ a:hover {
     width: 750px;
     height: auto;
     max-width: 260px;
+    display: block;
 }
 
 @media (max-width: 768px) {
