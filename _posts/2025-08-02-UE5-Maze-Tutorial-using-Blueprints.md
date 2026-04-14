@@ -269,9 +269,9 @@ Inside the function, create these **Local Variables**:
 
 Use local variables here. Do not make these regular Blueprint variables.
 
-### Screenshot Placeholder
-
-**[Screenshot: Local variables inside GetValidNeighbors]**
+<a href="{{ '/assets/images/blog/Local-variables-inside-GetValidNeighbors.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Local-variables-inside-GetValidNeighbors.png' | relative_url }}" alt="Screenshot showing Local variables inside GetValidNeighbors" class="post-image">
+</a>
 
 ---
 
@@ -293,9 +293,9 @@ Now store the values:
 - `X → Set CurrentX`
 - `Y → Set CurrentY`
 
-### Screenshot Placeholder
-
-**[Screenshot: Grid → Get (a copy) → Break MazeCell → Set CurrentX / Set CurrentY]**
+<a href="{{ '/assets/images/blog/Step 4.2.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 4.2.png' | relative_url }}" alt="Screenshot showing Grid  Get (a copy)  Break MazeCell Set CurrentX / Set CurrentY" class="post-image">
+</a>
 
 ---
 
@@ -309,6 +309,7 @@ Click `Add pin` until it has:
 - Then 1
 - Then 2
 - Then 3
+- Then 4
 
 We will use those for:
 
@@ -316,10 +317,11 @@ We will use those for:
 - Right
 - Up
 - Down
+- Return Node
 
-### Screenshot Placeholder
-
-**[Screenshot: Sequence node with Then 0 through Then 3]**
+<a href="{{ '/assets/images/blog/Step 4.3.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 4.3.png' | relative_url }}" alt="Screenshot showing Sequence node with Then 0 through Then 4" class="post-image">
+</a>
 
 ---
 
@@ -359,9 +361,9 @@ The white exec flow should be:
 
 `Sequence Then 0 → Set TestX → Set TestY`
 
-### Screenshot Placeholder
-
-**[Screenshot: LEFT setup using CurrentX - 2 and CurrentY]**
+<a href="{{ '/assets/images/blog/Step 5.1.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 5.1.png' | relative_url }}" alt="Screenshot showing LEFT setup using CurrentX - 2 and CurrentY" class="post-image">
+</a>
 
 ---
 
