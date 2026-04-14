@@ -531,6 +531,14 @@ a:hover {
     text-decoration: none;
 }
 
+.post-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 24px auto;
+    border-radius: 6px;
+}
+
 .post-title a:hover {
     color: #e0e0e0;
     text-decoration: underline;
