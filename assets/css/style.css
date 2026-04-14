@@ -192,6 +192,12 @@ a:hover {
     background: rgba(255, 255, 255, 0.03);
 }
 
+/* Target the container ONLY inside the home-feature section */
+.home-feature .container {
+    padding-left: 120px; /* Adjust this number to shift the text further right */
+    box-sizing: border-box; /* Ensures the padding doesn't make the section wider than the screen */
+}
+
 /* ==========================================================================
    5. NEWS / LATEST POST CARD
    ========================================================================== */
