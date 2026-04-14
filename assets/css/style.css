@@ -157,7 +157,8 @@ a:hover {
    ========================================================================== */
 
 .home-feature,
-.home-blog-roll {
+.home-blog-roll,
+.home-featured-post {
     padding: 20px 0 30px;
     margin: 0 auto;
 }
@@ -168,7 +169,8 @@ a:hover {
 }
 
 .home-feature h1,
-.home-blog-roll h1 {
+.home-blog-roll h1,
+.home-featured-post h1 {
     font-size: 2rem;
     margin: 20px 0 10px;
 }
@@ -192,10 +194,18 @@ a:hover {
     background: rgba(255, 255, 255, 0.03);
 }
 
-/* Target the container ONLY inside the home-feature section */
+/* Keep home-feature alignment adjustments isolated and predictable */
 .home-feature .container {
-    /*padding-left: 180px;  Adjust this number to shift the text further right */
-    box-sizing: border-box; /* Ensures the padding doesn't make the section wider than the screen */
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+@media (min-width: 769px) {
+    .home-feature .container {
+        padding-left: 180px;
+        padding-right: 20px;
+    }
 }
 
 /* ==========================================================================
@@ -698,61 +708,56 @@ a:hover {
 
 @media (max-width: 768px) {
     .header-inner {
-            flex-direction: column;
-            align-items: center;    /* Changed from flex-start to center */
-            text-align: center;
-            gap: 16px;    /* Adds space between logo and nav */
-        }
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+    }
 
-        .site-nav {
-            justify-content: center;        /* Centers the links on the screen */
-            gap: 18px;       /* Slightly more breathing room between links */
-            width: 100%;
-        }
+    .site-branding {
+        justify-content: center;
+        width: 100%;
+    }
 
-        .site-nav a {
-            font-size: 0.95rem;
-            padding: 5px 0;       /* Makes them easier to tap on a phone */
-        }
+    .site-nav {
+        justify-content: center;
+        gap: 18px;
+        width: 100%;
+    }
 
-        .site-branding {
-            justify-content: center;
-                    width: 100%;
-        }
+    .site-nav a {
+        font-size: 0.95rem;
+        padding: 5px 0;
+    }
 
-        .hero-inner {
-            grid-template-columns: 1fr;
-            row-gap: 24px;
-        }
-    
-        .hero-left,
-        .hero-right {
-            width: 100%;
-            justify-content: center;
-        }
-    
-        .hero-right {
-            text-align: center;
-        }
-    
-        .hero-text-block {
-            align-items: center;
-            text-align: center;
-            width: 100%;
-        }
-    
-        .hero-right h1 {
-            white-space: normal;
-            font-size: 1.8rem;
-        }
-    
-        .hero-text-block .cta-button {
-            align-self: center;
-        }
+    .hero-inner {
+        grid-template-columns: 1fr;
+        row-gap: 24px;
+    }
+
+    .hero-left,
+    .hero-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .hero-right {
+        text-align: center;
+    }
+
+    .hero-text-block {
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
 
     .hero-right h1 {
         white-space: normal;
         font-size: 1.8rem;
+    }
+
+    .hero-text-block .cta-button {
+        align-self: center;
     }
 
     .hero-logo {
@@ -761,6 +766,7 @@ a:hover {
 
     .home-feature h1,
     .home-blog-roll h1,
+    .home-featured-post h1,
     .page-content h1,
     .section-title {
         font-size: 1.8rem;
@@ -771,7 +777,8 @@ a:hover {
     }
 
     .home-feature .container {
-        padding-left: 180px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
 
     .post-title {
@@ -789,27 +796,5 @@ a:hover {
 
     .contact-form {
         width: 100%;
-    }
-}
-
-.home-feature .container {
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-.home-feature .container {
-    box-sizing: border-box;
-}
-
-@media (min-width: 769px) {
-    .home-feature .container {
-        padding-left: 180px;
-    }
-}
-
-@media (max-width: 768px) {
-    .home-feature .container {
-        padding-left: 20px;
-        padding-right: 20px;
     }
 }
