@@ -1010,12 +1010,17 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 250px;
+    border: 2px dashed #555;
 }
 
 .hero-right {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: flex-start;
+    min-height: 250px;
+    padding-left: 40px;
 }
 
 .hero-left {
@@ -1038,4 +1043,8 @@ a:hover {
     .hero-right {
         width: 100%;
     }
+}
+
+.hero-right {
+    border: 2px dashed #444;
 }
