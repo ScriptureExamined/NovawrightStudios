@@ -1049,3 +1049,13 @@ a:hover {
 .hero-right h1 {
     white-space: nowrap;
 }
+
+.hero {
+    padding-bottom: 20px;
+    margin-bottom: 0;
+}
+
+.home-feature {
+    padding-top: 20px;
+    margin-top: 0;
+}
