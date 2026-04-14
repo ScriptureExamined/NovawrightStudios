@@ -1004,6 +1004,7 @@ a:hover {
 .hero-left,
 .hero-right {
     width: 50%;
+    min-height: 250px;
 }
 
 .hero-left {
