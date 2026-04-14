@@ -57,12 +57,8 @@ Inside `MazeCell`, add these variables:
 - `Visited` — Boolean
 - `IsWall` — Boolean
 
-<a href="{{ '/assets/images/blog/Screenshot 2026-04-08 112134.png' | relative_url }}" target="_blank">
-  <img 
-    src="{{ '/assets/images/blog/Screenshot 2026-04-08 112134.png' | relative_url }}" 
-    alt="Your Image" 
-    class="post-image"
-  >
+<a href="{{ '/assets/images/blog/Screenshot 2026-04-08 112134.png' | relative_url }}" target="_blank" rel="noopener">
+  <img src="{{ '/assets/images/blog/Screenshot 2026-04-08 112134.png' | relative_url }}" alt="MazeCell structure screenshot" class="post-image">
 </a>
 
 ---
