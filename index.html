@@ -87,53 +87,39 @@ title: Home
   </div>
 </section>
 
-<section class="home-blog-roll">
+<<section class="home-blog-roll">
   <div class="container">
     <h1>Latest from Games 'N Things</h1>
 
-    <ul class="category-list">
-      {% assign category_order = "Announcements|Concept
-      Art|Development|Events|General|Studio News|Tutorials|Portfolio" | split:
-      "|" %} {% for cat in category_order %} {% assign matching_posts =
-      site.categories[cat] %}
-      <li>
-        {% if matching_posts and matching_posts.size > 0 %}
-        <a href="{{ site.baseurl }}/categories/{{ cat | slugify }}.html">
-          {{ cat }}
-        </a>
-        {% else %}
-        <span>{{ cat }}</span>
-        {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
-
-    {% for post in site.posts %}
+    {% assign latest_post = site.posts.first %}
+    {% if latest_post %}
     <article class="NewsSummary">
       <div class="NewsSummaryPostdate">
-        {{ post.date | date: "%b %-d, %Y" }}
+        {{ latest_post.date | date: "%b %-d, %Y" }}
       </div>
 
       <div class="NewsSummaryPostname">
-        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        <a href="{{ latest_post.url | relative_url }}">{{ latest_post.title }}</a>
       </div>
 
-      {% if post.categories and post.categories.size > 0 %}
-      <p>Category: {{ post.categories[0] }}</p>
+      {% if latest_post.categories and latest_post.categories.size > 0 %}
+      <p>Category: {{ latest_post.categories[0] }}</p>
       {% endif %}
 
-      <p>Posted by: {{ post.author | default: site.author }}</p>
+      <p>Posted by: {{ latest_post.author | default: site.author }}</p>
 
       <div class="NewsSummaryContent">
-        {% if post.excerpt %} {{ post.excerpt }} {% else %}
-        <p>{{ post.content | strip_html | truncatewords: 60 }}</p>
+        {% if latest_post.excerpt %}
+          {{ latest_post.excerpt }}
+        {% else %}
+          <p>{{ latest_post.content | strip_html | truncatewords: 60 }}</p>
         {% endif %}
       </div>
 
       <div class="NewsSummaryMorelink">
-        <a href="{{ post.url | relative_url }}">More</a>
+        <a href="{{ latest_post.url | relative_url }}">Read the latest post</a>
       </div>
     </article>
-    {% endfor %}
+    {% endif %}
   </div>
 </section>
