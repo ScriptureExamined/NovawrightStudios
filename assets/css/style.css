@@ -999,41 +999,11 @@ a:hover {
 
 .hero-inner {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
 }
 
-/* LEFT SIDE (placeholder for now) */
-.hero-logo-placeholder {
-    width: 220px;
-    height: 220px;
-    border: 2px dashed #555;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #777;
-    font-size: 14px;
-    margin-left: 0;
-    flex-shrink: 0;
-    transform: translateX(-120px);
-}
-
-/* RIGHT SIDE */
-.hero-content {
-    max-width: 500px;
-}
-
-@media (max-width: 768px) {
-    .hero-inner {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .hero-logo-placeholder {
-        width: 160px;
-        height: 160px;
-    }
+.hero-left,
+.hero-right {
+    width: 50%;
 }
 
 .hero-logo img {
