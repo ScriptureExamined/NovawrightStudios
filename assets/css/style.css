@@ -194,14 +194,23 @@ a:hover {
     background: rgba(255, 255, 255, 0.03);
 }
 
-/* Keep home-feature alignment adjustments isolated and predictable */
+/* Default / mobile-first spacing */
 .home-feature .container {
     box-sizing: border-box;
     padding-left: 20px;
     padding-right: 20px;
 }
 
-@media (min-width: 769px) {
+/* Tablet / iPad spacing */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .home-feature .container {
+        padding-left: 80px;
+        padding-right: 20px;
+    }
+}
+
+/* Desktop spacing */
+@media (min-width: 1025px) {
     .home-feature .container {
         padding-left: 180px;
         padding-right: 20px;
