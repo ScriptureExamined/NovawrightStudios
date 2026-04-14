@@ -4,6 +4,7 @@ title: "UE5 Maze Tutorial using Blueprints."
 date: 2025-08-02
 author: Roberta
 categories: [Tutorials]
+featured: true
 excerpt: >
   I found an Unreal Engine maze generation tutorial that would work fantastic for DungeonQuest. The only problem is it's a total train wreck for beginners to blueprint. It's called Random Maze Generator and you can find it at this site. It's taken me hours just to get to the end of page 5. And it's 14 pages long. Wow. I've decided to put together a beginners tutorial so someone new can follow along and get through this. When I'm done with the series, I'll post a link on the Unreal forum so anyone else searching can find help. The last posts on this were from 2014 and not much help. When done, I will delete this preview.
 ---

@@ -123,3 +123,40 @@ title: Home
     {% endif %}
   </div>
 </section>
+
+<section class="home-featured-post">
+  <div class="container">
+    <h1>Featured Post</h1>
+
+    {% assign featured_post = site.posts | where: "featured", true | first %}
+    {% if featured_post %}
+    <article class="NewsSummary">
+      <div class="NewsSummaryPostdate">
+        {{ featured_post.date | date: "%b %-d, %Y" }}
+      </div>
+
+      <div class="NewsSummaryPostname">
+        <a href="{{ featured_post.url | relative_url }}">{{ featured_post.title }}</a>
+      </div>
+
+      {% if featured_post.categories and featured_post.categories.size > 0 %}
+      <p>Category: {{ featured_post.categories[0] }}</p>
+      {% endif %}
+
+      <p>Posted by: {{ featured_post.author | default: site.author }}</p>
+
+      <div class="NewsSummaryContent">
+        {% if featured_post.excerpt %}
+          {{ featured_post.excerpt }}
+        {% else %}
+          <p>{{ featured_post.content | strip_html | truncatewords: 60 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="NewsSummaryMorelink">
+        <a href="{{ featured_post.url | relative_url }}">Read this post</a>
+      </div>
+    </article>
+    {% endif %}
+  </div>
+</section>
