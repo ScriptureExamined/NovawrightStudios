@@ -13,44 +13,44 @@ excerpt: >
 
 ## Creating the Grid and Valid Neighbor System
 
-If you have ever tried following an older Unreal maze tutorial, you probably noticed the same thing I did: the core idea is good, but the Blueprint setup can get messy fast. There are extra arrays, overcomplicated macros, and a lot of wiring that makes the logic harder to understand than it needs to be.
+If you have ever tried following an older Unreal maze tutorial, you probably noticed the same thing I did: the core idea is solid, but the Blueprint setup can get messy fast. Extra arrays, overcomplicated macros, and excessive wiring often make the logic harder to understand than it needs to be.
 
-This version rebuilds the system cleanly from scratch in Unreal Engine 5 Blueprints.
+In this guide, we rebuild the system cleanly from scratch using Unreal Engine 5 Blueprints.
 
-In Part 1, we are going to build the foundation:
+In Part 1, we will focus on the foundation:
 
-- a grid of maze cells
-- a helper function to convert X/Y into an array index
-- a function that finds valid neighboring cells
+- building a grid of maze cells
+- creating a helper function to convert X/Y into an array index
+- creating a function that finds valid neighboring cells
 
-This is the part that makes the maze “think.”
+> This is the part that makes the maze “think.”
 
 ---
 
 ## What We Are Building
 
-The maze will use a grid of cells. Each cell stores:
+The maze is built on a grid of cells. Each cell stores:
 
 - its X position
 - its Y position
 - whether it has been visited
 - whether it is currently a wall
 
-Later, the generator will carve paths by moving through this grid two cells at a time.
+Later, the generator will carve paths by moving through this grid two cells at a time, creating a proper maze structure.
 
 ---
 
 ## Before You Start
 
-Create a new Actor Blueprint called:
+Create a new **Actor Blueprint** called:
 
 `BP_MazeGenerator`
 
-Also create a Blueprint Structure called:
+Then create a **Blueprint Structure** called:
 
 `MazeCell`
 
-Inside `MazeCell`, add these variables:
+Inside `MazeCell`, add the following variables:
 
 - `X` — Integer
 - `Y` — Integer
@@ -63,23 +63,112 @@ Inside `MazeCell`, add these variables:
 
 ---
 
-# Step 1 — Add the Main Variables
+## Step 1 — Add the Main Variables
 
-Open `BP_MazeGenerator` and add these variables:
+Before building the maze, we need to define the core variables that control the grid and store its data.
 
-## Grid Settings
+---
+
+### What this step does
+
+This step creates the variables used to:
+
+- define the size of the grid
+- control spacing
+- store all maze cells
+
+> These variables are the foundation of the entire maze system.
+
+---
+
+### Instructions
+
+#### Open your Blueprint
+
+1. Open `BP_MazeGenerator`.
+
+---
+
+#### Add Grid Settings variables
+
+2. In the **My Blueprint** panel, add the following variables:
 
 - `GridWidth` — Integer
 - `GridHeight` — Integer
 - `TileSize` — Float
 
-Set these to **Instance Editable** so you can change them in the Details panel later.
+3. For each of these variables:
 
-## Grid Data
+- Enable **Instance Editable** in the Details panel
+
+This allows you to modify them directly in the editor.
+
+---
+
+#### Add Grid Data variable
+
+4. Add another variable:
 
 - `Grid` — MazeCell Array
 
-Make sure `Grid` is an **array** of `MazeCell`, not a single struct.
+5. Set the variable type to:
+
+- `MazeCell`
+- Then enable the **Array** option (click the grid icon)
+
+---
+
+### Connections recap
+
+- `GridWidth` → Integer (Instance Editable)
+- `GridHeight` → Integer (Instance Editable)
+- `TileSize` → Float (Instance Editable)
+- `Grid` → MazeCell **Array**
+
+---
+
+### Why this matters
+
+These variables define how your maze is built and stored.
+
+- `GridWidth` / `GridHeight` → control the size of the maze
+- `TileSize` → controls spacing in the world
+- `Grid` → stores every cell in the maze
+
+> Without these, there is no structure to build or reference the maze.
+
+---
+
+### Common mistakes
+
+❌ Forgetting to enable **Instance Editable**  
+✔️ This makes testing and tweaking much easier
+
+---
+
+❌ Creating `Grid` as a single struct  
+✔️ It must be an **array** of `MazeCell`
+
+---
+
+❌ Using the wrong variable types  
+✔️ Make sure:
+
+- Width/Height = Integer
+- TileSize = Float
+
+---
+
+### Expected result
+
+You now have all core variables set up:
+
+- Grid dimensions and spacing are configurable
+- The `Grid` array is ready to store maze cells
+
+These variables will be used in the next steps to build and populate the grid.
+
+---
 
 <a href="{{ '/assets/images/blog/Step 1.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 1.png' | relative_url }}" alt="BP_MazeGenerator variables panel screenshot showing GridWidth, GridHeight, TileSize, and Grid as MazeCell Array" class="post-image">
@@ -87,25 +176,171 @@ Make sure `Grid` is an **array** of `MazeCell`, not a single struct.
 
 ---
 
-# Step 2 — Create the `InitializeGrid` Function
+## Step 2 — Create the `InitializeGrid` Function
 
-This function creates every cell in the maze and stores it in the `Grid` array.
+Now we will create the function that builds the entire grid for the maze.
 
-Create a new function called:
+---
 
-`InitializeGrid`
+### What this function does
+
+This function creates every `MazeCell` in the grid and stores them in the `Grid` array.
+
+> It is responsible for generating the full grid structure before the maze is carved.
+
+---
+
+### Create the function
+
+1. In your Blueprint, open the **Functions** section.
+2. Click the **+ Function** button.
+3. Name the function:
+   `InitializeGrid`
+
+---
+
+### Inputs
+
+This function does **not** require any inputs.
+
+---
+
+### Outputs
+
+This function does **not** return a value.
+
+It directly modifies the `Grid` array.
+
+---
+
+### What will happen inside this function
+
+In the following steps, we will:
+
+- Clear the `Grid` array
+- Loop through every row and column
+- Create a `MazeCell` for each position
+- Add each cell to the `Grid`
+
+---
+
+### Why this matters
+
+The maze cannot exist without a grid.
+
+This function ensures:
+
+> Every cell is created and stored before any maze logic runs.
+
+If this step is incorrect, nothing else in the system will work properly.
+
+---
+
+### Common mistakes
+
+❌ Adding inputs that are not needed  
+✔️ This function builds the grid using existing variables
+
+---
+
+❌ Expecting a return value  
+✔️ The function updates the `Grid` directly
+
+---
+
+❌ Misspelling the function name  
+✔️ Keep it exactly: `InitializeGrid`
+
+---
+
+### Expected result
+
+You now have a function that:
+
+- Will generate the full grid
+- Prepares the data needed for maze generation
+
+In the next steps, we will build the logic inside this function.
+
+---
+
+> **Screenshot placeholder:** Insert image showing InitializeGrid function created in Blueprint
 
 ---
 
 ## Step 2.1 — Clear the Grid
 
-Inside `InitializeGrid`:
+Before we build the grid, we need to make sure it starts empty.
 
-- drag the `Grid` variable into the graph as **Get**
-- drag off it and add the node:
-  `Clear`
+---
 
-This ensures the array starts empty each time the grid is rebuilt.
+### What this step does
+
+This step clears out the `Grid` array before adding new cells.
+
+> It ensures no leftover data remains from previous runs.
+
+---
+
+### Instructions
+
+1. Open the `InitializeGrid` function.
+
+2. Drag the `Grid` variable into the graph as **Get**.
+
+3. Drag off `Grid` and search for:
+   `Clear`
+
+4. Connect the execution wire so this runs at the start of the function.
+
+---
+
+### Connections recap
+
+- Execution flow → `Clear`
+- `Grid` → **Target Array**
+
+---
+
+### Why this matters
+
+If you don’t clear the array first:
+
+- Old cells will remain in the `Grid`
+- New cells will be added on top of them
+- Your grid size will grow incorrectly
+
+This step ensures:
+
+> The grid is rebuilt cleanly every time the function runs.
+
+---
+
+### Common mistakes
+
+❌ Skipping this step  
+✔️ Always clear the grid before rebuilding it
+
+---
+
+❌ Using `Set Grid` instead of `Clear`  
+✔️ Use the `Clear` node to empty the array
+
+---
+
+❌ Not connecting the execution wire  
+✔️ The Clear node must actually run at the start
+
+---
+
+### Expected result
+
+When `InitializeGrid` runs:
+
+- The `Grid` array is emptied
+- The system is ready to rebuild the grid from scratch
+
+---
 
 <a href="{{ '/assets/images/blog/Step 2.1.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 2.1.png' | relative_url }}" alt="Screenshot showing InitializeGrid  Grid  Clear" class="post-image">
@@ -115,23 +350,114 @@ This ensures the array starts empty each time the grid is rebuilt.
 
 ## Step 2.2 — Add Nested For Loops
 
-We need one loop for rows and one loop for columns.
+To build the full grid, we need to loop through every row and every column.
 
-### Outer loop
+This requires **nested loops**—one for Y (rows) and one for X (columns).
 
-Add a `ForLoop` for Y.
+---
 
-- First Index = `0`
-- Last Index = `GridHeight - 1`
+### What this step does
 
-### Inner loop
+This step creates a loop structure that visits every position in the grid.
 
-From the outer loop’s `Loop Body`, add another `ForLoop` for X.
+> For each row (Y), we loop through every column (X).
 
-- First Index = `0`
-- Last Index = `GridWidth - 1`
+---
 
-This gives us a full 2D grid.
+### Instructions
+
+#### Outer loop (Rows / Y)
+
+1. Add a `ForLoop` node.
+2. Set:
+   - **First Index** = `0`
+   - **Last Index** = `GridHeight - 1`
+
+This loop represents the **rows** of the grid.
+
+---
+
+#### Inner loop (Columns / X)
+
+3. From the **Loop Body** of the outer loop, add another `ForLoop`.
+
+4. Set:
+   - **First Index** = `0`
+   - **Last Index** = `GridWidth - 1`
+
+This loop represents the **columns** within each row.
+
+---
+
+### Connections recap
+
+- Outer `ForLoop` (Y):
+  - `0 → GridHeight - 1`
+
+- Outer Loop Body → Inner `ForLoop` (X)
+
+- Inner `ForLoop`:
+  - `0 → GridWidth - 1`
+
+---
+
+### Why this matters
+
+This structure allows you to visit every coordinate in the grid.
+
+> It effectively creates a 2D grid using two loops.
+
+For example:
+
+- Outer loop controls **Y (rows)**
+- Inner loop controls **X (columns)**
+
+---
+
+### How it works (simple view)
+
+For each Y:
+
+- Run through all X values
+
+Resulting positions:
+
+- (0,0), (1,0), (2,0)...
+- (0,1), (1,1), (2,1)...
+
+---
+
+### Common mistakes
+
+❌ Reversing the loops  
+✔️ Outer = Y, Inner = X
+
+---
+
+❌ Using the wrong grid size  
+✔️ Y uses `GridHeight`, X uses `GridWidth`
+
+---
+
+❌ Forgetting `- 1`  
+✔️ Always use `GridHeight - 1` and `GridWidth - 1`
+
+---
+
+❌ Not connecting the inner loop to the outer loop’s Loop Body  
+✔️ The inner loop must run inside the outer loop
+
+---
+
+### Expected result
+
+You now have a nested loop structure that:
+
+- Iterates through every row and column
+- Covers the entire grid
+- Prepares each position for cell creation
+
+---
 
 <a href="{{ '/assets/images/blog/Step 2.2.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 2.2.png' | relative_url }}" alt="Screenshot showing Nested ForLoop setup inside InitializeGrid" class="post-image">
@@ -141,19 +467,92 @@ This gives us a full 2D grid.
 
 ## Step 2.3 — Create a MazeCell
 
-Inside the inner loop:
+Now we will create a new `MazeCell` for each position in the grid.
 
-- right-click and add:
-  `Make MazeCell`
+---
 
-Set it like this:
+### What this step does
 
-- `X = inner loop Index`
-- `Y = outer loop Index`
-- `Visited = false`
-- `IsWall = true`
+This step builds a `MazeCell` struct using the current loop indices.
 
-That means every cell starts as an unvisited wall.
+> Each cell starts as an unvisited wall and will be carved later during maze generation.
+
+---
+
+### Instructions
+
+1. Make sure you are inside the **inner loop** (where each grid position is processed).
+
+2. Right-click in the graph and search for:
+   `Make MazeCell`
+
+3. Set the values as follows:
+   - `X` → **Inner Loop Index**
+   - `Y` → **Outer Loop Index**
+   - `Visited` → `false`
+   - `IsWall` → `true`
+
+---
+
+### Connections recap
+
+- Inner Loop Index → `X`
+- Outer Loop Index → `Y`
+- `Visited` = `false`
+- `IsWall` = `true`
+
+---
+
+### Why this matters
+
+Every cell in your maze starts in the same initial state.
+
+This setup ensures:
+
+> The entire grid begins as solid walls that have not been visited.
+
+The maze generation algorithm will later carve paths by:
+
+- marking cells as visited
+- turning walls into open paths
+
+---
+
+### Common mistakes
+
+❌ Mixing up X and Y  
+✔️ Inner loop = X, Outer loop = Y
+
+---
+
+❌ Setting `Visited` to true  
+✔️ All cells must start as **unvisited**
+
+---
+
+❌ Setting `IsWall` to false  
+✔️ All cells must start as **walls**
+
+---
+
+❌ Creating the node outside the loop  
+✔️ This must run once per grid cell
+
+---
+
+### Expected result
+
+For each iteration of the inner loop:
+
+- A new `MazeCell` is created
+- It stores its position (`X`, `Y`)
+- It is marked as:
+  - `Visited = false`
+  - `IsWall = true`
+
+This cell will be added to the `Grid` array in the next step.
+
+---
 
 <a href="{{ '/assets/images/blog/Step 2.3.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 2.3.png' | relative_url }}" alt="Screenshot showing Make MazeCell with X, Y, Visited false, IsWall true" class="post-image">
@@ -163,18 +562,89 @@ That means every cell starts as an unvisited wall.
 
 ## Step 2.4 — Add the Cell to the Grid Array
 
-Still inside the inner loop:
+Now that we’ve created a `MazeCell`, we need to store it in the grid.
 
-- drag `Grid` into the graph as **Get**
-- drag off it and add:
-  `Add`
+---
 
-Connect:
+### What this step does
 
-- `Target Array = Grid`
-- `Item = Make MazeCell`
+This step adds each newly created `MazeCell` into the `Grid` array.
 
-At the end of this function, the Grid array will contain every cell in the maze.
+> By the end of the loop, the Grid will contain every cell in the maze.
+
+---
+
+### Instructions
+
+1. Make sure you are still inside the **inner loop** (where each cell is being created).
+
+2. Drag the `Grid` variable into the graph as **Get**.
+
+3. Drag off `Grid` and search for:
+   `Add`
+
+4. Connect:
+   - `Grid` → **Target Array**
+   - `Make MazeCell` → **Item**
+
+5. Connect the execution wire so this runs after the cell is created.
+
+---
+
+### Connections recap
+
+- Execution flow → `Add`
+- `Grid` → **Target Array**
+- `Make MazeCell` → **Item**
+
+---
+
+### Why this matters
+
+The grid does not exist until you populate it.
+
+This step ensures:
+
+> Every generated `MazeCell` is stored in the `Grid` array.
+
+Without this, your maze would have no data to work with in later steps.
+
+---
+
+### Common mistakes
+
+❌ Forgetting the execution wire  
+✔️ The `Add` node must be part of the execution flow
+
+---
+
+❌ Using `Set Grid` instead of `Get Grid`  
+✔️ Always use **Get** when feeding into the Add node
+
+---
+
+❌ Not connecting `Make MazeCell` to Item  
+✔️ The cell you created must be what gets added
+
+---
+
+❌ Adding outside the loop  
+✔️ This must happen inside the loop so every cell is added
+
+---
+
+### Expected result
+
+As the loop runs:
+
+- Each `MazeCell` is added to the `Grid` array
+- The array grows one element at a time
+
+By the end of the loop:
+
+> `Grid` contains all cells in the maze, in order
+
+---
 
 <a href="{{ '/assets/images/blog/Step 2.4.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 2.4.png' | relative_url }}" alt="Screenshot showing Make MazeCell connected into Add node targeting Grid" class="post-image">
@@ -182,36 +652,198 @@ At the end of this function, the Grid array will contain every cell in the maze.
 
 ---
 
-# Step 3 — Create the `GetIndex` Function
+## Step 3 — Create the `GetIndex` Function
 
-Because the maze is stored in a one-dimensional array, we need a way to convert grid coordinates into an array index.
+Because the maze is stored in a one-dimensional array, we need a way to convert grid coordinates into a usable array index.
 
-Create a new function called:
+---
 
-`GetIndex`
+### What this function does
 
-Inputs:
+This function converts 2D grid coordinates into a single index value.
+
+> It allows us to locate the correct cell inside the `Grid` array.
+
+---
+
+### Create the function
+
+1. In your Blueprint, open the **Functions** section.
+2. Click the **+ Function** button.
+3. Name the function:
+   `GetIndex`
+
+---
+
+### Inputs
+
+Add the following inputs:
 
 - `X` — Integer
 - `Y` — Integer
 
-Output:
+These represent the position in the grid.
+
+---
+
+### Output
+
+Add the following output:
 
 - `Index` — Integer
+
+This will be the calculated position in the array.
+
+---
+
+### Why this matters
+
+Your grid is stored as a **1D array**, but your maze logic works in **2D space**.
+
+This function bridges that gap:
+
+> It converts (X, Y) coordinates into a single index value used to access the grid.
+
+---
+
+### Important concept
+
+Every time you need to access a cell in the grid:
+
+- You will call `GetIndex`
+- Pass in `X` and `Y`
+- Use the returned `Index` to access the array
+
+---
+
+### Common mistakes
+
+❌ Forgetting to add the output  
+✔️ Make sure `Index` is created as an output
+
+---
+
+❌ Using floats instead of integers  
+✔️ All values here should be **Integers**
+
+---
+
+❌ Misspelling the function name  
+✔️ Keep it exactly: `GetIndex`
+
+---
+
+### Expected result
+
+You now have a function that:
+
+- Takes in `X` and `Y`
+- Returns an `Index`
+
+In the next step, we will build the formula that performs this conversion.
+
+---
+
+> **Screenshot placeholder:** Insert image showing the GetIndex function with inputs and output configured
 
 ---
 
 ## Step 3.1 — Build the Formula
 
-Use this formula:
+To access cells in our grid, we need to convert (X, Y) coordinates into a single array index.
 
-`Index = X + (Y * GridWidth)`
+---
 
-In Blueprint:
+### What this step does
 
-- multiply `Y * GridWidth`
-- add `X`
-- connect the result to the Return Node
+This step builds the formula that converts 2D grid coordinates into a 1D array index.
+
+> This allows us to correctly access cells stored in the `Grid` array.
+
+---
+
+### The formula
+
+Index = X + (Y \* GridWidth)
+
+---
+
+### Instructions
+
+1. Drag in the `Y` variable as **Get**.
+2. Drag in `GridWidth` as **Get**.
+3. Add a multiplication (`*`) node:
+   - Connect `Y` → input A
+   - Connect `GridWidth` → input B
+
+4. Drag in the `X` variable as **Get**.
+
+5. Add an addition (`+`) node:
+   - Connect the result of `(Y * GridWidth)` → input A
+   - Connect `X` → input B
+
+6. Connect the result of the addition to the **Return Node**.
+
+---
+
+### Connections recap
+
+- `Y * GridWidth`
+- Result + `X`
+- Final result → **Return Node**
+
+---
+
+### Why this matters
+
+Your grid is stored as a **1D array**, but you think in **2D coordinates**.
+
+This formula converts:
+
+> (X, Y) → Array Index
+
+Without this conversion, you would not be able to correctly locate cells in the grid.
+
+---
+
+### Example
+
+If `GridWidth = 21`:
+
+- `(0, 0)` → `0 + (0 * 21)` = `0`
+- `(1, 0)` → `1 + (0 * 21)` = `1`
+- `(0, 1)` → `0 + (1 * 21)` = `21`
+- `(1, 1)` → `1 + (1 * 21)` = `22`
+
+---
+
+### Common mistakes
+
+❌ Forgetting parentheses (order of operations)  
+✔️ Always calculate `(Y * GridWidth)` first
+
+---
+
+❌ Swapping X and Y  
+✔️ Formula is: `X + (Y * GridWidth)`
+
+---
+
+❌ Not connecting to the Return Node  
+✔️ The final value must go into the function output
+
+---
+
+### Expected result
+
+You now have a working formula that:
+
+- Converts grid coordinates into an array index
+- Allows accurate lookup of any cell in the grid
+
+This will be used throughout the maze system whenever we need to access a specific tile.
+
+---
 
 <a href="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}" alt="Screenshot showing GetIndex function using X + (Y * GridWidth)" class="post-image">
@@ -219,55 +851,190 @@ In Blueprint:
 
 ---
 
-## Why This Matters
+## Step 4 — Create `GetValidNeighbors`
 
-If your grid width is 21:
+This is the core function for this part of the maze system.
 
-- `(0,0)` becomes 0
-- `(1,0)` becomes 1
-- `(0,1)` becomes 21
-- `(1,1)` becomes 22
-
-This is how we look up the correct cell later.
+It is responsible for finding all valid neighboring cells from a given position.
 
 ---
 
-# Step 4 — Create `GetValidNeighbors`
+### What this function does
 
-This is the most important function in this part of the tutorial.
+This function takes a single cell index and:
 
-Its job is simple:
+- checks all four directions (Left, Right, Up, Down)
+- filters out invalid or visited cells
+- returns a list of valid neighbors
 
-- take the current cell
-- check the four directions
-- return only the valid neighboring cells
+> Only unvisited, in-bounds cells will be included in the result.
 
-Create a new function called:
+---
 
-`GetValidNeighbors`
+### Create the function
 
-Input:
+1. In your Blueprint, open the **Functions** section.
+2. Click the **+ Function** button.
+3. Name the function:
+   `GetValidNeighbors`
+
+---
+
+### Inputs
+
+Add the following input:
 
 - `CurrentIndex` — Integer
 
-Output:
+This represents the current position in the grid.
+
+---
+
+### Outputs
+
+Add the following output:
 
 - `Neighbors` — Integer Array
+
+This will store all valid neighboring cell indices.
+
+---
+
+### Why this matters
+
+This function drives the maze generation logic.
+
+> It determines where the algorithm can move next.
+
+If this function is incorrect, the maze will not generate properly.
+
+---
+
+### Important concept
+
+This function works with **indices**, not coordinates.
+
+- The grid is stored as a **1D array**
+- Each cell is accessed using an index
+- We convert between (X, Y) and Index as needed
+
+---
+
+### Common mistakes
+
+❌ Forgetting to add the output array  
+✔️ You must create `Neighbors` as an **Integer Array**
+
+---
+
+❌ Using coordinates instead of indices  
+✔️ This function should return **indices**, not X/Y values
+
+---
+
+❌ Misspelling the function name  
+✔️ Keep it exactly: `GetValidNeighbors`
+
+---
+
+### Expected result
+
+You now have a function that:
+
+- Accepts a `CurrentIndex`
+- Will return an array of valid neighbor indices
+
+In the next steps, we will build the logic inside this function step-by-step.
+
+---
+
+> **Screenshot placeholder:** Insert image showing the function with input and output configured
 
 ---
 
 ## Step 4.1 — Add Local Variables
 
-Inside the function, create these **Local Variables**:
+Before we begin building the logic, we need to create a set of local variables that will be used throughout this function.
 
-- `CurrentX` — Integer
-- `CurrentY` — Integer
-- `TestX` — Integer
-- `TestY` — Integer
-- `TestIndex` — Integer
-- `LocalNeighbors` — Integer Array
+---
 
-Use local variables here. Do not make these regular Blueprint variables.
+### What this step does
+
+This step defines temporary variables that exist only within this function.
+
+> These variables store positions, test values, and neighbor results during execution.
+
+---
+
+### Instructions
+
+1. Open your function.
+
+2. In the **My Blueprint** panel, locate the **Local Variables** section.
+
+3. Add the following variables:
+   - `CurrentX` — Integer
+   - `CurrentY` — Integer
+   - `TestX` — Integer
+   - `TestY` — Integer
+   - `TestIndex` — Integer
+   - `LocalNeighbors` — Integer Array
+
+4. For `LocalNeighbors`:
+   - Set the variable type to **Integer**
+   - Click the array icon to make it an **Array**
+
+---
+
+### Important note
+
+⚠️ These must be **Local Variables**, not regular Blueprint variables.
+
+- Local Variables exist **only inside this function**
+- They are reset each time the function runs
+- They keep your Blueprint clean and organized
+
+---
+
+### Why this matters
+
+Using local variables ensures:
+
+> Your function remains self-contained and does not interfere with other parts of your Blueprint.
+
+It also prevents bugs caused by leftover values from previous runs.
+
+---
+
+### Common mistakes
+
+❌ Creating regular Blueprint variables instead of Local Variables  
+✔️ Always use the **Local Variables** section inside the function
+
+---
+
+❌ Forgetting to make `LocalNeighbors` an array  
+✔️ It must be an **Integer Array**, not a single Integer
+
+---
+
+❌ Misspelling variable names  
+✔️ Keep names consistent (`TestIndex`, not `Testindex`, etc.)
+
+---
+
+### Expected result
+
+You now have all required variables ready:
+
+- Position tracking (`CurrentX`, `CurrentY`)
+- Test coordinates (`TestX`, `TestY`)
+- Index tracking (`TestIndex`)
+- Neighbor storage (`LocalNeighbors`)
+
+These will be used in the following steps to build your neighbor-checking logic.
+
+---
 
 <a href="{{ '/assets/images/blog/Step 4.1.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 4.1.png' | relative_url }}" alt="Screenshot showing Local variables inside GetValidNeighbors" class="post-image">
@@ -277,21 +1044,93 @@ Use local variables here. Do not make these regular Blueprint variables.
 
 ## Step 4.2 — Read the Current Cell
 
-We need to get the current MazeCell from the Grid array.
+Now we need to retrieve the current cell from the grid so we can work with its position.
 
-Do this:
+---
 
-- drag `Grid` into the graph as **Get**
-- drag off it and choose:
-  `Get (a copy)`
-- plug `CurrentIndex` into the Index pin
-- drag off the result and add:
-  `Break MazeCell`
+### What this step does
 
-Now store the values:
+This step pulls the `MazeCell` at `CurrentIndex` from the `Grid` array and extracts its `X` and `Y` values.
 
-- `X → Set CurrentX`
-- `Y → Set CurrentY`
+> These values will be used to calculate neighboring positions in the next steps.
+
+---
+
+### Instructions
+
+1. Drag the `Grid` variable into the graph as **Get**.
+
+2. Drag off `Grid` and search for:
+   `Get (a copy)`
+
+3. Connect:
+   - `CurrentIndex` → **Index**
+
+   This retrieves the MazeCell at the current position.
+
+4. Drag off the output of `Get (a copy)` and add:
+   `Break MazeCell`
+
+5. From the `Break MazeCell` node:
+   - Connect `X` → `Set CurrentX`
+   - Connect `Y` → `Set CurrentY`
+
+---
+
+### Connections recap
+
+- `Grid` → `Get (a copy)`
+- `CurrentIndex` → **Index**
+- Output → `Break MazeCell`
+- `X` → `Set CurrentX`
+- `Y` → `Set CurrentY`
+
+---
+
+### Why this matters
+
+Your grid stores cells as a structured type (`MazeCell`), not just raw values.
+
+This step allows you to:
+
+> Extract the position data (X and Y) from the current cell so you can calculate neighbors.
+
+Without this, you wouldn’t know where you are in the grid.
+
+---
+
+### Common mistakes
+
+❌ Forgetting to use `CurrentIndex`  
+✔️ Always use `CurrentIndex` to get the correct cell
+
+---
+
+❌ Not breaking the struct  
+✔️ You must use `Break MazeCell` to access `X` and `Y`
+
+---
+
+❌ Only setting one value  
+✔️ You need both `CurrentX` and `CurrentY`
+
+---
+
+❌ Using the wrong variable instead of `Grid`  
+✔️ Make sure you're pulling from the main grid array
+
+---
+
+### Expected result
+
+After this step runs:
+
+- `CurrentX` contains the X position of the current cell
+- `CurrentY` contains the Y position of the current cell
+
+These values will be used in the next step to check all neighboring directions.
+
+---
 
 <a href="{{ '/assets/images/blog/Step 4.2.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 4.2.png' | relative_url }}" alt="Screenshot showing Grid  Get (a copy)  Break MazeCell Set CurrentX / Set CurrentY" class="post-image">
@@ -301,23 +1140,100 @@ Now store the values:
 
 ## Step 4.3 — Add a Sequence Node
 
-After `Set CurrentY`, add a `Sequence` node.
+Now that `CurrentX` and `CurrentY` are set, we need a way to process multiple directions in order.
 
-Click `Add pin` until it has:
+We will use a **Sequence** node to handle each direction step-by-step.
 
-- Then 0
-- Then 1
-- Then 2
-- Then 3
-- Then 4
+---
 
-We will use those for:
+### What this step does
 
-- Left
-- Right
-- Up
-- Down
-- Return Node
+The **Sequence** node allows us to run multiple execution paths in order.
+
+> Each output pin will represent a different direction to check.
+
+---
+
+### Instructions
+
+1. Locate the node where you just finished setting:
+   - `Set CurrentY`
+
+2. Drag off the execution pin from `Set CurrentY` and add a:
+   `Sequence` node
+
+3. Select the Sequence node and click:
+   `Add pin`
+
+4. Continue clicking **Add pin** until you have:
+   - Then 0
+   - Then 1
+   - Then 2
+   - Then 3
+   - Then 4
+
+---
+
+### What each pin will be used for
+
+We will use each output for a different part of the logic:
+
+- **Then 0** → LEFT
+- **Then 1** → RIGHT
+- **Then 2** → UP
+- **Then 3** → DOWN
+- **Then 4** → Return Node
+
+---
+
+### Connections recap
+
+- `Set CurrentY` → `Sequence`
+- Sequence outputs:
+  - Then 0
+  - Then 1
+  - Then 2
+  - Then 3
+  - Then 4
+
+---
+
+### Why this matters
+
+Without the Sequence node, you would only be able to execute one path at a time.
+
+This node ensures:
+
+> All four directions are checked, one after another, every time this function runs.
+
+---
+
+### Common mistakes
+
+❌ Forgetting to add enough pins  
+✔️ Make sure you have **Then 0 through Then 4**
+
+---
+
+❌ Not connecting the execution wire  
+✔️ `Set CurrentY` must flow into the Sequence node
+
+---
+
+❌ Mixing up the order of directions  
+✔️ Keep the order consistent (Left, Right, Up, Down)
+
+---
+
+### Expected result
+
+You now have a Sequence node that will:
+
+- Execute five steps in order
+- Provide a clean structure for checking all directions
+- Prepare the flow for adding neighbors and returning results
+
+---
 
 <a href="{{ '/assets/images/blog/Step 4.3.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 4.3.png' | relative_url }}" alt="Screenshot showing Sequence node with Then 0 through Then 4" class="post-image">
@@ -341,25 +1257,85 @@ Start with LEFT.
 
 ## Step 5.1 — Set Test Coordinates for LEFT
 
-For LEFT:
+We begin by calculating the test coordinates for the **LEFT** direction.
 
-- `TestX = CurrentX - 2`
-- `TestY = CurrentY`
+This means moving two cells to the left from the current position.
 
-That means:
+---
 
-- drag in `CurrentX`
-- subtract `2`
-- connect into `Set TestX`
+### What this step does
 
-Then:
+This step sets up a potential neighbor position by adjusting the current coordinates.
 
-- drag in `CurrentY`
-- connect into `Set TestY`
+> LEFT means decreasing the X value while keeping Y the same.
 
-The white exec flow should be:
+---
 
-`Sequence Then 0 → Set TestX → Set TestY`
+### Instructions
+
+1. Locate the **Sequence** node in your function.
+2. From **Then 0**, begin the execution flow for the LEFT direction.
+
+3. Set `TestX`:
+   - Drag in `CurrentX` as **Get**
+   - Add a subtraction (`-`) node
+   - Set the value to `2`
+   - Connect the result into `Set TestX`
+
+4. Set `TestY`:
+   - Drag in `CurrentY` as **Get**
+   - Connect it directly into `Set TestY`
+
+---
+
+### Connections recap
+
+- `Sequence Then 0` → `Set TestX` → `Set TestY`
+- `CurrentX - 2` → `Set TestX`
+- `CurrentY` → `Set TestY`
+
+---
+
+### Why this matters
+
+In this maze system, we move in steps of **2** to skip over walls and land on the next valid cell.
+
+This step calculates:
+
+> The coordinates of the cell to the LEFT of the current position
+
+These coordinates will be tested in the next steps.
+
+---
+
+### Common mistakes
+
+❌ Subtracting `1` instead of `2`  
+✔️ Always move by `2` to maintain proper maze spacing
+
+---
+
+❌ Changing both X and Y  
+✔️ LEFT only affects X — Y stays the same
+
+---
+
+❌ Breaking execution flow  
+✔️ Make sure the white wire goes:
+`Then 0 → Set TestX → Set TestY`
+
+---
+
+### Expected result
+
+After this step runs:
+
+- `TestX` = `CurrentX - 2`
+- `TestY` = `CurrentY`
+
+These values will be used in the next step to check if the position is valid.
+
+---
 
 <a href="{{ '/assets/images/blog/Step 5.1.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Step 5.1.png' | relative_url }}" alt="Screenshot showing LEFT setup using CurrentX - 2 and CurrentY" class="post-image">
@@ -369,81 +1345,379 @@ The white exec flow should be:
 
 ## Step 5.2 — Add the Bounds Check
 
-We only want cells inside the valid maze area.
+Before we use our test coordinates, we need to make sure they are inside the valid maze area.
 
-Build these four checks:
+This step prevents us from checking tiles that are outside the grid.
 
-- `TestX > 0`
-- `TestX < GridWidth - 1`
-- `TestY > 0`
-- `TestY < GridHeight - 1`
+---
 
-Combine them using `AND` nodes, then plug the final result into a `Branch`.
+### What this step does
 
-### Screenshot Placeholder
+This step verifies that `TestX` and `TestY` are within the allowed grid boundaries.
 
-**[Screenshot: Bounds check using four comparisons and AND nodes]**
+> Only coordinates inside the maze will pass this check.
+
+---
+
+### Instructions
+
+1. Create the following four comparison checks:
+   - `TestX > 0`
+   - `TestX < GridWidth - 1`
+   - `TestY > 0`
+   - `TestY < GridHeight - 1`
+
+2. To build `GridWidth - 1`:
+   - Drag in `GridWidth` as **Get**
+   - Subtract `1` using an integer `-` node
+
+3. To build `GridHeight - 1`:
+   - Drag in `GridHeight` as **Get**
+   - Subtract `1` using an integer `-` node
+
+4. Combine the four conditions using **AND** nodes:
+   - First AND:
+     - `TestX > 0`
+     - `TestX < GridWidth - 1`
+
+   - Second AND:
+     - `TestY > 0`
+     - `TestY < GridHeight - 1`
+
+   - Final AND:
+     - Result of first AND
+     - Result of second AND
+
+5. Add a **Branch** node.
+
+6. Connect the final AND result to the **Condition** input of the Branch.
+
+---
+
+### Connections recap
+
+- `TestX > 0` → AND
+- `TestX < GridWidth - 1` → AND
+
+- `TestY > 0` → AND
+- `TestY < GridHeight - 1` → AND
+
+- Both AND results → final AND
+- Final AND → **Branch Condition**
+
+---
+
+### Why this matters
+
+Arrays in Unreal Engine will crash or throw errors if you try to access an invalid index.
+
+This step ensures:
+
+> We only process coordinates that exist inside the grid.
+
+It also keeps your maze generation stable and predictable.
+
+---
+
+### Common mistakes
+
+❌ Forgetting to subtract `1` from GridWidth / GridHeight  
+✔️ Use `GridWidth - 1` and `GridHeight - 1` to stay inside bounds
+
+---
+
+❌ Missing one of the four checks  
+✔️ All four conditions must be included
+
+---
+
+❌ Wiring AND nodes incorrectly  
+✔️ Make sure all conditions flow into a final AND before the Branch
+
+---
+
+❌ Plugging a single condition directly into the Branch  
+✔️ You must combine all checks first
+
+---
+
+### Expected result
+
+- If all four conditions are **True**, the Branch returns **True**
+- If any condition is **False**, the Branch returns **False**
+
+When the Branch is **True**, the coordinates are safe to use in the next step.
+
+---
+
+<a href="{{ '/assets/images/blog/Step 5.2.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 5.2.png' | relative_url }}" alt="Screenshot showing Bounds check using four comparisons and AND nodes" class="post-image">
+</a>
 
 ---
 
 ## Step 5.3 — Convert to Index
 
-On the **True** pin of that Branch:
+Now that we know the coordinates are within bounds, we need to convert them into a usable index for our grid array.
 
-- call `GetIndex`
-- connect `X = TestX`
-- connect `Y = TestY`
+---
 
-Then store the result in:
+### What this step does
 
-- `Set TestIndex`
+This step takes the valid grid coordinates (`TestX`, `TestY`) and converts them into a single array index.
 
-### Screenshot Placeholder
+> This index (`TestIndex`) is used to access the correct cell in the `Grid` array.
 
-**[Screenshot: Branch True → GetIndex → Set TestIndex]**
+---
+
+### Instructions
+
+1. Locate the **Branch** node that checks if the coordinates are within bounds.
+2. From the **True** output pin of that Branch, continue the execution flow.
+
+3. From the graph, add a call to:
+   `GetIndex`
+
+4. Connect the inputs:
+   - `TestX` → **X**
+   - `TestY` → **Y**
+
+5. Take the return value from `GetIndex` and connect it to:
+   - `Set TestIndex`
+
+---
+
+### Connections recap
+
+- **True** (Branch) → `GetIndex` (Exec)
+- `TestX` → **X**
+- `TestY` → **Y**
+- Return Value → `Set TestIndex`
+
+---
+
+### Why this matters
+
+Your grid is stored as a **1D array**, but you’re working with **2D coordinates**.
+
+This step converts:
+
+> (X, Y) → Array Index
+
+Without this conversion, you wouldn’t be able to correctly access the tile in the `Grid`.
+
+---
+
+### Common mistakes
+
+❌ Forgetting to connect the execution wire from the Branch  
+✔️ The `GetIndex` function must be executed from the **True** pin
+
+---
+
+❌ Mixing up X and Y inputs  
+✔️ Double-check: `TestX → X`, `TestY → Y`
+
+---
+
+❌ Not storing the result  
+✔️ You must use `Set TestIndex` or the value will be lost
+
+---
+
+### Expected result
+
+When the coordinates are valid:
+
+- `GetIndex` converts (`TestX`, `TestY`) into a single integer
+- That value is stored in `TestIndex`
+
+This index will be used in the next step to access the correct cell in the grid.
+
+---
+
+<a href="{{ '/assets/images/blog/Step 5.3.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 5.3.png' | relative_url }}" alt="Screenshot showing Branch True connected to GetIndex connected to Set TestIndex" class="post-image">
+</a>
 
 ---
 
 ## Step 5.4 — Check If the Tile Has Been Visited
 
-Now test the actual cell:
+Now that we have a potential neighbor (`TestIndex`), we need to check if that tile has already been visited.
 
-- drag `Grid` into the graph as **Get**
-- drag off and choose:
-  `Get (a copy)`
-- use `TestIndex` as the Index
-- add `Break MazeCell`
+We only want to include neighbors that have **not** been visited yet.
 
-Then:
+---
 
-- take `Visited`
-- pass it through a `NOT` node
-- plug that into another `Branch`
+### What this step does
 
-If the Branch is True, the tile is a valid neighbor.
+This step checks the `Visited` property of the tile at `TestIndex`.
 
-### Screenshot Placeholder
+> If the tile has **not** been visited, it is considered a valid neighbor.
 
-**[Screenshot: Grid → Get (a copy) using TestIndex → Break MazeCell → NOT Visited → Branch]**
+---
+
+### Instructions
+
+1. Drag the `Grid` variable into the graph as **Get**.
+2. Drag off `Grid` and search for:
+   `Get (a copy)`
+3. Connect `TestIndex` to the **Index** input.
+
+   This retrieves the MazeCell at the position of `TestIndex`.
+
+4. Drag off the output of `Get (a copy)` and add:
+   `Break MazeCell`
+
+5. From the `Break MazeCell` node, locate the `Visited` output.
+
+6. Drag off `Visited` and add a:
+   `NOT` node
+
+   This flips the value:
+   - `Visited = True` → becomes `False`
+   - `Visited = False` → becomes `True`
+
+7. Add a **Branch** node.
+
+8. Connect:
+   - Output of `NOT` → **Condition** of the Branch
+
+---
+
+### Connections recap
+
+- `Grid` → `Get (a copy)`
+- `TestIndex` → **Index**
+- Output → `Break MazeCell`
+- `Visited` → `NOT`
+- `NOT` → **Branch Condition**
+
+---
+
+### Why this matters
+
+Maze generation only works correctly if we avoid revisiting tiles.
+
+This step ensures:
+
+> Only unvisited tiles are considered valid neighbors.
+
+If you skip this, your maze can loop back on itself and break the algorithm.
+
+---
+
+### Common mistakes
+
+❌ Forgetting to use `TestIndex` as the Index  
+✔️ Always use `TestIndex` to check the correct tile
+
+---
+
+❌ Skipping the `NOT` node  
+✔️ We want **NOT Visited**, not Visited
+
+---
+
+❌ Using the wrong variable instead of `Grid`  
+✔️ Make sure you're pulling from your main grid array
+
+---
+
+❌ Not breaking the `MazeCell` struct  
+✔️ You must use `Break MazeCell` to access `Visited`
+
+---
+
+### Expected result
+
+- If the tile **has not been visited**, the Branch returns **True**
+- If the tile **has been visited**, the Branch returns **False**
+
+When the Branch is **True**, this tile can now be added as a valid neighbor in the next step.
+
+---
+
+<a href="{{ '/assets/images/blog/Step 5.4.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 5.4.png' | relative_url }}" alt="Screenshot showing Grid to Get (a copy) using TestIndex to Break MazeCell to NOT Visited to Branch" class="post-image">
+</a>
 
 ---
 
 ## Step 5.5 — Add the Valid Neighbor
 
-On the **True** pin of that second Branch:
+Now that the second **Branch** has confirmed that `TestIndex` is valid, we need to store it in our local array of neighbors.
 
-- drag `LocalNeighbors` into the graph as **Get**
-- drag off it and add:
-  `Add`
+This step adds `TestIndex` into `LocalNeighbors`.
 
-Connect:
+### What this step does
 
-- `Target Array = LocalNeighbors`
-- `Item = TestIndex`
+If the second Branch returns **True**, we want Blueprint to do this:
 
-### Screenshot Placeholder
+> Add `TestIndex` to `LocalNeighbors`
 
-**[Screenshot: Add node using LocalNeighbors and TestIndex]**
+That way, every valid neighbor gets saved into the array for later use.
+
+### Instructions
+
+1. Locate the **second Branch** node in your function.
+2. From the **True** output pin of that Branch, continue the execution flow.
+3. In the **My Blueprint** panel, find `LocalNeighbors`.
+4. Drag `LocalNeighbors` into the graph as **Get**.
+5. Drag off the `LocalNeighbors` pin and search for `Add`.
+6. Choose the **Add (Array)** node.
+7. Connect `LocalNeighbors` to **Target Array**.
+8. Drag `TestIndex` into the graph as **Get**.
+9. Connect `TestIndex` to **Item**.
+10. Connect the **True** execution pin from the Branch into the **Add** node’s execution input.
+
+### Connections recap
+
+- **True** (second Branch) → **Exec** on `Add`
+- `LocalNeighbors` → **Target Array**
+- `TestIndex` → **Item**
+
+### Why this matters
+
+This is the step that actually saves the valid neighbor.
+
+Without it, your logic may correctly detect a valid neighbor, but it will never be added to the `LocalNeighbors` array. That means your maze generation will not have the neighbor data it needs for later steps.
+
+### Common mistakes
+
+- Dragging in `LocalNeighbors` as **Set** instead of **Get**
+- Forgetting to connect the white execution wire from the Branch
+- Plugging the wrong variable into **Item**
+- Creating the wrong kind of `Add` node
+
+### Expected result
+
+When the Branch returns **True**, Blueprint adds `TestIndex` to `LocalNeighbors`.
+
+For example, if `TestIndex` is `12`, then after this node runs, `12` is now stored in the `LocalNeighbors` array.
+
+### Direction flow note
+
+At this point, you have completed the full logic for the **LEFT** direction.
+
+Make sure this entire block is connected to:
+
+- `Sequence Then 0` That was created in step 5.1.
+
+> Note: We may adjust or extend these connections later as we build the full function.
+
+In the next step, we will duplicate this block for the other directions using:
+
+- `Then 1` → RIGHT  
+- `Then 2` → UP  
+- `Then 3` → DOWN  
+
+---
+
+<a href="{{ '/assets/images/blog/Step 5.5.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 5.5.png' | relative_url }}" alt="Screenshot showing Grid to Get (a copy) using TestIndex to Break MazeCell to NOT Visited to Branch" class="post-image">
+</a>
 
 ---
 
