@@ -537,6 +537,7 @@ a:hover {
     display: block;
     margin: 24px auto;
     border-radius: 6px;
+    cursor: zoom-in;
 }
 
 .post-title a:hover {
