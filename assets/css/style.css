@@ -770,6 +770,11 @@ a:hover {
         font-size: 1.25rem;
     }
 
+    .home-feature .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
     .post-title {
         font-size: 1.35rem;
     }
