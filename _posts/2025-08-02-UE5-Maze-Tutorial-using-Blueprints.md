@@ -107,9 +107,9 @@ Inside `InitializeGrid`:
 
 This ensures the array starts empty each time the grid is rebuilt.
 
-### Screenshot Placeholder
-
-**[Screenshot: InitializeGrid → Grid → Clear]**
+<a href="{{ '/assets/images/blog/Screenshot-showing-InitializeGrid-Grid-Clear.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Screenshot-showing-InitializeGrid-Grid-Clear.png' | relative_url }}" alt="Screenshot showing InitializeGrid  Grid  Clear" class="post-image">
+</a>
 
 ---
 
@@ -133,9 +133,9 @@ From the outer loop’s `Loop Body`, add another `ForLoop` for X.
 
 This gives us a full 2D grid.
 
-### Screenshot Placeholder
-
-**[Screenshot: Nested ForLoop setup inside InitializeGrid]**
+<a href="{{ '/assets/images/blog/Nested-ForLoop-setup-inside-InitializeGrid.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Nested-ForLoop-setup-inside-InitializeGrid.png' | relative_url }}" alt="Screenshot showing Nested ForLoop setup inside InitializeGrid" class="post-image">
+</a>
 
 ---
 
@@ -155,9 +155,9 @@ Set it like this:
 
 That means every cell starts as an unvisited wall.
 
-### Screenshot Placeholder
-
-**[Screenshot: Make MazeCell with X, Y, Visited false, IsWall true]**
+<a href="{{ '/assets/images/blog/Make-MazeCell-with-X-Y-Visited false-IsWall-true.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Make-MazeCell-with-X-Y-Visited false-IsWall-true.png' | relative_url }}" alt="Screenshot showing Make MazeCell with X, Y, Visited false, IsWall true" class="post-image">
+</a>
 
 ---
 
