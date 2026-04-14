@@ -1076,7 +1076,7 @@ a:hover {
 .hero-inner {
     display: flex;
     align-items: center;
-    gap: 150px;
+    gap: 300px;
     /* increase this */
 }
 
