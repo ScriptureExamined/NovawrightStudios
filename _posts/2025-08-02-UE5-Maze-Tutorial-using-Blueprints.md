@@ -57,9 +57,7 @@ Inside `MazeCell`, add these variables:
 - `Visited` — Boolean
 - `IsWall` — Boolean
 
-### Screenshot Placeholder
-
-**[Screenshot: MazeCell struct with X, Y, Visited, IsWall]**
+![Example]({{ "/assets/images/blog/Screenshot 2026-04-08 112134.png" | relative_url }})
 
 ---
 
