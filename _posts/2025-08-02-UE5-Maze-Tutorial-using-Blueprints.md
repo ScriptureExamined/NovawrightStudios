@@ -57,6 +57,10 @@ Inside `MazeCell`, add these variables:
 - `Visited` — Boolean
 - `IsWall` — Boolean
 
+<div class="image-scroll">
+  <img src="{{ '/assets/images/blog/Screenshot 2026-04-08 112134.png' | relative_url }}" alt="Wide Image">
+</div>
+
 ![Example]({{ "/assets/images/blog/Screenshot 2026-04-08 112134.png" | relative_url }})
 
 ---
