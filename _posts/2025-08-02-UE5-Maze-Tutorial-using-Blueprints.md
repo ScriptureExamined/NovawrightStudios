@@ -81,9 +81,9 @@ Set these to **Instance Editable** so you can change them in the Details panel l
 
 Make sure `Grid` is an **array** of `MazeCell`, not a single struct.
 
-### Screenshot Placeholder
-
-**[Screenshot: BP_MazeGenerator variables panel showing GridWidth, GridHeight, TileSize, and Grid as MazeCell Array]**
+<a href="{{ '/assets/images/blog/BP_MazeGeneratorVariables.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/BP_MazeGeneratorVariables.png' | relative_url }}" alt="BP_MazeGenerator variables panel screenshot showing GridWidth, GridHeight, TileSize, and Grid as MazeCell Array" class="post-image">
+</a>
 
 ---
 
