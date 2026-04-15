@@ -1562,6 +1562,7 @@ This step verifies that `TestX` and `TestY` are within the allowed grid boundari
    - `GridWidth - 1` → second input of the `<` node
 
 You now have:
+
 - `TestX > 0`
 - `TestX < GridWidth - 1`
 
@@ -1585,6 +1586,7 @@ You now have:
    - `GridHeight - 1` → second input of the `<` node
 
 You now have:
+
 - `TestY > 0`
 - `TestY < GridHeight - 1`
 
@@ -1598,8 +1600,9 @@ You now have:
    - select the Boolean **AND** node
 
 10. Connect:
-   - `TestX > 0` → first input
-   - `TestX < GridWidth - 1` → second input
+
+- `TestX > 0` → first input
+- `TestX < GridWidth - 1` → second input
 
 This checks if X is inside valid bounds.
 
@@ -1608,11 +1611,13 @@ This checks if X is inside valid bounds.
 #### Step 4 — Combine the Y conditions
 
 11. From the output of `TestY > 0`:
-   - drag out and create another **AND** node
+
+- drag out and create another **AND** node
 
 12. Connect:
-   - `TestY > 0` → first input
-   - `TestY < GridHeight - 1` → second input
+
+- `TestY > 0` → first input
+- `TestY < GridHeight - 1` → second input
 
 This checks if Y is inside valid bounds.
 
@@ -1621,11 +1626,13 @@ This checks if Y is inside valid bounds.
 #### Step 5 — Combine both results
 
 13. From the output of the X AND node:
-   - drag out and create a third **AND** node
+
+- drag out and create a third **AND** node
 
 14. Connect:
-   - X result → first input
-   - Y result → second input
+
+- X result → first input
+- Y result → second input
 
 This final AND means:
 
@@ -1636,12 +1643,14 @@ This final AND means:
 #### Step 6 — Add the Branch
 
 15. From the output of the final AND node:
-   - drag out and search for:
-     `Branch`
-   - select the Branch node
+
+- drag out and search for:
+  `Branch`
+- select the Branch node
 
 16. Connect:
-   - final AND output → **Condition** input on the Branch
+
+- final AND output → **Condition** input on the Branch
 
 ---
 
@@ -1669,22 +1678,22 @@ It also keeps your maze generation stable and predictable.
 ### Common mistakes
 
 ❌ Forgetting to subtract `1` from GridWidth / GridHeight  
-✔️ Use `GridWidth - 1` and `GridHeight - 1` to stay inside bounds  
+✔️ Use `GridWidth - 1` and `GridHeight - 1` to stay inside bounds
 
 ---
 
 ❌ Creating only one AND node  
-✔️ You need **three AND nodes total**  
+✔️ You need **three AND nodes total**
 
 ---
 
 ❌ Wiring AND nodes incorrectly  
-✔️ Build left-to-right: X checks → Y checks → final AND  
+✔️ Build left-to-right: X checks → Y checks → final AND
 
 ---
 
 ❌ Plugging a single condition directly into the Branch  
-✔️ The Branch must use the **final combined result**  
+✔️ The Branch must use the **final combined result**
 
 ---
 
@@ -1914,7 +1923,8 @@ This flips the value:
    - `Set TestIndex` → `Branch`
 
 10. Connect:
-   - `NOT` output → **Condition** on the Branch
+
+- `NOT` output → **Condition** on the Branch
 
 ---
 
@@ -1962,27 +1972,27 @@ If you skip this, your maze can loop back on itself and break the algorithm.
 ### Common mistakes
 
 ❌ Forgetting to connect the execution wire into `Get (a copy)`  
-✔️ The node must run as part of the execution flow  
+✔️ The node must run as part of the execution flow
 
 ---
 
 ❌ Forgetting to use `TestIndex` as the Index  
-✔️ Always use `TestIndex` to check the correct tile  
+✔️ Always use `TestIndex` to check the correct tile
 
 ---
 
 ❌ Skipping the `NOT` node  
-✔️ We want **NOT Visited**, not Visited  
+✔️ We want **NOT Visited**, not Visited
 
 ---
 
 ❌ Not connecting `Get (a copy)` to the Branch execution  
-✔️ The Branch must execute after retrieving the cell  
+✔️ The Branch must execute after retrieving the cell
 
 ---
 
 ❌ Not breaking the `MazeCell` struct  
-✔️ You must use `Break MazeCell` to access `Visited`  
+✔️ You must use `Break MazeCell` to access `Visited`
 
 ---
 
@@ -1992,10 +2002,6 @@ If you skip this, your maze can loop back on itself and break the algorithm.
 - If the tile **has been visited**, the Branch returns **False**
 
 When the Branch is **True**, this tile can now be added as a valid neighbor in the next step.
-
----
-
-> **Screenshot placeholder:** Insert image showing Set TestIndex → Get (a copy) → Break MazeCell → NOT → Branch
 
 ---
 
@@ -2046,10 +2052,23 @@ Without it, your logic may correctly detect a valid neighbor, but it will never 
 
 ### Common mistakes
 
-- Dragging in `LocalNeighbors` as **Set** instead of **Get**
-- Forgetting to connect the white execution wire from the Branch
-- Plugging the wrong variable into **Item**
-- Creating the wrong kind of `Add` node
+❌ Dragging in `LocalNeighbors` as **Set** instead of **Get**  
+✔️ Always use **Get** when feeding into the Add node
+
+---
+
+❌ Forgetting to connect the white execution wire from the Branch  
+✔️ The Add node must be connected to the **True** pin
+
+---
+
+❌ Plugging the wrong variable into **Item**  
+✔️ It must be `TestIndex`
+
+---
+
+❌ Creating the wrong kind of `Add` node  
+✔️ Drag off `LocalNeighbors` to create the correct **Add (Array)** node
 
 ### Expected result
 
@@ -2076,14 +2095,35 @@ In the next step, we will duplicate this block for the other directions using:
 ---
 
 <a href="{{ '/assets/images/blog/Step 5.5.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Step 5.5.png' | relative_url }}" alt="Screenshot showing Grid to Get (a copy) using TestIndex to Break MazeCell to NOT Visited to Branch" class="post-image">
+  <img src="{{ '/assets/images/blog/Step 5.5.png' | relative_url }}" alt="Screenshot showing full logic for the left direction" class="post-image">
 </a>
 
 ---
 
 # Step 6 — Duplicate for the Other Three Directions
 
-Once LEFT is working, duplicate the whole direction block three times and change only the coordinate math.
+Once the **LEFT** direction is fully working, duplicate that entire direction block for the other three directions.
+
+This means duplicating the full chain that begins after Sequence `Then 0`:
+
+- `Set TestX`
+- `Set TestY`
+
+and continues through:
+
+- bounds check
+- `GetIndex`
+- `Set TestIndex`
+- visited check
+- add valid neighbor
+
+Then reconnect each duplicated block to the Sequence node:
+
+- `Then 1` → RIGHT
+- `Then 2` → UP
+- `Then 3` → DOWN
+
+Only the coordinate math at the start of each block should change.
 
 ---
 
@@ -2096,9 +2136,11 @@ Connect:
 
 - `Sequence Then 1 → RIGHT Set TestX`
 
-### Screenshot Placeholder
+---
 
-**[Screenshot: RIGHT direction block]**
+<a href="{{ '/assets/images/blog/Step 6 Right.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 6 Right.png' | relative_url }}" alt="Screenshot showing full logic for the right direction" class="post-image">
+</a>
 
 ---
 
@@ -2111,9 +2153,11 @@ Connect:
 
 - `Sequence Then 2 → UP Set TestX`
 
-### Screenshot Placeholder
+---
 
-**[Screenshot: UP direction block]**
+<a href="{{ '/assets/images/blog/Step 6 Up.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 6 Up.png' | relative_url }}" alt="Screenshot showing full logic for the up direction" class="post-image">
+</a>
 
 ---
 
@@ -2126,27 +2170,118 @@ Connect:
 
 - `Sequence Then 3 → DOWN Set TestX`
 
-### Screenshot Placeholder
+---
 
-**[Screenshot: DOWN direction block]**
+<a href="{{ '/assets/images/blog/Step 6 Down.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 6 Down.png' | relative_url }}" alt="Screenshot showing full logic for the down direction" class="post-image">
+</a>
 
 ---
 
 # Step 7 — Add the Return Node
 
-If your Return Node is missing, right-click in the function graph and add:
+Now we will return the list of valid neighbors that we built in this function.
 
-`Return Node`
+---
 
-Now connect:
+### What this step does
 
-- `LocalNeighbors` into the `Neighbors` pin on the Return Node
+This step sends the completed `LocalNeighbors` array out of the function.
 
-This means the function returns every valid neighbor it found.
+> The function will return all valid, unvisited neighboring cells.
 
-### Screenshot Placeholder
+---
 
-**[Screenshot: Return Node with LocalNeighbors connected to Neighbors]**
+### Important concept
+
+All four directions (LEFT, RIGHT, UP, DOWN):
+
+- **do NOT connect directly to the Return Node**
+- they each add valid results into `LocalNeighbors`
+
+Then:
+
+> The Return Node returns the **entire `LocalNeighbors` array at once**
+
+---
+
+### Instructions
+
+1. Locate your **Return Node**.
+   - If you deleted it:
+     - right-click in the graph
+     - search for:
+       `Return Node`
+     - select it
+
+2. Connect the data:
+   - drag `LocalNeighbors` into the graph as **Get**
+   - connect it to:
+     - `Neighbors` pin on the Return Node
+
+3. Connect the execution flow:
+   - locate your **Sequence** node
+   - connect:
+     - `Then 4` → `Return Node`
+
+---
+
+### Execution flow
+
+Your function should now end like this:
+
+    Then 0 → LEFT (adds to LocalNeighbors)
+    Then 1 → RIGHT (adds to LocalNeighbors)
+    Then 2 → UP (adds to LocalNeighbors)
+    Then 3 → DOWN (adds to LocalNeighbors)
+    Then 4 → Return Node
+
+---
+
+### What is happening
+
+- Each direction checks a neighbor
+- If valid, it adds that neighbor to `LocalNeighbors`
+- After all directions are processed:
+  - the Return Node sends the full list back
+
+---
+
+### Common mistakes
+
+❌ Connecting LEFT/RIGHT/UP/DOWN directly to the Return Node  
+✔️ Only `LocalNeighbors` connects to the Return Node
+
+---
+
+❌ Forgetting the execution wire  
+✔️ `Then 4` must connect to the Return Node
+
+---
+
+❌ Connecting the Return Node too early  
+✔️ It must run **after all directions are checked**
+
+---
+
+❌ Forgetting to use `LocalNeighbors`  
+✔️ That array is what collects all valid neighbors
+
+---
+
+### Expected result
+
+- All four directions are checked
+- Valid neighbors are added to `LocalNeighbors`
+- The Return Node outputs the full list
+
+> The function now correctly returns all valid neighboring cells.
+
+---
+
+<a href="{{ '/assets/images/blog/Step 7.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 7.png' | relative_url }}" alt="Screenshot showing Return Node with LocalNeighbors connected to Neighbors" class="post-image">
+</a>
 
 ---
 
@@ -2154,19 +2289,21 @@ This means the function returns every valid neighbor it found.
 
 Your function should now flow like this:
 
-`GetValidNeighbors  
-→ Set CurrentX  
-→ Set CurrentY  
-→ Sequence  
-   Then 0 → LEFT  
-   Then 1 → RIGHT  
-   Then 2 → UP  
-   Then 3 → DOWN  
-→ Return Node`
+    GetValidNeighbors
+      → Set CurrentX
+      → Set CurrentY
+      → Sequence
+          Then 0 → LEFT
+          Then 1 → RIGHT
+          Then 2 → UP
+          Then 3 → DOWN
+          Then 4 → Return Node
 
-### Screenshot Placeholder
+---
 
-**[Screenshot: Full GetValidNeighbors function overview]**
+<a href="{{ '/assets/images/blog/Full GetValidNeighbors.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Full GetValidNeighbors.png' | relative_url }}" alt="Screenshot showing Return Node with LocalNeighbors connected to Neighbors" class="post-image">
+</a>
 
 ---
 
@@ -2189,6 +2326,8 @@ In the next part, we will use this system to generate the actual maze path using
 
 If you are new to Blueprints, here are a few things worth remembering:
 
+---
+
 ### “Get” vs “Get (a copy)”
 
 When working with arrays, Unreal often uses the node name:
@@ -2209,6 +2348,8 @@ what you actually do in Unreal is:
 - drag off it and choose **Get (a copy)**
 - plug in the index
 
+---
+
 ### Local Variables
 
 Use **Local Variables** inside functions for temporary values like:
@@ -2221,6 +2362,8 @@ Use **Local Variables** inside functions for temporary values like:
 - LocalNeighbors
 
 These are cleaner and safer than turning everything into Blueprint-wide variables.
+
+---
 
 ### Sequence Node
 
