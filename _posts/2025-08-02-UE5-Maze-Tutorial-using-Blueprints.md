@@ -671,7 +671,6 @@ The `Make MazeCell` node provides the data that gets added.
 2. Locate the **Loop Body** execution pin on the inner `ForLoop`.
 
 3. From the **MazeCell pin** of `Make MazeCell`, do the following:
-
    - Click and drag from the blue pin on `Make MazeCell`
    - Release in empty space in the graph
    - In the search box that appears, type:
@@ -883,7 +882,7 @@ This step builds the formula that converts 2D grid coordinates into a 1D array i
 
 ### The formula
 
-Index = X + (Y * GridWidth)
+Index = X + (Y \* GridWidth)
 
 ---
 
@@ -924,10 +923,11 @@ These pins are what you will use in this step.
    - `GridWidth` → second input of the multiply node
 
 5. From the `X` input pin on the Entry node:
-  - click and drag a wire into the graph
-  - search for:
-    `+`
-  - select the integer **Add** node
+
+- click and drag a wire into the graph
+- search for:
+  `+`
+- select the integer **Add** node
 
 6. From the output of the multiply node:
    - connect it to the second input of the Add node
@@ -1219,22 +1219,42 @@ This step pulls the `MazeCell` at `CurrentIndex` from the `Grid` array and extra
 
 ### Instructions
 
-1. Drag the `Grid` variable into the graph as **Get**.
+1. Break the wire going to `Return Node` and put it off to the side.
 
-2. Drag off `Grid` and search for:
+2. Drag the `Grid` variable into the graph as **Get**.
+
+3. Drag off `Grid` and search for:
    `Get (a copy)`
 
-3. Connect:
-   - `CurrentIndex` → **Index**
+4. On the `Get (a copy)` node, locate the input pin used to select the array position.
+
+   In Unreal, this pin may be labeled:
+   - **Index**, or
+   - **Dimension 1 Integer** (depending on the version)
+   - Connect `CurrentIndex` → this input pin
 
    This retrieves the MazeCell at the current position.
 
-4. Drag off the output of `Get (a copy)` and add:
+5. Drag off the output of `Get (a copy)` and add:
    `Break MazeCell`
 
-5. From the `Break MazeCell` node:
-   - Connect `X` → `Set CurrentX`
-   - Connect `Y` → `Set CurrentY`
+6. From the `Break MazeCell` node:
+   - From the `X` output pin:
+     - click and drag a wire into empty space
+     - search for:
+       `Set CurrentX`
+     - select the node
+
+   - From the `Y` output pin:
+     - click and drag a wire into empty space
+     - search for:
+       `Set CurrentY`
+     - select the node
+
+7. Connect the execution flow:
+   - Connect the incoming execution wire to `Set CurrentX`
+   - Connect `Set CurrentX` → `Set CurrentY`
+   - Leave `Return Node` off to the side as we are still building the function
 
 ---
 
@@ -1441,11 +1461,13 @@ This step sets up a potential neighbor position by adjusting the current coordin
    - Drag in `CurrentX` as **Get**
    - Add a subtraction (`-`) node
    - Set the value to `2`
-   - Connect the result into `Set TestX`
+   - Drag off the return pin and search for `Set TestX`
+   - Connect the `Then 0` execution pin to `Set TestX` execution pin
 
 4. Set `TestY`:
    - Drag in `CurrentY` as **Get**
-   - Connect it directly into `Set TestY`
+   - Drag off the return pin and search for `Set TestY`
+   - Connect the `Set TestX` execution pin to `Set TestY` execution pin
 
 ---
 
@@ -1522,48 +1544,112 @@ This step verifies that `TestX` and `TestY` are within the allowed grid boundari
 
 ### Instructions
 
-1. Create the following four comparison checks:
-   - `TestX > 0`
-   - `TestX < GridWidth - 1`
-   - `TestY > 0`
-   - `TestY < GridHeight - 1`
+#### Step 1 — Create the X comparisons
 
-2. To build `GridWidth - 1`:
-   - Drag in `GridWidth` as **Get**
-   - Subtract `1` using an integer `-` node
+1. From `TestX`, drag out and create:
+   - `>` (Greater Than) node
+   - Set the value to `0`
 
-3. To build `GridHeight - 1`:
-   - Drag in `GridHeight` as **Get**
-   - Subtract `1` using an integer `-` node
+2. From `TestX`, drag out again and create:
+   - `<` (Less Than) node
 
-4. Combine the four conditions using **AND** nodes:
-   - First AND:
-     - `TestX > 0`
-     - `TestX < GridWidth - 1`
+3. To build `GridWidth - 1`:
+   - Drag `GridWidth` into the graph as **Get**
+   - Drag off it and create a subtraction (`-`) node
+   - Set the second value to `1`
 
-   - Second AND:
-     - `TestY > 0`
-     - `TestY < GridHeight - 1`
+4. Connect:
+   - `GridWidth - 1` → second input of the `<` node
 
-   - Final AND:
-     - Result of first AND
-     - Result of second AND
+You now have:
+- `TestX > 0`
+- `TestX < GridWidth - 1`
 
-5. Add a **Branch** node.
+---
 
-6. Connect the final AND result to the **Condition** input of the Branch.
+#### Step 2 — Create the Y comparisons
+
+5. From `TestY`, drag out and create:
+   - `>` (Greater Than) node
+   - Set the value to `0`
+
+6. From `TestY`, drag out again and create:
+   - `<` (Less Than) node
+
+7. To build `GridHeight - 1`:
+   - Drag `GridHeight` into the graph as **Get**
+   - Drag off it and create a subtraction (`-`) node
+   - Set the second value to `1`
+
+8. Connect:
+   - `GridHeight - 1` → second input of the `<` node
+
+You now have:
+- `TestY > 0`
+- `TestY < GridHeight - 1`
+
+---
+
+#### Step 3 — Combine the X conditions
+
+9. From the output of `TestX > 0`:
+   - drag out and search for:
+     `AND`
+   - select the Boolean **AND** node
+
+10. Connect:
+   - `TestX > 0` → first input
+   - `TestX < GridWidth - 1` → second input
+
+This checks if X is inside valid bounds.
+
+---
+
+#### Step 4 — Combine the Y conditions
+
+11. From the output of `TestY > 0`:
+   - drag out and create another **AND** node
+
+12. Connect:
+   - `TestY > 0` → first input
+   - `TestY < GridHeight - 1` → second input
+
+This checks if Y is inside valid bounds.
+
+---
+
+#### Step 5 — Combine both results
+
+13. From the output of the X AND node:
+   - drag out and create a third **AND** node
+
+14. Connect:
+   - X result → first input
+   - Y result → second input
+
+This final AND means:
+
+> X is valid AND Y is valid
+
+---
+
+#### Step 6 — Add the Branch
+
+15. From the output of the final AND node:
+   - drag out and search for:
+     `Branch`
+   - select the Branch node
+
+16. Connect:
+   - final AND output → **Condition** input on the Branch
 
 ---
 
 ### Connections recap
 
-- `TestX > 0` → AND
-- `TestX < GridWidth - 1` → AND
-
-- `TestY > 0` → AND
-- `TestY < GridHeight - 1` → AND
-
-- Both AND results → final AND
+- `TestX > 0` AND `TestX < GridWidth - 1`
+- `TestY > 0` AND `TestY < GridHeight - 1`
+- Combine both results with a final AND
 - Final AND → **Branch Condition**
 
 ---
@@ -1583,22 +1669,22 @@ It also keeps your maze generation stable and predictable.
 ### Common mistakes
 
 ❌ Forgetting to subtract `1` from GridWidth / GridHeight  
-✔️ Use `GridWidth - 1` and `GridHeight - 1` to stay inside bounds
+✔️ Use `GridWidth - 1` and `GridHeight - 1` to stay inside bounds  
 
 ---
 
-❌ Missing one of the four checks  
-✔️ All four conditions must be included
+❌ Creating only one AND node  
+✔️ You need **three AND nodes total**  
 
 ---
 
 ❌ Wiring AND nodes incorrectly  
-✔️ Make sure all conditions flow into a final AND before the Branch
+✔️ Build left-to-right: X checks → Y checks → final AND  
 
 ---
 
 ❌ Plugging a single condition directly into the Branch  
-✔️ You must combine all checks first
+✔️ The Branch must use the **final combined result**  
 
 ---
 
