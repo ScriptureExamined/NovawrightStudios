@@ -1719,27 +1719,60 @@ This step takes the valid grid coordinates (`TestX`, `TestY`) and converts them 
 
 ### Instructions
 
-1. Locate the **Branch** node that checks if the coordinates are within bounds.
-2. From the **True** output pin of that Branch, continue the execution flow.
+1. Locate the **Branch** node from Step 5.2 that checks whether the test coordinates are inside the maze bounds.
 
-3. From the graph, add a call to:
-   `GetIndex`
+2. From the **True** output pin of that Branch:
+   - click and drag a wire into empty space in the graph
+   - search for:
+     `GetIndex`
+   - select your `GetIndex` function
 
-4. Connect the inputs:
-   - `TestX` → **X**
-   - `TestY` → **Y**
+3. On the `GetIndex` node, locate the input pins:
+   - `X`
+   - `Y`
 
-5. Take the return value from `GetIndex` and connect it to:
-   - `Set TestIndex`
+4. Drag `TestX` into the graph as **Get**.
+
+5. Connect:
+   - `TestX` → `X` on the `GetIndex` node
+
+6. Drag `TestY` into the graph as **Get**.
+
+7. Connect:
+   - `TestY` → `Y` on the `GetIndex` node
+
+8. From the **Return Value** pin of the `GetIndex` node:
+   - click and drag a wire into empty space
+   - search for:
+     `Set TestIndex`
+   - select the node
+
+9. Connect the white execution wire:
+   - **True** (Branch) → `GetIndex`
+   - `GetIndex` → `Set TestIndex`
+
+10. Connect:
+    - **Return Value** from `GetIndex` → value input on `Set TestIndex`
 
 ---
 
 ### Connections recap
 
 - **True** (Branch) → `GetIndex` (Exec)
-- `TestX` → **X**
-- `TestY` → **Y**
+- `TestX` → `X`
+- `TestY` → `Y`
+- `GetIndex` → `Set TestIndex` (Exec)
 - Return Value → `Set TestIndex`
+
+---
+
+### Execution flow
+
+Your white execution wires should now look like this:
+
+    Branch (True)
+        → GetIndex
+        → Set TestIndex
 
 ---
 
@@ -1751,24 +1784,23 @@ This step converts:
 
 > (X, Y) → Array Index
 
-Without this conversion, you wouldn’t be able to correctly access the tile in the `Grid`.
+Without this conversion, you would not be able to correctly access the tile in the `Grid`.
 
 ---
 
 ### Common mistakes
 
-❌ Forgetting to connect the execution wire from the Branch  
-✔️ The `GetIndex` function must be executed from the **True** pin
+❌ Forgetting to create the `GetIndex` call from the Branch’s **True** pin  
+✔️ Drag from **True** and add the `GetIndex` function
 
----
+❌ Forgetting the white execution wire into `Set TestIndex`  
+✔️ `GetIndex` must flow into `Set TestIndex`
 
 ❌ Mixing up X and Y inputs  
 ✔️ Double-check: `TestX → X`, `TestY → Y`
 
----
-
 ❌ Not storing the result  
-✔️ You must use `Set TestIndex` or the value will be lost
+✔️ You must use `Set TestIndex` or the value will not be saved for the next step
 
 ---
 
@@ -1777,7 +1809,7 @@ Without this conversion, you wouldn’t be able to correctly access the tile in 
 When the coordinates are valid:
 
 - `GetIndex` converts (`TestX`, `TestY`) into a single integer
-- That value is stored in `TestIndex`
+- that value is stored in `TestIndex`
 
 This index will be used in the next step to access the correct cell in the grid.
 
@@ -1805,41 +1837,113 @@ This step checks the `Visited` property of the tile at `TestIndex`.
 
 ---
 
+### Where this goes
+
+This step continues directly after Step 5.3.
+
+Your execution flow should now look like this:
+
+    Branch (Bounds Check True)
+        → GetIndex
+        → Set TestIndex
+        → (this step begins here)
+
+---
+
 ### Instructions
 
-1. Drag the `Grid` variable into the graph as **Get**.
-2. Drag off `Grid` and search for:
-   `Get (a copy)`
-3. Connect `TestIndex` to the **Index** input.
+#### Step 1 — Get the cell from the Grid array
 
-   This retrieves the MazeCell at the position of `TestIndex`.
+1. From the execution output of `Set TestIndex`:
+   - drag a wire into empty space
+   - search for:
+     `Get (a copy)`
+   - select the node
 
-4. Drag off the output of `Get (a copy)` and add:
-   `Break MazeCell`
+2. Drag the `Grid` variable into the graph as **Get**.
 
-5. From the `Break MazeCell` node, locate the `Visited` output.
+3. Connect:
+   - `Grid` → **Target Array** on the `Get (a copy)` node
 
-6. Drag off `Visited` and add a:
-   `NOT` node
+4. Drag `TestIndex` into the graph as **Get**.
 
-   This flips the value:
-   - `Visited = True` → becomes `False`
-   - `Visited = False` → becomes `True`
+5. Connect:
+   - `TestIndex` → the input pin on `Get (a copy)`  
+     (this pin may be labeled **Index** or **Dimension 1 Integer**)
 
-7. Add a **Branch** node.
+This retrieves the `MazeCell` at position `TestIndex`.
 
-8. Connect:
-   - Output of `NOT` → **Condition** of the Branch
+---
+
+#### Step 2 — Break the MazeCell
+
+6. From the output of `Get (a copy)`:
+   - drag a wire into empty space
+   - search for:
+     `Break MazeCell`
+   - select the node
+
+This gives you access to the cell’s data (X, Y, Visited, IsWall).
+
+---
+
+#### Step 3 — Check the Visited value
+
+7. From the `Visited` output pin on `Break MazeCell`:
+   - drag a wire into empty space
+   - search for:
+     `NOT`
+   - select the Boolean **NOT** node
+
+This flips the value:
+
+- `Visited = True` → becomes `False`
+- `Visited = False` → becomes `True`
+
+---
+
+#### Step 4 — Add the Branch
+
+8. From the output of the `NOT` node:
+   - drag a wire into empty space
+   - search for:
+     `Branch`
+   - select the Branch node
+
+9. Connect the execution flow:
+   - `Set TestIndex` → `Branch`
+
+10. Connect:
+   - `NOT` output → **Condition** on the Branch
 
 ---
 
 ### Connections recap
 
-- `Grid` → `Get (a copy)`
-- `TestIndex` → **Index**
+- `Set TestIndex` → `Branch)` (Exec)
+- `Grid` → **Target Array**
+- `TestIndex` → **Index / Dimension 1 Integer**
 - Output → `Break MazeCell`
 - `Visited` → `NOT`
 - `NOT` → **Branch Condition**
+
+---
+
+### Execution flow
+
+Your white execution wires should now look like this:
+
+    Set TestIndex
+        → Branch
+
+---
+
+### What this means
+
+The Branch will return:
+
+- **True** → the tile has **NOT** been visited (valid neighbor)
+- **False** → the tile has already been visited (skip it)
 
 ---
 
@@ -1857,23 +1961,28 @@ If you skip this, your maze can loop back on itself and break the algorithm.
 
 ### Common mistakes
 
+❌ Forgetting to connect the execution wire into `Get (a copy)`  
+✔️ The node must run as part of the execution flow  
+
+---
+
 ❌ Forgetting to use `TestIndex` as the Index  
-✔️ Always use `TestIndex` to check the correct tile
+✔️ Always use `TestIndex` to check the correct tile  
 
 ---
 
 ❌ Skipping the `NOT` node  
-✔️ We want **NOT Visited**, not Visited
+✔️ We want **NOT Visited**, not Visited  
 
 ---
 
-❌ Using the wrong variable instead of `Grid`  
-✔️ Make sure you're pulling from your main grid array
+❌ Not connecting `Get (a copy)` to the Branch execution  
+✔️ The Branch must execute after retrieving the cell  
 
 ---
 
 ❌ Not breaking the `MazeCell` struct  
-✔️ You must use `Break MazeCell` to access `Visited`
+✔️ You must use `Break MazeCell` to access `Visited`  
 
 ---
 
@@ -1883,6 +1992,10 @@ If you skip this, your maze can loop back on itself and break the algorithm.
 - If the tile **has been visited**, the Branch returns **False**
 
 When the Branch is **True**, this tile can now be added as a valid neighbor in the next step.
+
+---
+
+> **Screenshot placeholder:** Insert image showing Set TestIndex → Get (a copy) → Break MazeCell → NOT → Branch
 
 ---
 
