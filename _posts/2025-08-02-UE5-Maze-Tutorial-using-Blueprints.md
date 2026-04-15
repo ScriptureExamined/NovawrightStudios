@@ -345,7 +345,7 @@ When `InitializeGrid` runs:
 ---
 
 <a href="{{ '/assets/images/blog/Step 2.1.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Step 2.1.png' | relative_url }}" alt="Screenshot showing InitializeGrid  Grid  Clear" class="post-image">
+  <img src="{{ '/assets/images/blog/Step 2.1.png' | relative_url }}" alt="Screenshot showing InitializeGrid  Grid  Clear node at start of function" class="post-image">
 </a>
 
 ---
@@ -631,92 +631,140 @@ This cell will be added to the `Grid` array in the next step.
 
 ## Step 2.4 — Add the Cell to the Grid Array
 
-Now that we’ve created a `MazeCell`, we need to store it in the grid.
+Now that we’ve created a `MazeCell`, we need to store it in the `Grid` array.
+
+This step is what actually builds the grid data.
 
 ---
 
 ### What this step does
 
-This step adds each newly created `MazeCell` into the `Grid` array.
+This step takes the `MazeCell` created in the inner loop and adds it to the `Grid` array.
 
-> By the end of the loop, the Grid will contain every cell in the maze.
+> Each time the inner loop runs, one new cell is added to the grid.
+
+---
+
+### Where this goes
+
+This must happen **inside the inner loop**, using the same execution flow that runs for each cell.
+
+Your flow should now look like this:
+
+    InitializeGrid
+      → Clear
+      → Outer ForLoop (Y)
+          → Inner ForLoop (X)
+              → Add (Grid)
+                     ↑
+                Make MazeCell
+
+The `Add` node is part of the white execution flow.  
+The `Make MazeCell` node provides the data that gets added.
 
 ---
 
 ### Instructions
 
-1. Make sure you are still inside the **inner loop** (where each cell is being created).
+1. Make sure you are still working inside the **inner ForLoop**.
 
-2. Drag the `Grid` variable into the graph as **Get**.
+2. Locate the **Loop Body** execution pin on the inner `ForLoop`.
 
-3. Drag off `Grid` and search for:
-   `Add`
+3. From the **MazeCell pin** of `Make MazeCell`, do the following:
 
-4. Connect:
+   - Click and drag from the blue pin on `Make MazeCell`
+   - Release in empty space in the graph
+   - In the search box that appears, type:
+     `Add`
+   - Look for the node labeled:
+     **Add (Array)**
+   - Click it to place the node
+
+   This creates an **Add node** that will let us insert the new cell into the `Grid` array.
+
+4. Drag the `Grid` variable into the graph as **Get**.
+
+5. Connect:
    - `Grid` → **Target Array**
-   - `Make MazeCell` → **Item**
 
-5. Connect the execution wire so this runs after the cell is created.
+6. Make sure the white execution wire goes:
+   - inner `ForLoop Loop Body` → `Add`
 
 ---
 
 ### Connections recap
 
-- Execution flow → `Add`
+- inner `ForLoop Loop Body` → `Add` (Exec)
 - `Grid` → **Target Array**
 - `Make MazeCell` → **Item**
 
 ---
 
+### What is happening here
+
+Each time the inner loop runs:
+
+- the loop reaches one grid position
+- `Make MazeCell` builds the cell data for that position
+- `Add` stores that new cell in the `Grid` array
+
+So the array builds like this:
+
+- first loop → add cell (0,0)
+- next loop → add cell (1,0)
+- next loop → add cell (2,0)
+- continue until the entire grid is filled
+
+---
+
 ### Why this matters
 
-The grid does not exist until you populate it.
+Creating the cell is not enough—you must store it.
 
-This step ensures:
+> The `Grid` array is what the rest of the maze system uses to read and modify cells.
 
-> Every generated `MazeCell` is stored in the `Grid` array.
+Without this step:
 
-Without this, your maze would have no data to work with in later steps.
+- the grid stays empty
+- later steps like neighbor checks will fail
 
 ---
 
 ### Common mistakes
 
-❌ Forgetting the execution wire  
-✔️ The `Add` node must be part of the execution flow
+❌ Trying to connect execution from `Make MazeCell`  
+✔️ `Make MazeCell` is a pure node and has no exec pins
 
----
+❌ Connecting the wrong white wire  
+✔️ The exec wire should come from the inner `ForLoop Loop Body`
 
-❌ Using `Set Grid` instead of `Get Grid`  
-✔️ Always use **Get** when feeding into the Add node
+❌ Using `Set Grid` instead of `Add`  
+✔️ Use `Add` to append items to the array
 
----
+❌ Forgetting to connect `Make MazeCell` to **Item**  
+✔️ That is the cell data being stored
 
-❌ Not connecting `Make MazeCell` to Item  
-✔️ The cell you created must be what gets added
-
----
-
-❌ Adding outside the loop  
-✔️ This must happen inside the loop so every cell is added
+❌ Placing the `Add` node outside the inner loop  
+✔️ It must run once per cell
 
 ---
 
 ### Expected result
 
-As the loop runs:
+As the loops run:
 
-- Each `MazeCell` is added to the `Grid` array
-- The array grows one element at a time
+- each `MazeCell` is created
+- each cell is added to the `Grid` array
+- the array grows one element at a time
 
-By the end of the loop:
+By the end of both loops:
 
-> `Grid` contains all cells in the maze, in order
+> `Grid` contains every cell in the maze, in order
 
 ---
 
 <a href="{{ '/assets/images/blog/Step 2.4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Step 2.4.png' | relative_url }}" alt="Screenshot showing Make MazeCell connected into Add node targeting Grid" class="post-image">
+  <img src="{{ '/assets/images/blog/Step 2.4.png' | relative_url }}" alt="Screenshot showing Make MazeCell → Add (Grid) setup inside loop" class="post-image">
 </a>
 
 ---
@@ -813,7 +861,9 @@ In the next step, we will build the formula that performs this conversion.
 
 ---
 
-> **Screenshot placeholder:** Insert image showing the GetIndex function with inputs and output configured
+<a href="{{ '/assets/images/blog/Step 3.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 3.png' | relative_url }}" alt="Screenshot showing the GetIndex function with inputs and output configured" class="post-image">
+</a>
 
 ---
 
@@ -833,25 +883,60 @@ This step builds the formula that converts 2D grid coordinates into a 1D array i
 
 ### The formula
 
-Index = X + (Y \* GridWidth)
+Index = X + (Y * GridWidth)
+
+---
+
+### Where X and Y come from
+
+The `X` and `Y` values are the **inputs** of the `GetIndex` function.
+
+In Unreal Engine 5, function inputs do **not** appear in the My Blueprint panel.
+
+Instead:
+
+> They are available as pins on the **Function Entry node**
+
+When you open `GetIndex`, you should see:
+
+    GetIndex (Entry)
+        X
+        Y
+
+These pins are what you will use in this step.
 
 ---
 
 ### Instructions
 
-1. Drag in the `Y` variable as **Get**.
-2. Drag in `GridWidth` as **Get**.
-3. Add a multiplication (`*`) node:
-   - Connect `Y` → input A
-   - Connect `GridWidth` → input B
+1. Locate the **Function Entry node** for `GetIndex`.
 
-4. Drag in the `X` variable as **Get**.
+2. From the `Y` input pin on the Entry node:
+   - click and drag a wire into empty space in the graph
+   - release the wire and search for:
+     `*`
+   - choose the integer **multiply** node
 
-5. Add an addition (`+`) node:
-   - Connect the result of `(Y * GridWidth)` → input A
-   - Connect `X` → input B
+3. Drag `GridWidth` into the graph as **Get**.
 
-6. Connect the result of the addition to the **Return Node**.
+4. Connect:
+   - `Y` → first input of the multiply node
+   - `GridWidth` → second input of the multiply node
+
+5. From the `X` input pin on the Entry node:
+  - click and drag a wire into the graph
+  - search for:
+    `+`
+  - select the integer **Add** node
+
+6. From the output of the multiply node:
+   - connect it to the second input of the Add node
+
+7. Connect:
+   - result of `(Y * GridWidth)` → first input of the Add node
+   - `X` → second input of the Add node
+
+8. Connect the output of the add node to the **Return Node**.
 
 ---
 
@@ -888,6 +973,11 @@ If `GridWidth = 21`:
 
 ### Common mistakes
 
+❌ Looking for X and Y in the variable list  
+✔️ They are on the **Function Entry node**
+
+---
+
 ❌ Forgetting parentheses (order of operations)  
 ✔️ Always calculate `(Y * GridWidth)` first
 
@@ -915,7 +1005,7 @@ This will be used throughout the maze system whenever we need to access a specif
 ---
 
 <a href="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}" alt="Screenshot showing GetIndex function using X + (Y * GridWidth)" class="post-image">
+  <img src="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}" alt="Screenshot showing multiply → add → return node setup" class="post-image">
 </a>
 
 ---
@@ -1017,7 +1107,9 @@ In the next steps, we will build the logic inside this function step-by-step.
 
 ---
 
-> **Screenshot placeholder:** Insert image showing the function with input and output configured
+<a href="{{ '/assets/images/blog/Step 4.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 4.png' | relative_url }}" alt="Screenshot showing the GetValidNeighbors function with input and output configured" class="post-image">
+</a>
 
 ---
 
@@ -1037,7 +1129,7 @@ This step defines temporary variables that exist only within this function.
 
 ### Instructions
 
-1. Open your function.
+1. Open your GetValidNeighbors function.
 
 2. In the **My Blueprint** panel, locate the **Local Variables** section.
 
