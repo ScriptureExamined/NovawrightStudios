@@ -264,7 +264,9 @@ In the next steps, we will build the logic inside this function.
 
 ---
 
-> **Screenshot placeholder:** Insert image showing InitializeGrid function created in Blueprint
+<a href="{{ '/assets/images/blog/Step 2.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 2.png' | relative_url }}" alt="BP_MazeGenerator variables panel screenshot showing GridWidth, GridHeight, TileSize, and Grid as MazeCell Array" class="post-image">
+</a>
 
 ---
 
@@ -350,102 +352,166 @@ When `InitializeGrid` runs:
 
 ## Step 2.2 — Add Nested For Loops
 
-To build the full grid, we need to loop through every row and every column.
+To build the full maze grid, we need to visit every row and every column.
 
-This requires **nested loops**—one for Y (rows) and one for X (columns).
+In Blueprint, we do that with **nested ForLoop nodes**:
+
+- one loop for **Y** (rows)
+- one loop for **X** (columns)
+
+The outer loop picks the current row.  
+The inner loop runs through every column in that row.
 
 ---
 
 ### What this step does
 
-This step creates a loop structure that visits every position in the grid.
+This step creates the loop structure that will visit every position in the grid.
 
-> For each row (Y), we loop through every column (X).
+> For each row (`Y`), we loop through every column (`X`).
+
+This gives us a full 2D grid layout.
 
 ---
 
 ### Instructions
 
-#### Outer loop (Rows / Y)
+#### Add the outer loop for rows (Y)
 
-1. Add a `ForLoop` node.
-2. Set:
-   - **First Index** = `0`
-   - **Last Index** = `GridHeight - 1`
+1. Make sure you are still inside the `InitializeGrid` function.
 
-This loop represents the **rows** of the grid.
+2. After the `Clear` node from Step 2.1, drag off the white execution pin and add a:
+   `ForLoop`
+
+3. This first `ForLoop` will represent the **rows** of the grid, which means it will control the **Y** value.
+
+4. Set the **First Index** of this outer loop to:
+   `0`
+
+5. To set the **Last Index**:
+   - drag `GridHeight` into the graph as **Get**
+   - drag off `GridHeight` and add an integer subtraction node:
+     `-`
+   - set the second input to:
+     `1`
+   - connect the result into the **Last Index** pin of the outer `ForLoop`
+
+This creates:
+
+`GridHeight - 1`
+
+That means the loop will run through every row, starting at row `0` and ending at the last valid row.
 
 ---
 
-#### Inner loop (Columns / X)
+#### Add the inner loop for columns (X)
 
-3. From the **Loop Body** of the outer loop, add another `ForLoop`.
+6. From the **Loop Body** pin of the outer `ForLoop`, drag out and add another:
+   `ForLoop`
 
-4. Set:
-   - **First Index** = `0`
-   - **Last Index** = `GridWidth - 1`
+7. This second `ForLoop` will represent the **columns** of the grid, which means it will control the **X** value.
 
-This loop represents the **columns** within each row.
+8. Set the **First Index** of this inner loop to:
+   `0`
+
+9. To set the **Last Index**:
+   - drag `GridWidth` into the graph as **Get**
+   - drag off `GridWidth` and add an integer subtraction node:
+     `-`
+   - set the second input to:
+     `1`
+   - connect the result into the **Last Index** pin of the inner `ForLoop`
+
+This creates:
+
+`GridWidth - 1`
+
+That means the loop will run through every column in the current row, starting at column `0` and ending at the last valid column.
+
+---
+
+### What the loops mean
+
+These two loops work together like this:
+
+- the **outer loop** selects the current row (`Y`)
+- the **inner loop** runs across that row, one column at a time (`X`)
+
+So the flow looks like this:
+
+- row 0, column 0
+- row 0, column 1
+- row 0, column 2
+- continue until the end of the row
+- then move to row 1
+- repeat for all columns
+- continue until every row has been processed
+
+---
+
+### Why we subtract 1
+
+In Unreal Engine arrays and loop indices, counting starts at `0`.
+
+That means if your grid height is `21`, the valid row numbers are:
+
+- `0`
+- `1`
+- `2`
+- ...
+- `20`
+
+So the last valid index is not `21`.  
+It is `20`.
+
+That is why we use:
+
+- `GridHeight - 1`
+- `GridWidth - 1`
 
 ---
 
 ### Connections recap
 
-- Outer `ForLoop` (Y):
-  - `0 → GridHeight - 1`
+- `Clear` → outer `ForLoop`
+- Outer `ForLoop First Index` = `0`
+- `GridHeight - 1` → outer `ForLoop Last Index`
 
-- Outer Loop Body → Inner `ForLoop` (X)
-
-- Inner `ForLoop`:
-  - `0 → GridWidth - 1`
+- Outer `Loop Body` → inner `ForLoop`
+- Inner `ForLoop First Index` = `0`
+- `GridWidth - 1` → inner `ForLoop Last Index`
 
 ---
 
 ### Why this matters
 
-This structure allows you to visit every coordinate in the grid.
+This is the structure that allows us to create the full maze grid.
 
-> It effectively creates a 2D grid using two loops.
+> Without these nested loops, we would only create one row or one column instead of the entire grid.
 
-For example:
-
-- Outer loop controls **Y (rows)**
-- Inner loop controls **X (columns)**
-
----
-
-### How it works (simple view)
-
-For each Y:
-
-- Run through all X values
-
-Resulting positions:
-
-- (0,0), (1,0), (2,0)...
-- (0,1), (1,1), (2,1)...
+This step ensures that every position in the maze gets processed.
 
 ---
 
 ### Common mistakes
 
+❌ Setting `Last Index` directly to `GridHeight` or `GridWidth`  
+✔️ Always subtract `1`
+
+---
+
 ❌ Reversing the loops  
-✔️ Outer = Y, Inner = X
+✔️ Outer loop = Y (rows), Inner loop = X (columns)
 
 ---
 
-❌ Using the wrong grid size  
-✔️ Y uses `GridHeight`, X uses `GridWidth`
+❌ Connecting the inner loop to the wrong pin  
+✔️ The inner loop must come from the **Loop Body** pin of the outer loop
 
 ---
 
-❌ Forgetting `- 1`  
-✔️ Always use `GridHeight - 1` and `GridWidth - 1`
-
----
-
-❌ Not connecting the inner loop to the outer loop’s Loop Body  
-✔️ The inner loop must run inside the outer loop
+❌ Forgetting that both loops need a First Index of `0`  
+✔️ Both loops start at `0`
 
 ---
 
@@ -453,9 +519,12 @@ Resulting positions:
 
 You now have a nested loop structure that:
 
-- Iterates through every row and column
-- Covers the entire grid
-- Prepares each position for cell creation
+- goes through every row
+- goes through every column in each row
+- covers the full grid
+- prepares each position for creating a `MazeCell`
+
+In the next step, we will use these loop indices to build each cell.
 
 ---
 
@@ -1709,9 +1778,9 @@ Make sure this entire block is connected to:
 
 In the next step, we will duplicate this block for the other directions using:
 
-- `Then 1` → RIGHT  
-- `Then 2` → UP  
-- `Then 3` → DOWN  
+- `Then 1` → RIGHT
+- `Then 2` → UP
+- `Then 3` → DOWN
 
 ---
 
