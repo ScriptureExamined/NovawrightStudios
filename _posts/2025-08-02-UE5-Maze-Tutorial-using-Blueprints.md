@@ -8,7 +8,7 @@ featured: true
 excerpt: >
   I found an Unreal Engine maze generation tutorial that would work fantastic for DungeonQuest. It was very hard for me as a beginner, and it was most likely designed for people with a deeper knowledge of UE. It's called Random Maze Generator and you can find it at this <a href="https://voxagon.blogspot.com/2015/02/ue4-tutorial-random-maze-generator.html" target="_blank" rel="noopener noreferrer">site</a>. It's taken me hours just to get to the end of page 5. And it's 14 pages long. Wow. I've decided to put together a beginners tutorial so someone new can follow along and get through this.
 
-  Update: It's taken me so long to get to this, UE is now on version 5+. This tutorial was made in version 4.6.   When done, I will remove this last line so you'll know it's finished..
+  Update: This tutorial was made in version 4.6. It's taken me so long to get to this, UE is now on version 5+, so this is gettiung a good update.  When done, I will remove this last line so you'll know it's finished..
 ---
 
 # Building a Procedural Maze Generator in UE5 Blueprints — Part 1
