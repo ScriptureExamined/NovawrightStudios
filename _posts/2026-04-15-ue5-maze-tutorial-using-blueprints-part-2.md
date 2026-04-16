@@ -4,8 +4,7 @@ title: "Building a Procedural Maze Generator in UE5 Blueprints — Part 2"
 date: 2026-04-15
 author: Roberta
 categories: [Tutorials]
-hidden: true
-featured: false
+published: false
 excerpt: >
   In Part 1, we created the grid and valid neighbor system for our procedural maze generator. In this part, we will finally build the maze generation logic itself. We will choose a starting cell, mark it as visited, use valid neighbors to move through the grid, carve passages, and backtrack when we hit dead ends.
 ---
