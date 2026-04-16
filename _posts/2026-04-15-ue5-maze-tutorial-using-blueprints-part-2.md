@@ -346,6 +346,7 @@ This step gets the `MazeCell` at `CurrentIndex` and the `MazeCell` at `NextIndex
    `Get (a copy)`
 3. Connect:
    - `CurrentIndex` → **Index**
+     (this pin may be labeled **Index** or **Dimension 1 Integer**)
 4. From the output:
    - drag out and create:
      `Set CurrentCell`
@@ -359,6 +360,7 @@ This step gets the `MazeCell` at `CurrentIndex` and the `MazeCell` at `NextIndex
    `Get (a copy)`
 7. Connect:
    - `NextIndex` → **Index**
+     (this pin may be labeled **Index** or **Dimension 1 Integer**)
 8. From the output:
    - drag out and create:
      `Set NextCell`
@@ -417,102 +419,255 @@ You now have both the current cell and the next cell stored locally.
 
 ## Step 9.3 — Calculate the Bridge Tile
 
-Now we will calculate the tile that sits between the current tile and the next tile.
+Now we need to find the wall tile that sits between the current tile and the next tile.
+
+Because our maze moves **2 cells at a time**, there is always **1 cell in the middle**. That middle cell is the wall we need to remove.
 
 ---
 
 ### What this step does
 
-This step finds the midpoint between the two cells.
+This step calculates the midpoint between:
 
-> That midpoint is the wall tile that must be removed.
+- `CurrentCell`
+- `NextCell`
+
+That midpoint becomes the bridge tile.
+
+> This is the wall tile that will be turned into an open passage.
 
 ---
 
 ### Instructions
 
-#### Step 1 — Break the structs
+#### Step 1 — Break the `CurrentCell` struct
 
-1. Drag off `CurrentCell` and create:
+1. In the `CarvePassage` function, locate your local variable:
+   `CurrentCell`
+
+2. Drag `CurrentCell` into the graph as **Get**
+
+3. Drag off the `CurrentCell` pin and search for:
    `Break MazeCell`
 
-2. Drag off `NextCell` and create:
-   `Break MazeCell`
+4. Click `Break MazeCell`
+
+You should now see the outputs:
+
+- `X`
+- `Y`
+- `Visited`
+- `IsWall`
+
+We only need `X` and `Y` here.
 
 ---
 
-#### Step 2 — Calculate MidX
+#### Step 2 — Break the `NextCell` struct
 
-3. Take `CurrentCell.X`
-4. Add `NextCell.X`
-5. Divide the result by `2`
-6. Drag off the result and create:
-   `Set MidX`
+5. Locate your local variable:
+   `NextCell`
+
+6. Drag `NextCell` into the graph as **Get**
+
+7. Drag off the `NextCell` pin and search for:
+   `Break MazeCell`
+
+8. Click `Break MazeCell`
+
+Again, we only need:
+
+- `X`
+- `Y`
 
 ---
 
-#### Step 3 — Calculate MidY
+#### Step 3 — Calculate `MidX`
 
-7. Take `CurrentCell.Y`
-8. Add `NextCell.Y`
-9. Divide the result by `2`
-10. Drag off the result and create:
+Now we will calculate the X coordinate of the bridge tile.
+
+9. From `Break CurrentCell`, drag off the `X` pin
+
+10. Search for:
+    `+`
+
+11. Choose the integer **Add** node
+
+12. From `Break NextCell`, connect:
+    - `X` → second input of the **Add** node
+
+You now have:
+
+`CurrentCell.X + NextCell.X`
+
+13. Drag off the output of the **Add** node
+
+14. Search for:
+    `/`
+
+15. Choose the integer **Divide** node
+
+16. Set the second input of the Divide node to:
+    `2`
+
+You now have:
+
+`(CurrentCell.X + NextCell.X) / 2`
+
+17. Drag off the output of the Divide node
+
+18. Search for:
+    `Set MidX`
+
+19. Click `Set MidX`
+
+20. Connect the Divide result into the value pin of `Set MidX`
+
+---
+
+#### Step 4 — Calculate `MidY`
+
+Now we do the same thing for the Y coordinate.
+
+21. From `Break CurrentCell`, drag off the `Y` pin
+
+22. Search for:
+    `+`
+
+23. Choose the integer **Add** node
+
+24. From `Break NextCell`, connect:
+    - `Y` → second input of the **Add** node
+
+You now have:
+
+`CurrentCell.Y + NextCell.Y`
+
+25. Drag off the output of that **Add** node
+
+26. Search for:
+    `/`
+
+27. Choose the integer **Divide** node
+
+28. Set the second input of the Divide node to:
+    `2`
+
+You now have:
+
+`(CurrentCell.Y + NextCell.Y) / 2`
+
+29. Drag off the output of the Divide node
+
+30. Search for:
     `Set MidY`
 
+31. Click `Set MidY`
+
+32. Connect the Divide result into the value pin of `Set MidY`
+
 ---
 
-#### Step 4 — Convert midpoint to BridgeIndex
+#### Step 5 — Connect the execution wires
 
-11. Call `GetIndex`
-12. Connect:
-    - `MidX` → `X`
-    - `MidY` → `Y`
+Now wire the white execution pins so the steps run in order.
 
-13. From the return value:
-    - create:
-      `Set BridgeIndex`
-
-14. Connect the execution flow:
+33. Connect:
 
 - `Set NextCell` → `Set MidX`
 - `Set MidX` → `Set MidY`
-- `Set MidY` → `GetIndex`
-- `GetIndex` → `Set BridgeIndex`
+
+At this point, your flow should move in this order:
+
+- get current cell
+- get next cell
+- calculate MidX
+- calculate MidY
 
 ---
 
 ### Connections recap
 
-- `Break CurrentCell` + `Break NextCell`
-- `(CurrentX + NextX) / 2` → `MidX`
-- `(CurrentY + NextY) / 2` → `MidY`
-- `GetIndex(MidX, MidY)` → `BridgeIndex`
+#### MidX
+
+- `CurrentCell.X` → Add
+- `NextCell.X` → Add
+- Add result → Divide
+- `2` → Divide
+- Divide result → `Set MidX`
+
+#### MidY
+
+- `CurrentCell.Y` → Add
+- `NextCell.Y` → Add
+- Add result → Divide
+- `2` → Divide
+- Divide result → `Set MidY`
+
+#### Execution
+
+- `Set NextCell` → `Set MidX`
+- `Set MidX` → `Set MidY`
 
 ---
 
 ### Why this matters
 
-If the current tile is at `(1,1)` and the next tile is at `(3,1)`, the bridge tile is `(2,1)`.
+We are finding the tile directly between the current tile and the next tile.
 
-> That bridge tile is the wall between the two cells.
+For example:
+
+- Current tile = `(1,1)`
+- Next tile = `(3,1)`
+
+Then:
+
+- `MidX = (1 + 3) / 2 = 2`
+- `MidY = (1 + 1) / 2 = 1`
+
+So the bridge tile is:
+
+`(2,1)`
+
+> That is the wall tile we need to remove to connect the two path tiles.
 
 ---
 
 ### Common mistakes
 
-❌ Forgetting to divide by `2`  
-✔️ You must average the coordinates
+❌ Forgetting to break the structs
+✔️ Use `Break MazeCell` on both `CurrentCell` and `NextCell`
 
 ---
 
-❌ Trying to guess the bridge tile manually  
-✔️ Always calculate the midpoint
+❌ Using `Visited` or `IsWall` pins by mistake
+✔️ Only use `X` and `Y`
+
+---
+
+❌ Forgetting to divide by `2`
+✔️ You must average the two coordinates
+
+---
+
+❌ Using float division nodes
+✔️ Use integer math here
+
+---
+
+❌ Forgetting the white execution wires
+✔️ `Set NextCell → Set MidX → Set MidY`
 
 ---
 
 ### Expected result
 
-You now know which wall tile sits between the current and next path tiles.
+After this step:
+
+- `MidX` contains the X coordinate of the wall tile between the two cells
+- `MidY` contains the Y coordinate of the wall tile between the two cells
+
+In the next step, we will convert `(MidX, MidY)` into `BridgeIndex`.
 
 ---
 
@@ -522,7 +677,148 @@ You now know which wall tile sits between the current and next path tiles.
 
 ---
 
-## Step 9.4 — Open the Current Tile
+## Step 9.4 — Convert Midpoint to BridgeIndex
+
+Before we can open the bridge tile, we need to convert the midpoint coordinates (`MidX`, `MidY`) into an array index.
+
+---
+
+### What this step does
+
+This step takes the midpoint position:
+
+- `MidX`
+- `MidY`
+
+and converts it into a usable array index using the `GetIndex` function.
+
+> This index represents the wall tile between the current tile and the next tile.
+
+---
+
+### Instructions
+
+#### Step 1 — Locate MidX and MidY
+
+1. Make sure you already created:
+   - `MidX`
+   - `MidY`
+
+These should have been set in the previous step using the midpoint calculation.
+
+---
+
+#### Step 2 — Add the GetIndex node
+
+2. Right-click in the graph
+
+3. Search for:
+   `GetIndex`
+
+4. Click the function:
+   `GetIndex`
+
+---
+
+#### Step 3 — Connect MidX and MidY
+
+5. Drag `MidX` into the graph as **Get**
+
+6. Connect:
+   - `MidX` → `X` input on `GetIndex`
+
+7. Drag `MidY` into the graph as **Get**
+
+8. Connect:
+   - `MidY` → `Y` input on `GetIndex`
+
+---
+
+#### Step 4 — Store the result
+
+9. Drag off the return value of `GetIndex`
+
+10. Search for:
+    `Set BridgeIndex`
+
+11. Click:
+    `Set BridgeIndex`
+
+12. Connect:
+    - `GetIndex Return Value` → `BridgeIndex`
+
+---
+
+#### Step 5 — Connect execution flow
+
+13. Connect the white execution wires:
+
+- `Set MidY` → `GetIndex`
+- `GetIndex` → `Set BridgeIndex`
+
+---
+
+### Connections recap
+
+- `MidX` → `GetIndex.X`
+- `MidY` → `GetIndex.Y`
+- `GetIndex Return` → `Set BridgeIndex`
+
+Execution:
+
+```text
+Set MidX
+→ Set MidY
+→ GetIndex
+→ Set BridgeIndex
+```
+
+---
+
+### Why this matters
+
+The Grid is a **1D array**, not a 2D grid.
+
+So even though we calculated `(MidX, MidY)`, we **cannot use that directly**.
+
+> We must convert it into a single index before accessing the Grid.
+
+---
+
+### Common mistakes
+
+❌ Trying to use `MidX` or `MidY` directly in `Get (a copy)`
+✔️ Always convert to an index first
+
+---
+
+❌ Forgetting to store the result
+✔️ You must use `Set BridgeIndex`
+
+---
+
+❌ Not connecting execution wires
+✔️ The node must execute after MidX and MidY are set
+
+---
+
+### Expected result
+
+You now have:
+
+- `BridgeIndex` correctly set to the wall tile between the current and next tiles
+
+This value will be used in the next step to open the bridge tile.
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-9.4.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part2-Step-9.4.png' | relative_url }}" alt="Screenshot showing midpoint calculation and BridgeIndex setup" class="post-image">
+</a>
+
+---
+
+## Step 9.5 — Open the Current Tile
 
 Now we will mark the current tile as open.
 
@@ -540,85 +836,159 @@ This step sets the current tile’s `IsWall` value to `false`.
 
 #### Step 1 — Get the current cell again
 
-1. Drag `Grid` into the graph as **Get**
-2. Drag off `Grid` and create:
+1. In the `CarvePassage` function, locate your variable:
+   `Grid`
+
+2. Drag `Grid` into the graph as **Get**
+
+3. Drag off the `Grid` pin and search for:
    `Get (a copy)`
-3. Connect:
-   - `CurrentIndex` → **Index**
+
+4. Click:
+   `Get (a copy)`
+
+5. Locate your variable:
+   `CurrentIndex`
+
+6. Drag `CurrentIndex` into the graph as **Get**
+
+7. Connect:
+   - `CurrentIndex` → **Index** on `Get (a copy)`
+     (this pin may be labeled **Index** or **Dimension 1 Integer**)
+
+You are now retrieving the current MazeCell from the Grid.
 
 ---
 
 #### Step 2 — Modify the struct
 
-4. Drag off the result and create:
+8. Drag off the output of `Get (a copy)`
+
+9. Search for:
    `Set Members in MazeCell`
 
-5. In the node details, expose:
-   - `IsWall`
+10. Click:
+    `Set Members in MazeCell`
 
-6. Set:
+---
 
-- `IsWall = false`
+#### Step 2.1 — Expose IsWall
+
+11. Click on the `Set Members in MazeCell` node
+
+12. In the **Details panel**, look for the list of variables
+
+13. Check the box for:
+
+- `IsWall`
+
+This will make the `IsWall` pin appear on the node.
+
+---
+
+#### Step 2.2 — Set the value
+
+14. On the `IsWall` pin:
+
+- set the value to `false` (unchecked)
 
 ---
 
 #### Step 3 — Write it back into the Grid
 
-7. Drag `Grid` into the graph as **Get**
-8. Drag off it and create:
-   `Set Array Elem`
+15. Drag `Grid` into the graph again as **Get**
 
-9. Connect:
+16. Drag off it and search for:
+    `Set Array Elem`
+
+17. Click:
+    `Set Array Elem`
+
+---
+
+#### Step 3.1 — Connect the array
+
+18. Connect:
 
 - `Grid` → **Target Array**
-- `CurrentIndex` → **Index**
-- modified MazeCell → **Item**
 
-10. Continue execution from `Set BridgeIndex` into this section.
+---
+
+#### Step 3.2 — Connect the index
+
+19. Drag `CurrentIndex` into the graph again as **Get**
+
+20. Connect:
+
+- `CurrentIndex` → **Index**
+
+---
+
+#### Step 3.3 — Connect the modified struct
+
+20. Connect:
+
+- output of `Set Members in MazeCell` → `Set Array Elem` **Item**
+
+---
+
+#### Step 4 — Connect execution flow
+
+21. Connect the white execution wires:
+
+- Previous step (`Set BridgeIndex`) → `Set Members in MazeCell`
+- `Set Members in MazeCell` → `Set Array Elem`
 
 ---
 
 ### Connections recap
 
 - `Grid` → `Get (a copy)` using `CurrentIndex`
-- `Set Members in MazeCell` → `IsWall = false`
-- `Set Array Elem` writes the modified cell back to `Grid`
+- Output → `Set Members in MazeCell`
+- `IsWall = false`
+- Output → `Set Array Elem`
+- `CurrentIndex` → Index
 
 ---
 
 ### Why this matters
 
-The current tile should always be open if the generator is standing on it.
+Even though the generator is already on this tile, we explicitly set it to open.
 
-> This keeps the carving logic consistent.
+> This keeps the carving logic consistent and prevents edge-case errors.
 
 ---
 
 ### Common mistakes
 
-❌ Changing the struct but not writing it back  
+❌ Forgetting to expose `IsWall`
+✔️ You must check it in the node details
+
+---
+
+❌ Setting `IsWall` but not writing back to the array
 ✔️ Always use `Set Array Elem`
 
 ---
 
-❌ Forgetting to expose `IsWall` on `Set Members in MazeCell`  
-✔️ You must expose the field before editing it
+❌ Wiring execution incorrectly
+✔️ Execution must flow through both nodes
 
 ---
 
 ### Expected result
 
-The current tile is now marked as open.
+The current tile is now marked as open (`IsWall = false`) inside the Grid.
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-9.4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-9.4.png' | relative_url }}" alt="Screenshot showing current cell opened with Set Members in MazeCell and Set Array Elem" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-9.5.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part2-Step-9.5.png' | relative_url }}" alt="Screenshot showing current cell opened with Set Members in MazeCell and Set Array Elem" class="post-image">
 </a>
 
 ---
 
-## Step 9.5 — Open the Bridge Tile
+## Step 9.6 — Open the Bridge Tile
 
 Now we will remove the wall between the current tile and the next tile.
 
@@ -636,86 +1006,151 @@ This step sets the bridge tile’s `IsWall` value to `false`.
 
 #### Step 1 — Get the bridge cell
 
-1. Drag `Grid` into the graph as **Get**
-2. Drag off it and create:
+1. Locate your variable:
+   `Grid`
+
+2. Drag `Grid` into the graph as **Get**
+
+3. Drag off the `Grid` pin and search for:
    `Get (a copy)`
-3. Connect:
+
+4. Click:
+   `Get (a copy)`
+
+5. Locate your variable:
+   `BridgeIndex`
+
+6. Drag `BridgeIndex` into the graph as **Get**
+
+7. Connect:
    - `BridgeIndex` → **Index**
+     (this pin may be labeled **Index** or **Dimension 1 Integer**)
 
 ---
 
 #### Step 2 — Modify the struct
 
-4. Drag off the result and create:
+8. Drag off the output of `Get (a copy)`
+
+9. Search for:
    `Set Members in MazeCell`
 
-5. Expose:
+10. Click:
+    `Set Members in MazeCell`
+
+---
+
+#### Step 2.1 — Expose IsWall
+
+11. Select the node
+
+12. In the Details panel, check:
 
 - `IsWall`
 
-6. Set:
+---
 
-- `IsWall = false`
+#### Step 2.2 — Set the value
+
+13. Set:
+
+- `IsWall = false` (unchecked)
 
 ---
 
 #### Step 3 — Write it back into the Grid
 
-7. Drag `Grid` into the graph as **Get**
-8. Drag off it and create:
-   `Set Array Elem`
+14. Drag `Grid` into the graph as **Get**
 
-9. Connect:
+15. Drag off it and search for:
+    `Set Array Elem`
+
+16. Click:
+    `Set Array Elem`
+
+---
+
+#### Step 3.1 — Connect the array
+
+17. Connect:
 
 - `Grid` → **Target Array**
-- `BridgeIndex` → **Index**
-- modified MazeCell → **Item**
 
-10. Continue execution from the previous section into this section.
+---
+
+#### Step 3.2 — Connect the index
+
+18. Drag `BridgeIndex` into the graph as **Get**
+
+- Connect `BridgeIndex` → **Index**
+
+---
+
+#### Step 3.3 — Connect the modified struct
+
+19. Connect:
+
+- output of `Set Members in MazeCell` → **Item**
+
+---
+
+#### Step 4 — Connect execution flow
+
+20. Connect:
+
+- previous step (`Set Array Elem` from Step 9.4) → `Set Members in MazeCell`
+- `Set Members in MazeCell` → `Set Array Elem`
 
 ---
 
 ### Connections recap
 
 - `Grid` → `Get (a copy)` using `BridgeIndex`
-- `Set Members in MazeCell` → `IsWall = false`
-- `Set Array Elem` writes the modified bridge tile back to `Grid`
+- Output → `Set Members in MazeCell`
+- `IsWall = false`
+- Output → `Set Array Elem`
+- `BridgeIndex` → Index
 
 ---
 
 ### Why this matters
 
-Without this step, the generator would move into the next tile but leave the wall between them intact.
+This is the **most important carving step**.
 
-> This is the step that actually cuts the passage through the wall.
+> Without this, the maze would move forward but never break walls.
 
 ---
 
 ### Common mistakes
 
-❌ Using `CurrentIndex` instead of `BridgeIndex`  
-✔️ Make sure this step edits the bridge tile
+❌ Using `CurrentIndex` instead of `BridgeIndex`
+✔️ This step must use the bridge tile
 
 ---
 
-❌ Forgetting to write the modified struct back into the array  
-✔️ Always use `Set Array Elem`
+❌ Forgetting to expose `IsWall`
+✔️ Must be enabled in node details
+
+---
+
+❌ Not chaining execution correctly
+✔️ This must run after opening the current tile
 
 ---
 
 ### Expected result
 
-The bridge tile is now open.
+The wall between the current tile and the next tile is now open.
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-9.5.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-9.5.png' | relative_url }}" alt="Screenshot showing bridge cell opened with Set Members in MazeCell and Set Array Elem" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-9.6.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part2-Step-9.6.png' | relative_url }}" alt="Screenshot showing bridge cell opened with Set Members in MazeCell and Set Array Elem" class="post-image">
 </a>
 
 ---
 
-## Step 9.6 — Open and Visit the Next Tile
+## Step 9.7 — Open and Visit the Next Tile
 
 Now we will mark the destination tile as both open and visited.
 
@@ -807,8 +1242,8 @@ At the end of `CarvePassage`, the current tile, bridge tile, and next tile are a
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-9.6.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-9.6.png' | relative_url }}" alt="Screenshot showing next cell marked visited and opened" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-9.7.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part2-Step-9.7.png' | relative_url }}" alt="Screenshot showing next cell marked visited and opened" class="post-image">
 </a>
 
 ---
