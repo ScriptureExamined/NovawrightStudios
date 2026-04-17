@@ -1168,51 +1168,121 @@ This step prepares the next tile to become part of the maze path.
 
 #### Step 1 — Get the next cell
 
-1. Drag `Grid` into the graph as **Get**
-2. Drag off it and create:
-   `Get (a copy)`
-3. Connect:
+1. Locate your variable:
+   `Grid`
 
-- `NextIndex` → **Index**
+2. Drag `Grid` into the graph as **Get**
+
+3. Drag off the `Grid` pin and search for:
+   `Get (a copy)`
+
+4. Click:
+   `Get (a copy)`
+
+---
+
+#### Step 1.1 — Connect the index
+
+5. Locate your variable:
+   `NextIndex`
+
+6. Drag `NextIndex` into the graph as **Get**
+
+7. Connect:
+
+- `NextIndex` → **Index** on `Get (a copy)`
+  (this pin may be labeled **Index** or **Dimension 1 Integer**)
+
+You are now retrieving the next MazeCell from the Grid.
 
 ---
 
 #### Step 2 — Modify the struct
 
-4. Drag off the result and create:
+8. Drag off the output of `Get (a copy)`
+
+9. Search for:
    `Set Members in MazeCell`
 
-5. Expose:
+10. Click:
+    `Set Members in MazeCell`
+
+---
+
+#### Step 2.1 — Expose the variables
+
+11. Select the `Set Members in MazeCell` node
+
+12. In the **Details panel**, check:
 
 - `Visited`
 - `IsWall`
 
-6. Set:
+---
 
-- `Visited = true`
-- `IsWall = false`
+#### Step 2.2 — Set the values
+
+13. Set:
+
+- `Visited = true` (checked)
+- `IsWall = false` (unchecked)
 
 ---
 
 #### Step 3 — Write it back into the Grid
 
-7. Drag `Grid` into the graph as **Get**
-8. Drag off it and create:
-   `Set Array Elem`
+14. Drag `Grid` into the graph as **Get**
 
-9. Connect:
+15. Drag off it and search for:
+    `Set Array Elem`
+
+16. Click:
+    `Set Array Elem`
+
+---
+
+#### Step 3.1 — Connect the array
+
+17. Connect:
 
 - `Grid` → **Target Array**
-- `NextIndex` → **Index**
-- modified MazeCell → **Item**
+
+---
+
+#### Step 3.2 — Connect the index
+
+18. Drag `NextIndex` into the graph as **Get**
+
+19. Connect:
+
+- `NextIndex` → `Set Array Elem` **Index**
+
+---
+
+#### Step 3.3 — Connect the modified struct
+
+20. Connect:
+
+- output of `Set Members in MazeCell` → `Set Array Elem` **Item**
+
+---
+
+#### Step 4 — Connect execution flow
+
+21. Connect the white execution wires:
+
+- Previous step (`Set Array Elem` from Bridge tile) → `Set Members in MazeCell`
+- `Set Members in MazeCell` → `Set Array Elem`
 
 ---
 
 ### Connections recap
 
 - `Grid` → `Get (a copy)` using `NextIndex`
+- `NextIndex` → Index
 - `Set Members in MazeCell` → `Visited = true`, `IsWall = false`
-- `Set Array Elem` writes the modified next tile back into `Grid`
+- Output → `Set Array Elem`
+- `NextIndex` → Index
 
 ---
 
@@ -1226,13 +1296,18 @@ The next tile is now officially part of the maze.
 
 ### Common mistakes
 
-❌ Setting only `Visited` and forgetting `IsWall`  
-✔️ The next tile must be both visited and open
+❌ Forgetting to drag `NextIndex` into the graph as **Get**
+✔️ Always place variables explicitly before connecting
 
 ---
 
-❌ Using the wrong index  
-✔️ This step uses `NextIndex`
+❌ Setting values but not writing back to the array
+✔️ Always use `Set Array Elem`
+
+---
+
+❌ Breaking execution flow
+✔️ This step must run after the bridge tile is opened
 
 ---
 
@@ -1513,51 +1588,128 @@ This step turns the starting tile into the first path tile in the maze.
 
 #### Step 1 — Get the start tile
 
-1. Drag `Grid` into the graph as **Get**
-2. Drag off it and create:
-   `Get (a copy)`
-3. Connect:
+1. Locate your variable:
+   `Grid`
 
-- `CurrentIndex` → **Index**
+2. Drag `Grid` into the graph as **Get**
+
+3. Drag off the `Grid` pin and search for:
+   `Get (a copy)`
+
+4. Click:
+   `Get (a copy)`
+
+---
+
+#### Step 1.1 — Connect the index
+
+5. Locate your variable:
+   `CurrentIndex`
+
+6. Drag `CurrentIndex` into the graph as **Get**
+
+7. Connect:
+
+- `CurrentIndex` → **Index** on `Get (a copy)`
+  (this pin may be labeled **Index** or **Dimension 1 Integer**)
+
+You are now retrieving the start MazeCell from the Grid.
 
 ---
 
 #### Step 2 — Modify the tile
 
-4. Drag off the result and create:
+8. Drag off the output of `Get (a copy)`
+
+9. Search for:
    `Set Members in MazeCell`
 
-5. Expose:
+10. Click:
+    `Set Members in MazeCell`
+
+---
+
+#### Step 2.1 — Expose the variables
+
+11. Select the node
+
+12. In the **Details panel**, check:
 
 - `Visited`
 - `IsWall`
 
-6. Set:
+---
 
-- `Visited = true`
-- `IsWall = false`
+#### Step 2.2 — Set the values
+
+13. Set:
+
+- `Visited = true` (checked)
+- `IsWall = false` (unchecked)
 
 ---
 
 #### Step 3 — Write it back
 
-7. Drag `Grid` into the graph as **Get**
-8. Drag off it and create:
-   `Set Array Elem`
+14. Drag `Grid` into the graph as **Get**
 
-9. Connect:
+15. Drag off it and search for:
+    `Set Array Elem`
+
+16. Click:
+    `Set Array Elem`
+
+---
+
+#### Step 3.1 — Connect the array
+
+17. Connect:
 
 - `Grid` → **Target Array**
-- `CurrentIndex` → **Index**
-- modified MazeCell → **Item**
+
+---
+
+#### Step 3.2 — Connect the index
+
+18. Drag `CurrentIndex` into the graph as **Get**
+
+19. Connect:
+
+- `CurrentIndex` → `Set Array Elem` **Index**
+
+---
+
+#### Step 3.3 — Connect the modified struct
+
+20. Connect:
+
+- output of `Set Members in MazeCell` → `Set Array Elem` **Item**
+
+---
+
+#### Step 4 — Connect execution flow
+
+21. Connect the white execution wires:
+
+- Previous step (`Set CurrentIndex`) → `Set Members in MazeCell`
+- `Set Members in MazeCell` → `Set Array Elem`
 
 ---
 
 ### Connections recap
 
-- Start tile → `Visited = true`
-- Start tile → `IsWall = false`
-- modified tile → `Set Array Elem`
+- `Grid` → `Get (a copy)` using `CurrentIndex`
+- `CurrentIndex` → Index
+- `Set Members in MazeCell` → `Visited = true`, `IsWall = false`
+- Output → `Set Array Elem`
+
+Execution:
+
+```text
+Set CurrentIndex
+→ Set Members in MazeCell
+→ Set Array Elem
+```
 
 ---
 
@@ -1571,14 +1723,29 @@ The first tile must already belong to the maze.
 
 ### Common mistakes
 
-❌ Marking the tile visited but leaving it as a wall  
-✔️ Set both values
+❌ Forgetting to drag `CurrentIndex` into the graph as **Get**
+✔️ Always place variables explicitly
+
+---
+
+❌ Setting values but not writing back to the array
+✔️ Always use `Set Array Elem`
+
+---
+
+❌ Forgetting execution wires
+✔️ The nodes must be connected to run
+
+---
+
+❌ Connecting execution from the wrong place
+✔️ This step should come directly after `Set CurrentIndex`
 
 ---
 
 ### Expected result
 
-The start tile is now open and visited.
+The start tile is now open and visited, and correctly stored back into the Grid.
 
 ---
 
