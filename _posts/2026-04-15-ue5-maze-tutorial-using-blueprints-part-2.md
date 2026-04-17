@@ -1771,14 +1771,48 @@ This step adds the start tile to the stack so the generator has a path history t
 
 ### Instructions
 
-1. Drag `Stack` into the graph as **Get**
-2. Drag off it and create:
+#### Step 1 — Add to the Stack
+
+1. Locate your variable:
+   `Stack`
+
+2. Drag `Stack` into the graph as **Get**
+
+3. Drag off the `Stack` pin and search for:
    `Add`
 
-3. Connect:
+4. Click:
+   `Add`
+
+---
+
+#### Step 2 — Connect the item
+
+5. Locate your variable:
+   `CurrentIndex`
+
+6. Drag `CurrentIndex` into the graph as **Get**
+
+7. Connect:
+
+- `CurrentIndex` → **Item**
+
+---
+
+#### Step 3 — Connect the array
+
+8. Connect:
 
 - `Stack` → **Target Array**
-- `CurrentIndex` → **Item**
+
+---
+
+#### Step 4 — Connect execution flow (IMPORTANT)
+
+9. Connect the white execution wires:
+
+- Previous step (`Set Array Elem` from Step 10.4) → `Add`
+- `Add` → next step (While Loop)
 
 ---
 
@@ -1787,26 +1821,51 @@ This step adds the start tile to the stack so the generator has a path history t
 - `Stack` → `Add`
 - `CurrentIndex` → **Item**
 
+Execution:
+
+Set Array Elem (Start Tile)
+→ Add (Stack)
+→ While Loop
+
 ---
 
 ### Why this matters
 
-The stack remembers where the generator has been.
+If the start tile is not added to the stack:
 
-> The last item in the stack is always the tile we are currently exploring from.
+- the stack will be empty
+- the While Loop condition (`Length > 0`) will fail immediately
+- the maze will never generate
+
+> This single step is what actually starts the maze algorithm.
 
 ---
 
 ### Common mistakes
 
-❌ Forgetting to add the start tile to the stack  
-✔️ The maze loop depends on the stack
+❌ Forgetting to drag `CurrentIndex` into the graph as **Get**
+✔️ Always place variables explicitly
+
+---
+
+❌ Not connecting execution wires
+✔️ Without execution, nothing runs
+
+---
+
+❌ Adding the wrong value (like `NextIndex`)
+✔️ This step must use `CurrentIndex`
+
+---
+
+❌ Connecting the While Loop before the Add node
+✔️ The stack must have at least one item before the loop starts
 
 ---
 
 ### Expected result
 
-The stack now contains the starting tile.
+The stack now contains the starting tile, and the maze generation loop is ready to begin.
 
 ---
 
@@ -1832,23 +1891,80 @@ This step keeps generation running while there are still tiles left to explore o
 
 ### Instructions
 
-1. Add a `WhileLoop` node.
-2. Drag `Stack` into the graph as **Get**
-3. Drag off it and create:
+#### Step 1 — Add the WhileLoop node
+
+1. Right-click in the graph
+
+2. Search for:
+   `WhileLoop`
+
+3. Click:
+   `WhileLoop`
+
+---
+
+#### Step 2 — Get the Stack length
+
+4. Locate your variable:
+   `Stack`
+
+5. Drag `Stack` into the graph as **Get**
+
+6. Drag off the `Stack` pin and search for:
    `Length`
-4. Compare:
-   `Length > 0`
-5. Connect that result into the `Condition` pin of the `WhileLoop`
 
-6. Connect execution:
+7. Click:
+   `Length`
 
-- previous step → `WhileLoop`
+---
+
+#### Step 3 — Compare Length > 0
+
+8. Drag off the output of the `Length` node
+
+9. Search for:
+   `>`
+
+10. Click the **Integer > Integer** node
+
+11. Set the second value to:
+    `0`
+
+You now have:
+
+`Stack Length > 0`
+
+---
+
+#### Step 4 — Connect the Condition
+
+12. Connect:
+
+- result of `Length > 0` → **Condition** pin on the `WhileLoop`
+
+---
+
+#### Step 5 — Connect execution (IMPORTANT)
+
+13. Connect the white execution wires:
+
+- Previous step (`Add` from Step 10.5) → `WhileLoop`
 
 ---
 
 ### Connections recap
 
-- `Stack Length > 0` → `WhileLoop Condition`
+- `Stack` → `Length`
+- `Length` → `>` (Greater Than)
+- `0` → second input
+- result → `WhileLoop Condition`
+
+Execution:
+
+```
+Add (Stack)
+→ WhileLoop
+```
 
 ---
 
@@ -1862,8 +1978,23 @@ As long as the stack still has items, the generator still has somewhere to conti
 
 ### Common mistakes
 
-❌ Using `>= 0`  
+❌ Forgetting to add the WhileLoop node
+✔️ You must create it manually
+
+---
+
+❌ Using `>= 0`
 ✔️ Use `> 0`
+
+---
+
+❌ Not connecting execution wires
+✔️ The loop will never run without execution
+
+---
+
+❌ Connecting Condition incorrectly
+✔️ Condition must come from `Length > 0`
 
 ---
 
