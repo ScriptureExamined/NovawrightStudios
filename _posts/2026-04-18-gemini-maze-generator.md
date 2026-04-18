@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Building a Procedural Maze Generator in UE5 Blueprints — Part 3"
+title: "Building a Procedural Maze Generator in UE5 Blueprints Part 1"
 date: 2026-04-17
 author: Roberta
 categories: [Tutorials]
-published: true
+published: false
 excerpt: >
   In Part 2, we completed the full maze generation logic using a stack-based depth-first search system. The maze now exists in memory, but it is not yet visible. In this part, we will read the grid data and begin building the maze visually in the world.
 ---
