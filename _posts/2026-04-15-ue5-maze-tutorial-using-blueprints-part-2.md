@@ -2041,6 +2041,7 @@ This step sets `CurrentIndex` to the last item in the stack.
 5. Connect:
 
 - `Last Index` → **Index**
+(this pin may be labeled **Index** or **Dimension 1 Integer**)
 
 #### Step 3 — Store it
 
@@ -2104,27 +2105,87 @@ This step calls `GetValidNeighbors` using the current tile and returns an array 
 
 ### Instructions
 
-1. From `Set CurrentIndex`, call:
+#### Step 1 — Call the GetValidNeighbors function
+
+1. From the execution output of `Set CurrentIndex`, drag out a wire
+
+2. Search for:
    `GetValidNeighbors`
 
-2. Connect:
+3. Click:
+   `GetValidNeighbors`
 
-- `CurrentIndex` → `CurrentIndex`
+---
 
-3. Create a local variable inside `GenerateMaze`:
+#### Step 2 — Connect the input
 
-- `ValidNeighbors` — Integer Array
+4. Locate your variable:
+   `CurrentIndex`
 
-4. Store the output of `GetValidNeighbors` in:
+5. Drag `CurrentIndex` into the graph as **Get**
 
-- `Set ValidNeighbors`
+6. Connect:
+
+* `CurrentIndex` → `CurrentIndex` input on the function
+
+---
+
+#### Step 3 — Create the local variable
+
+7. In the **My Blueprint** panel, under **Local Variables**:
+
+8. Click:
+   `+`
+
+9. Name it:
+   `ValidNeighbors`
+
+10. Set the type to:
+
+* Integer
+
+11. Click the array icon to make it an **Array**
+
+---
+
+#### Step 4 — Store the result
+
+12. Drag off the output of `GetValidNeighbors`
+
+13. Search for:
+    `Set ValidNeighbors`
+
+14. Click:
+    `Set ValidNeighbors`
+
+15. Connect:
+
+* output of `GetValidNeighbors` → `ValidNeighbors`
+
+---
+
+#### Step 5 — Connect execution flow
+
+16. Connect the white execution wires:
+
+* `Set CurrentIndex` → `GetValidNeighbors`
+* `GetValidNeighbors` → `Set ValidNeighbors`
 
 ---
 
 ### Connections recap
 
-- `CurrentIndex` → `GetValidNeighbors`
-- returned array → `Set ValidNeighbors`
+* `CurrentIndex` → `GetValidNeighbors`
+* output → `Set ValidNeighbors`
+
+Execution:
+
+```
+WhileLoop (Loop Body)
+→ Set CurrentIndex
+→ GetValidNeighbors
+→ Set ValidNeighbors
+```
 
 ---
 
@@ -2138,14 +2199,30 @@ This gives the generator a list of all possible next moves.
 
 ### Common mistakes
 
-❌ Forgetting to store the result  
-✔️ Save it in `ValidNeighbors`
+❌ Forgetting to drag `CurrentIndex` into the graph as **Get**
+✔️ Always place variables explicitly
+
+---
+
+❌ Not creating `ValidNeighbors` as an array
+✔️ It must be an Integer Array
+
+---
+
+❌ Not connecting execution wires
+✔️ The function must execute to return results
+
+---
+
+❌ Trying to use the function output directly without storing it
+✔️ Store it for clarity and reuse
 
 ---
 
 ### Expected result
 
-You now have an array containing all valid next moves.
+You now have an array containing all valid next moves stored in `ValidNeighbors`.
+
 
 ---
 
@@ -2171,25 +2248,80 @@ This step checks whether `ValidNeighbors` contains any items.
 
 ### Instructions
 
-1. Drag `ValidNeighbors` into the graph as **Get**
-2. Drag off it and create:
+#### Step 1 — Get the length of ValidNeighbors
+
+1. Locate your variable:
+   `ValidNeighbors`
+
+2. Drag `ValidNeighbors` into the graph as **Get**
+
+3. Drag off the `ValidNeighbors` pin and search for:
    `Length`
-3. Compare:
-   `Length > 0`
-4. Add a `Branch`
-5. Connect:
 
-- result of `Length > 0` → `Branch Condition`
+4. Click:
+   `Length`
 
-6. Connect execution:
+---
 
-- `Set ValidNeighbors` → `Branch`
+#### Step 2 — Compare Length > 0
+
+5. Drag off the output of the `Length` node
+
+6. Search for:
+   `>`
+
+7. Click the **Integer > Integer** node
+
+8. Set the second value to:
+   `0`
+
+You now have:
+
+`ValidNeighbors Length > 0`
+
+---
+
+#### Step 3 — Add the Branch node
+
+9. Right-click in the graph
+
+10. Search for:
+    `Branch`
+
+11. Click:
+    `Branch`
+
+---
+
+#### Step 4 — Connect the condition
+
+12. Connect:
+
+* result of `Length > 0` → **Condition** pin on the Branch
+
+---
+
+#### Step 5 — Connect execution flow
+
+13. Connect the white execution wires:
+
+* `Set ValidNeighbors` → `Branch`
 
 ---
 
 ### Connections recap
 
-- `ValidNeighbors Length > 0` → `Branch Condition`
+* `ValidNeighbors` → `Length`
+* `Length` → `>` (Greater Than)
+* `0` → second input
+* result → `Branch Condition`
+
+Execution:
+
+```
+Set ValidNeighbors
+→ Branch
+```
 
 ---
 
@@ -2203,8 +2335,23 @@ This is the decision point of the maze algorithm.
 
 ### Common mistakes
 
-❌ Skipping the Branch and choosing a random index anyway  
-✔️ Only choose a random neighbor if the array is not empty
+❌ Forgetting to create the `>` node
+✔️ You must compare `Length > 0`
+
+---
+
+❌ Forgetting to add the Branch node
+✔️ The logic must split here
+
+---
+
+❌ Not connecting execution wires
+✔️ The Branch will never run without execution
+
+---
+
+❌ Plugging `Length` directly into the Branch
+✔️ You must compare it to `0`
 
 ---
 
@@ -2212,8 +2359,9 @@ This is the decision point of the maze algorithm.
 
 The loop now splits into two paths:
 
-- True = move forward
-- False = backtrack
+* **True** → move forward to a new tile
+* **False** → backtrack to a previous tile
+
 
 ---
 
@@ -2241,52 +2389,243 @@ This step selects one valid neighbor from the `ValidNeighbors` array.
 
 #### Step 1 — Build the random range
 
-1. Drag `ValidNeighbors` into the graph as **Get**
-2. Drag off it and create:
+1. Locate your variable:
+   `ValidNeighbors`
+
+2. Drag `ValidNeighbors` into the graph as **Get**
+
+3. Drag off the `ValidNeighbors` pin and search for:
    `Length`
-3. Subtract:
+
+4. Click:
+   `Length`
+
+5. Drag off the output of the `Length` node
+
+6. Search for:
+   `-`
+
+7. Click the **Integer - Integer** node
+
+8. Set the second value to:
    `1`
+
+You now have:
+
+`ValidNeighbors Length - 1`
 
 This gives the maximum valid array index.
 
 ---
 
-#### Step 2 — Pick the random index
+#### Step 2 — Create the random node
 
-4. From the **True** pin of the Branch, create either:
+You have two options here. This tutorial will follow Option A for beginners. Afterwards, I will post a short tutorial switching from Option A to Option B.
 
-- `Random Integer in Range from Stream`  
-  or
-- `Random Integer in Range`
+#### Choosing a Random Method (Optional)
 
-5. Set:
+At this step, you have two options:
 
-- Min = `0`
-- Max = `ValidNeighbors Length - 1`
-
-If using the stream version:
-
-- connect `RandomStream`
+* `Random Integer in Range`
+* `Random Integer in Range from Stream`
 
 ---
 
-#### Step 3 — Read the selected neighbor
+### What’s the difference?
 
-6. Drag `ValidNeighbors` into the graph as **Get**
-7. Drag off it and create:
-   `Get (a copy)`
-8. Connect the random result into the **Index**
-9. From the result:
-   - create:
-     `Set NextIndex`
+#### Option A `Random Integer in Range`
+
+* Uses Unreal’s default random system
+* Produces different results every time you run the game
+
+> Use this if you just want a random maze each time.
+
+---
+
+#### Option B `Random Integer in Range from Stream`
+
+* Uses your `RandomStream` variable
+* Produces the same results when using the same `MazeSeed`
+
+> Use this if you want repeatable mazes (useful for testing or level design).
+
+---
+
+### Recommendation
+
+If you are following this tutorial for the first time:
+
+> Start with Option A `Random Integer in Range`
+
+Once everything is working, you can switch to the stream version for more control.
+
+---
+
+### Option A — Simple random (Recommended for beginners)
+
+9. Right-click in the graph
+
+10. Search for:
+
+* `Random Integer in Range`
+
+11. Click `Random Integer in Range` (proceed to step 15.)
+
+### Option B — Seeded random (Advanced)
+
+If you want repeatable mazes, use the stream version.
+
+9. Right-click in the graph
+
+10. Search for:
+    `Random Integer in Range from Stream`
+
+11. Click:
+    `Random Integer in Range from Stream`
+
+12. Locate your variable:
+    `RandomStream`
+
+13. Drag `RandomStream` into the graph as **Get**
+
+14. Connect:
+
+* `RandomStream` → `Stream`
+
+> If you cannot find the stream version, use the simple random version for now.
+
+---
+
+#### Step 3 — Set Min and Max
+
+15. Set:
+
+* `Min = 0`
+
+16. Connect:
+
+* `ValidNeighbors Length - 1` → `Max`
+
+---
+
+#### Step 4 — Get the selected neighbor
+
+Now we will use the random number to pick one item from the `ValidNeighbors` array.
+
+---
+
+### What this step does
+
+This step takes the random number we generated and uses it to select a specific neighbor from the array.
+
+> The result will be one randomly chosen valid neighbor.
+
+---
+
+### Instructions
+
+17. Locate your variable:
+    `ValidNeighbors`
+
+18. Drag `ValidNeighbors` into the graph as **Get**
+
+19. Drag off the `ValidNeighbors` pin and search for:
+    `Get (a copy)`
+
+20. Click:
+    `Get (a copy)`
+
+---
+
+#### Step 4.1 — Use the random number as the index
+
+21. Locate the output pin on your Random Integer node
+    (this is the number it generates)
+
+22. Click and drag from that output pin
+
+23. Connect it to the **Index** input on the `Get (a copy)` node
+(this pin may be labeled **Index** or **Dimension 1 Integer**)
+
+---
+
+### What this means
+
+* The Random Integer node gives you a number (for example: `2`)
+* That number is used as the position inside the `ValidNeighbors` array
+
+Example:
+
+```
+ValidNeighbors = [5, 12, 8, 3]
+```
+
+If the random number is:
+
+```
+2
+```
+
+Then the selected value will be:
+
+```
+8
+```
+
+---
+
+### Result
+
+The `Get (a copy)` node now returns:
+
+> one randomly selected neighbor from the array
+
+This value will be used in the next step as `NextIndex`.
+
+
+---
+
+#### Step 5 — Store the result
+
+21. Drag off the output of `Get (a copy)`
+
+22. Search for:
+    `Set NextIndex`
+
+23. Click:
+    `Set NextIndex`
+
+24. Connect:
+
+* output → `NextIndex`
+
+---
+
+#### Step 6 — Connect execution flow
+
+25. Connect the white execution wires:
+
+* `Branch (True)` → `Set NextIndex`
 
 ---
 
 ### Connections recap
 
-- `ValidNeighbors Length - 1` → random Max
-- random result → `Get (a copy)` on `ValidNeighbors`
-- selected value → `Set NextIndex`
+* `ValidNeighbors` → `Length`
+* `Length - 1` → random `Max`
+* random result → `Get (a copy)` on `ValidNeighbors`
+* selected value → `Set NextIndex`
+
+Execution:
+
+```
+Branch (True)
+→ Set NextIndex
+```
+
+If using the stream version:
+
+* `RandomStream` → `Stream`
 
 ---
 
@@ -2296,23 +2635,40 @@ This is the step that gives the maze its shape.
 
 > The chosen neighbor becomes the next tile the maze will move into.
 
+Because the choice is random, the same system can generate many different mazes.
+
 ---
 
 ### Common mistakes
 
-❌ Using `Length` directly as Max  
+❌ Trying to drag from the Branch pin to find the random node
+✔️ Right-click in the graph and search for it instead
+
+---
+
+❌ Using `Length` directly as `Max`
 ✔️ Use `Length - 1`
 
 ---
 
-❌ Choosing a random value from an empty array  
-✔️ Always do this only on the Branch True path
+❌ Forgetting to connect `RandomStream` when using the stream version
+✔️ Drag `RandomStream` into the graph as **Get** and connect it
+
+---
+
+❌ Forgetting to store the result
+✔️ Always set `NextIndex`
+
+---
+
+❌ Running this from the Branch False pin
+✔️ This only runs when neighbors exist
 
 ---
 
 ### Expected result
 
-`NextIndex` now stores the chosen next tile.
+`NextIndex` now stores the randomly selected next tile.
 
 ---
 
@@ -2332,9 +2688,9 @@ Now we connect the current tile to the next tile.
 
 This step calls `CarvePassage` so the maze opens:
 
-- current tile
-- bridge tile
-- next tile
+* current tile
+* bridge tile
+* next tile
 
 > This is the moment the maze actually expands.
 
@@ -2342,29 +2698,70 @@ This step calls `CarvePassage` so the maze opens:
 
 ### Instructions
 
-1. Call:
+#### Step 1 — Add the CarvePassage function call
+
+1. From the white execution output of `Set NextIndex`, drag out a wire
+
+2. Search for:
    `CarvePassage`
 
-2. Connect:
+3. Click:
+   `CarvePassage`
 
-- `CurrentIndex` → `CurrentIndex`
-- `NextIndex` → `NextIndex`
+---
 
-3. Connect execution:
+#### Step 2 — Connect CurrentIndex
 
-- `Set NextIndex` → `CarvePassage`
+4. Locate your variable:
+   `CurrentIndex`
+
+5. Drag `CurrentIndex` into the graph as **Get**
+
+6. Connect:
+
+* `CurrentIndex` → `CurrentIndex` input on `CarvePassage`
+
+---
+
+#### Step 3 — Connect NextIndex
+
+7. Locate your variable:
+   `NextIndex`
+
+8. Drag `NextIndex` into the graph as **Get**
+
+9. Connect:
+
+* `NextIndex` → `NextIndex` input on `CarvePassage`
+
+---
+
+#### Step 4 — Connect execution flow
+
+10. Connect the white execution wire:
+
+* `Set NextIndex` → `CarvePassage`
 
 ---
 
 ### Connections recap
 
-- `CurrentIndex` + `NextIndex` → `CarvePassage`
+* `Set NextIndex` → `CarvePassage`
+* `CurrentIndex` → `CurrentIndex`
+* `NextIndex` → `NextIndex`
+
+Execution:
+
+```
+Set NextIndex
+→ CarvePassage
+```
 
 ---
 
 ### Why this matters
 
-Without this step, the generator would select a next tile but never actually carve the path to it.
+Without this step, the generator would successfully choose a next tile, but the maze would never actually open the path to reach it.
 
 > This is what turns the grid data into an actual maze structure.
 
@@ -2372,14 +2769,30 @@ Without this step, the generator would select a next tile but never actually car
 
 ### Common mistakes
 
-❌ Marking the next tile visited without carving the bridge  
-✔️ Always call `CarvePassage`
+❌ Forgetting to drag `CurrentIndex` into the graph as **Get**
+✔️ Always place variables explicitly before connecting them
+
+---
+
+❌ Forgetting to drag `NextIndex` into the graph as **Get**
+✔️ Both inputs must be connected
+
+---
+
+❌ Connecting execution from the wrong node
+✔️ `CarvePassage` should run after `Set NextIndex`
+
+---
+
+❌ Skipping this step entirely
+✔️ Choosing a neighbor is not enough — you must carve the path
 
 ---
 
 ### Expected result
 
 The path between the current tile and the chosen neighbor is now opened.
+
 
 ---
 
@@ -2405,24 +2818,63 @@ This step stores the new tile at the top of the stack.
 
 ### Instructions
 
-1. Drag `Stack` into the graph as **Get**
-2. Drag off it and create:
+#### Step 1 — Add to the Stack
+
+1. Locate your variable:
+   `Stack`
+
+2. Drag `Stack` into the graph as **Get**
+
+3. Drag off the `Stack` pin and search for:
    `Add`
-3. Connect:
 
-- `Stack` → **Target Array**
-- `NextIndex` → **Item**
+4. Click:
+   `Add`
 
-4. Connect execution:
+---
 
-- `CarvePassage` → `Add`
+#### Step 2 — Connect the item
+
+5. Locate your variable:
+   `NextIndex`
+
+6. Drag `NextIndex` into the graph as **Get**
+
+7. Connect:
+
+* `NextIndex` → **New Item** (ADD Node)
+
+---
+
+#### Step 3 — Connect the array
+
+8. Connect:
+
+* `Stack` → **Target Array**
+
+---
+
+#### Step 4 — Connect execution flow
+
+9. Connect the white execution wires:
+
+* `CarvePassage` → `Add`
+* `Add` → next step in the loop (continue execution)
 
 ---
 
 ### Connections recap
 
-- `Stack` → `Add`
-- `NextIndex` → **Item**
+* `Stack` → `Add`
+* `NextIndex` → **Item**
+
+Execution:
+
+```
+CarvePassage
+→ Add (Stack)
+→ (continues loop)
+```
 
 ---
 
@@ -2432,18 +2884,31 @@ This continues the path forward.
 
 > The stack always grows when the maze successfully moves into a new tile.
 
+Without this step, the algorithm would move forward once and then lose its path history.
+
 ---
 
 ### Common mistakes
 
-❌ Forgetting to push `NextIndex`  
-✔️ Add it to the stack after carving
+❌ Forgetting to drag `NextIndex` into the graph as **Get**
+✔️ Always place variables explicitly before connecting
+
+---
+
+❌ Adding the wrong value
+✔️ This step must use `NextIndex`
+
+---
+
+❌ Forgetting execution wires
+✔️ The Add node must execute to update the stack
 
 ---
 
 ### Expected result
 
 The newly carved tile is now on the stack and ready to become the next active tile.
+
 
 ---
 
@@ -2469,26 +2934,73 @@ This step removes the dead-end tile from the stack.
 
 ### Instructions
 
-1. From the **False** pin of the neighbor Branch:
-   - drag `Stack` into the graph as **Get**
-   - drag off it and create:
-     `Last Index`
+#### Step 1 — Get the last index of the stack
 
-2. Drag `Stack` into the graph again as **Get**
-3. Drag off it and create:
+1. Locate your variable:
+   `Stack`
+
+2. Drag `Stack` into the graph as **Get**
+
+3. Drag off the `Stack` pin and search for:
+   `Last Index`
+
+4. Click:
+   `Last Index`
+
+This gives you the index of the last item in the stack.
+
+---
+
+#### Step 2 — Create the Remove Index node
+
+5. Drag `Stack` into the graph again as **Get**
+
+6. Drag off the `Stack` pin and search for:
    `Remove Index`
 
-4. Connect:
+7. Click:
+   `Remove Index`
 
-- `Stack` → **Target Array**
-- `Last Index` → **Index**
+---
+
+#### Step 3 — Connect the array
+
+8. Connect:
+
+* `Stack` → **Target Array**
+
+---
+
+#### Step 4 — Connect the index
+
+9. Connect:
+
+* output of `Last Index` → **Index to Remove Integer**
+
+---
+
+#### Step 5 — Connect execution flow
+
+10. From the **False** pin of the Branch (from Step 10.9), drag a white execution wire
+
+11. Connect it to:
+
+* `Remove Index`
 
 ---
 
 ### Connections recap
 
-- Branch False → `Remove Index`
-- `Stack Last Index` → `Remove Index Index`
+* `Stack` → `Last Index`
+* `Last Index` → `Remove Index Index`
+* `Stack` → `Remove Index Target Array`
+
+Execution:
+
+```
+Branch (False)
+→ Remove Index (Stack)
+```
 
 ---
 
@@ -2498,23 +3010,36 @@ This is the backtracking part of the algorithm.
 
 > When the maze hits a dead end, it goes backward until it finds another tile with unused neighbors.
 
+Without this step, the maze would get stuck the first time it hits a dead end.
+
 ---
 
 ### Common mistakes
 
-❌ Removing the wrong stack index  
-✔️ Remove the last index
+❌ Forgetting to connect the Branch False execution wire
+✔️ This step only runs when there are no neighbors
 
 ---
 
-❌ Clearing the whole stack instead of removing one item  
-✔️ Only remove the current dead-end tile
+❌ Removing the wrong index
+✔️ Always use `Last Index`
+
+---
+
+❌ Clearing the entire stack
+✔️ Only remove one item at a time
+
+---
+
+❌ Not connecting the Stack to `Remove Index`
+✔️ The node needs the array to modify
 
 ---
 
 ### Expected result
 
 If the current tile has no valid neighbors, it is removed from the stack and the generator backs up automatically.
+
 
 ---
 
@@ -2538,27 +3063,116 @@ This step ensures the maze is built from a clean grid before generation starts.
 
 ---
 
+### Where this happens
+
+This setup is done in the **Event Graph** of your Blueprint.
+
+---
+
 ### Instructions
 
-At minimum, your main execution flow should be:
+#### Step 1 — Choose a starting point
 
-1. `InitializeGrid`
-2. `GenerateMaze`
+#### Using BeginPlay vs a Custom Event (Optional)
 
-If you already have a function that builds the visible wall meshes, call it after generation.
+You have two ways to start your maze generation:
 
-So the final order becomes:
+---
 
-- `InitializeGrid`
-- `GenerateMaze`
-- `BuildMazeMeshes` _(if already created)_
+### `Event BeginPlay` (Recommended for beginners)
+
+* Runs automatically when the game starts
+* No setup required
+
+> Use this if you just want the maze to generate immediately when the level loads.
+
+---
+
+### Custom Event (Optional)
+
+* Lets you trigger maze generation manually
+* Can be called from:
+
+  * a button press
+  * UI (menus)
+  * another Blueprint
+
+> Use this if you want to regenerate the maze during gameplay or control *when* it runs.
+
+---
+
+### Recommendation
+
+If you are following this tutorial for the first time:
+
+> Use `Event BeginPlay`
+
+You can switch to a custom event later once everything is working.
+
+
+1. Open the **Event Graph**
+
+2. Locate:
+
+* `Event BeginPlay`
+  *(or create a custom event if you prefer)*
+
+---
+
+#### Step 2 — Add InitializeGrid
+
+3. Drag a white execution wire from `Event BeginPlay`
+
+4. Search for:
+   `InitializeGrid`
+
+5. Click:
+   `InitializeGrid`
+
+---
+
+#### Step 3 — Add GenerateMaze
+
+6. Drag a white execution wire from `InitializeGrid`
+
+7. Search for:
+   `GenerateMaze`
+
+8. Click:
+   `GenerateMaze`
+
+---
+
+#### Note — Visuals come next
+
+At this point, the maze is fully generated in memory.
+
+> You just can’t see it yet.
+
+In the next part of this tutorial, we will:
+
+* read the Grid
+* and build the visible maze using meshes
+
+---
+
+
+---
+
+### Final execution flow
+
+```
+Event BeginPlay
+→ InitializeGrid
+→ GenerateMaze
+```
 
 ---
 
 ### Connections recap
 
-- `InitializeGrid` → `GenerateMaze`
-- `GenerateMaze` → `BuildMazeMeshes` _(optional if built already)_
+* `Event BeginPlay` → `InitializeGrid`
+* `InitializeGrid` → `GenerateMaze`
 
 ---
 
@@ -2568,18 +3182,46 @@ The maze cannot be generated before the grid exists.
 
 > The order matters.
 
+If the order is wrong:
+
+* the maze may be empty
+* generation may fail silently
+* meshes may not appear
+
 ---
 
 ### Common mistakes
 
-❌ Calling `GenerateMaze` before `InitializeGrid`  
+❌ Calling `GenerateMaze` before `InitializeGrid`
 ✔️ Always initialize the grid first
+
+---
+
+❌ Building meshes before generating the maze
+✔️ Generate first, then build visuals
+
+---
+
+❌ Not placing this in the Event Graph
+✔️ Functions do not run unless called
+
+---
+
+❌ Forgetting a starting node (like BeginPlay)
+✔️ Execution must start somewhere
 
 ---
 
 ### Expected result
 
-The maze generation system now runs in the correct order.
+When the game starts:
+
+* the grid is created
+* the maze is generated
+* the mesh is built (if included)
+
+The full maze now appears correctly in your level.
+
 
 ---
 
@@ -2706,3 +3348,213 @@ Odd grid sizes work best for this style of maze generator.
 ## Up Next
 
 Part 3 will render the maze visually using Instanced Static Meshes so the generated data becomes a visible maze in the level.
+
+
+
+
+## Step 10.10 — Pick a Random Neighbor
+
+If neighbors exist, we now choose one at random.
+
+---
+
+### What this step does
+
+This step selects one valid neighbor from the `ValidNeighbors` array.
+
+> This becomes the next tile the maze will carve into.
+
+---
+
+### Instructions
+
+#### Step 1 — Build the random range
+
+1. Locate your variable:
+   `ValidNeighbors`
+
+2. Drag `ValidNeighbors` into the graph as **Get**
+
+3. Drag off the `ValidNeighbors` pin and search for:
+   `Length`
+
+4. Click:
+   `Length`
+
+5. Drag off the output of the `Length` node
+
+6. Search for:
+   `-`
+
+7. Click the **Integer - Integer** node
+
+8. Set the second value to:
+   `1`
+
+You now have:
+
+`ValidNeighbors Length - 1`
+
+This gives the maximum valid array index.
+
+---
+
+#### Step 2 — Create the random node
+
+You have two options here.
+
+---
+
+### Option A — Simple random (Recommended for beginners)
+
+9. Right-click in the graph
+
+10. Search for:
+    `Random Integer in Range`
+
+11. Click:
+    `Random Integer in Range`
+
+---
+
+### Option B — Seeded random (Advanced)
+
+If you want repeatable mazes, use the stream version.
+
+9. Right-click in the graph
+
+10. Search for:
+    `Random Integer in Range from Stream`
+
+11. Click:
+    `Random Integer in Range from Stream`
+
+12. Locate your variable:
+    `RandomStream`
+
+13. Drag `RandomStream` into the graph as **Get**
+
+14. Connect:
+
+* `RandomStream` → `Stream`
+
+> If you cannot find the stream version, use the simple random version for now.
+
+---
+
+#### Step 3 — Set Min and Max
+
+15. Set:
+
+* `Min = 0`
+
+16. Connect:
+
+* `ValidNeighbors Length - 1` → `Max`
+
+---
+
+#### Step 4 — Get the selected neighbor
+
+17. Drag `ValidNeighbors` into the graph as **Get**
+
+18. Drag off the `ValidNeighbors` pin and search for:
+    `Get (a copy)`
+
+19. Click:
+    `Get (a copy)`
+
+20. Connect:
+
+* random result → **Index**
+
+This retrieves one item from the `ValidNeighbors` array.
+
+---
+
+#### Step 5 — Store the result
+
+21. Drag off the output of `Get (a copy)`
+
+22. Search for:
+    `Set NextIndex`
+
+23. Click:
+    `Set NextIndex`
+
+24. Connect:
+
+* output → `NextIndex`
+
+---
+
+#### Step 6 — Connect execution flow
+
+25. Connect the white execution wires:
+
+* `Branch (True)` → Random Integer node
+* Random Integer node → `Set NextIndex`
+
+---
+
+### Connections recap
+
+* `ValidNeighbors` → `Length`
+* `Length - 1` → random `Max`
+* random result → `Get (a copy)` on `ValidNeighbors`
+* selected value → `Set NextIndex`
+
+Execution:
+
+```
+Branch (True)
+→ Random Integer in Range
+→ Set NextIndex
+```
+
+If using the stream version:
+
+* `RandomStream` → `Stream`
+
+---
+
+### Why this matters
+
+This is the step that gives the maze its shape.
+
+> The chosen neighbor becomes the next tile the maze will move into.
+
+Because the choice is random, the same system can generate many different mazes.
+
+---
+
+### Common mistakes
+
+❌ Trying to drag from the Branch pin to find the random node
+✔️ Right-click in the graph and search for it instead
+
+---
+
+❌ Using `Length` directly as `Max`
+✔️ Use `Length - 1`
+
+---
+
+❌ Forgetting to connect `RandomStream` when using the stream version
+✔️ Drag `RandomStream` into the graph as **Get** and connect it
+
+---
+
+❌ Forgetting to store the result
+✔️ Always set `NextIndex`
+
+---
+
+❌ Running this from the Branch False pin
+✔️ This only runs when neighbors exist
+
+---
+
+### Expected result
+
+`NextIndex` now stores the randomly selected next tile.

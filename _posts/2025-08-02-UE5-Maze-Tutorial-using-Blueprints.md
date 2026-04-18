@@ -1673,7 +1673,7 @@ This step ensures:
 
 > We only process coordinates that exist inside the grid.
 
-It also keeps your maze generation stable and predictable.
+Note: By checking `> 0` and `< Max - 1`, we effectively protect the 1-tile thick outer wall of the maze.
 
 ---
 
@@ -1795,7 +1795,7 @@ This step converts:
 
 > (X, Y) → Array Index
 
-Without this conversion, you would not be able to correctly access the tile in the `Grid`.
+Without this conversion, you would not be able to correctly locate the tile in the `Grid`.
 
 ---
 
@@ -1826,8 +1826,8 @@ This index will be used in the next step to access the correct cell in the grid.
 
 ---
 
-<a href="{{ '/assets/images/blog/Step 5.3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Step 5.3.png' | relative_url }}" alt="Screenshot showing Branch True connected to GetIndex connected to Set TestIndex" class="post-image">
+<a href="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Step 3.1.png' | relative_url }}" alt="Screenshot showing Branch True connected to GetIndex connected to Set TestIndex" class="post-image">
 </a>
 
 ---
@@ -2054,8 +2054,7 @@ Without it, your logic may correctly detect a valid neighbor, but it will never 
 
 ### Common mistakes
 
-❌ Dragging in `LocalNeighbors` as **Set** instead of **Get**  
-✔️ Always use **Get** when feeding into the Add node
+❌ Dragging in `LocalNeighbors` as **Set** instead of **Get** ✔️ Always use **Get** when feeding into the Add node
 
 ---
 
@@ -2064,8 +2063,7 @@ Without it, your logic may correctly detect a valid neighbor, but it will never 
 
 ---
 
-❌ Plugging the wrong variable into **Item**  
-✔️ It must be `TestIndex`
+❌ Plugging the wrong variable into **Item** ✔️ It must be `TestIndex`
 
 ---
 
@@ -2084,7 +2082,7 @@ At this point, you have completed the full logic for the **LEFT** direction.
 
 Make sure this entire block is connected to:
 
-- `Sequence Then 0` That was created in step 5.1.
+- `Sequence Then 0` That was created in step 4.3.
 
 > Note: We may adjust or extend these connections later as we build the full function.
 
