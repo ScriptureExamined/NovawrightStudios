@@ -11,19 +11,6 @@ excerpt: >
   Update: This tutorial was made in version 4.6. It's taken me so long to get to this, UE is now on version 5+, so this is getting a good update.  When done, I will remove this last line so you'll know it's finished. Currently working on Part 2.
 ---
 
----
-
-layout: post
-title: "Building a Procedural Maze Generator in UE5 Blueprints Part 1"
-date: 2026-04-18
-author: Roberta
-categories: [Tutorials]
-published: false
-excerpt: >
-In this series, we build a procedurally generated maze from scratch using Unreal Engine 5. In Part 1, we lay the foundation: creating the Maze Cell, setting up the Random Seed engine, and spawning the initial Grid.
-
----
-
 # Procedural Maze Generation in UE5: Part 1 — The Foundation
 
 In this series, we are building a procedurally generated maze from scratch using **Unreal Engine 5**. We will start by building the "Grid", the mathematical foundation of every maze, and a "Random Engine" to make it repeatable.
