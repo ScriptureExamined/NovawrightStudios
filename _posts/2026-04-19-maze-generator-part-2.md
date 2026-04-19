@@ -1,82 +1,66 @@
----
-layout: post
-title: "Building a Procedural Maze Generator in UE5 Blueprints Part 1"
-date: 2026-04-18
-author: Roberta
-categories: [Tutorials]
-published: false
-excerpt: >
-  In this series, we build a procedurally generated maze from scratch using Unreal Engine 5. In Part 1, we laid the foundation: creating the Maze Cell, setting up the Random Seed engine, and spawning the initial Grid. In this part, we will prepare the Logic Machine for carving: identifying the Entrance and setting up the "Stack" (the memory of where the generator has been).
----
+# Procedural Maze Generation in UE5: Part 2 — The Random Entrance
 
-# Procedural Maze Generation in UE5: Part 2 — The Carving Logic
-
-Our generator has a memory (the **GridArray**), but currently, every cell is a solid "waffle" with four walls. To create a maze, we need to pick a starting point and begin "carving" through those walls.
+Now that our "waffle" grid is built and stored in memory, we need to pick a starting point. Instead of always starting in the same corner, we will use our **ActiveStream** to pick a random tile on the bottom row to be our entrance.
 
 ---
 
-#### Step 1 — Create the "Visited" List and Stack
+#### Step 1 — Transitioning from the Loops
 
-For our algorithm to work, the generator needs to know two things: which cells it has already visited (so it doesn't go in circles) and the path it took (so it can backtrack).
+We need to wait for the entire grid to finish spawning before we can pick an entrance. 
 
-1. In `BP_MazeGenerator`, create a new variable named `VisitedCells`.
-2. Set the **Variable Type** to `BP_MazeCell` (**Object Reference**).
-3. Change it to an **Array** (the grid icon).
-
-4. Create another variable named `CellStack`.
-5. Set the **Variable Type** to `BP_MazeCell` (**Object Reference**) and ensure it is also an **Array**.
+1. Find your **For Loop (X)** (the very first loop from Part 1).
+2. Look for the white **Completed** pin on the right side of that node.
+3. Drag a wire from **Completed** and search for a **Sequence** node. 
+   > *A Sequence node is like a power strip. It lets us run multiple sets of logic one after another. Pin **Then 0** will handle our Entrance, and we will use **Then 1** later for the carving algorithm.*
 
 <a href="{{ '/assets/images/blog/Part2-Step-1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-1.png' | relative_url }}" style="width:100%;" alt="Creating the VisitedCells and CellStack array variables" class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-1.png' | relative_url }}" style="width:100%;" alt="Connecting the Completed pin of the For Loop to a new Sequence node." class="post-image">
 </a>
 
 ---
 
-#### Step 2 — Knocking Down the Entrance
+#### Step 2 — Picking a Random Entrance
 
-Since you want a border around your maze with a specific entrance, we will start at the very first cell we created (**Index 0**) and remove its **South Wall**.
+To keep the entrance on the "South" border, we need to pick a random index from the very first row we spawned (Index 0 to GridSizeX - 1).
 
-6. At the end of your **Step 7** logic (after the loops have finished spawning everything), add a **Sequence** node.
+4. Drag your **ActiveStream** variable into the graph. Drag a wire off it and search for:
+   `Random Integer in Range`.
 
-   > _The first pin (0) of the sequence handled the spawning. We will use the second pin (1) to start the carving._
+5. **Setting the Range:**
+   - Leave **Min** at `0`.
+   - Drag in your `GridSizeX` variable, add a **Subtract** node, set it to `1`, and plug that into **Max**.
 
-7. Drag `GridArray` into the graph. Drag off it and search for **Get (a copy)**. Leave the index at `0`.
+6. **The Connection:** Drag your `GridArray` variable into the graph and select **Get (a copy)**. Plug the result of your random integer into the **Index** pin of the Get node.
 
-8. Drag a wire off that **Get** node and search for `Set Show South Wall`. Uncheck the box (**False**).
+---
 
-<a href="{{ '/assets/images/blog/Part2-Step-2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-2.png' | relative_url }}" style="width:100%;" alt="Using the GridArray to find the first cell and hiding its south wall to create an entrance." class="post-image">
+#### Step 3 — Opening the Door and Starting the Path
+
+Now we physically remove the wall and mark this cell as our starting point.
+
+7. Drag a wire off the blue output pin of the **Get** node and search for `Set Show South Wall`. 
+   - Uncheck the box (**False**).
+   - Connect the white execution wire from **Sequence (Then 0)** to the input of this node.
+
+8. **CurrentCell Variable:** Right-click the blue output pin of that same **Get** node and select **Promote to Variable**. Name it `CurrentCell`.
+   > *This variable is your 'GPS.' It tells the generator exactly which cell it is currently standing in.*
+
+9. **The Memory Lists:** Drag your `VisitedCells` and `CellStack` arrays into the graph. Search for the **Add** node for each.
+   - Connect the execution wire from `Set Show South Wall` through both **Add** nodes.
+   - Connect your `CurrentCell` variable to the input of both **Add** nodes.
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.png' | relative_url }}" style="width:100%;" alt="Promoting the starting cell to CurrentCell and adding it to the Visited and Stack arrays." class="post-image">
 </a>
 
 ---
 
-#### Step 3 — Starting the Algorithm
+### Why the "CurrentCell" Matters
+From this point forward, the generator stops looking at the whole grid. It only cares about `CurrentCell`. It will look at its neighbors, pick one, move there, and then that neighbor becomes the new `CurrentCell`.
 
-Now we tell the "Carver" where to begin its journey.
 
-9. Drag your `VisitedCells` variable into the graph and select **Add**.
-10. Connect the **Index 0** cell (from Step 7) to this **Add** node.
-
-11. Drag your `CellStack` variable into the graph and select **Add**.
-12. Connect that same **Index 0** cell here as well.
-
----
-
-### Why the "Stack" Matters
-
-Think of the **CellStack** like a trail of breadcrumbs.
-
-- As the generator moves forward into a new cell, it adds that cell to the **Stack**.
-- If the generator hits a dead end (where all neighbors are already visited), it "pops" the top cell off the stack to move backward until it finds a cell with an unvisited neighbor.
-
----
-
-### Why the "Visited" List Matters
-
-Without the **VisitedCells** list, the generator is like a person lost in a forest who keeps walking in circles. By checking this list before moving, the generator ensures it only carves into "fresh" territory, which is how we guarantee there are no infinite loops in your maze.
 
 ---
 
 ### Expected Result
-
-When you hit **Play**, the grid will still look like a waffle, but the very first tile (usually the bottom-left corner) will now have its front wall missing. Behind the scenes, the generator has now "marked" that spot as the beginning of the maze and is ready to look for its neighbors.
+When you hit **Play**, a random tile along the bottom edge of your grid will have its front wall missing. The generator has now "stepped into" the maze and is ready to look for the next room!
