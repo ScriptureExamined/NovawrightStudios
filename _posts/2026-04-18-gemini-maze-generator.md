@@ -80,15 +80,53 @@ In this series, we are building a procedurally generated maze from scratch using
 
 #### Step 3 — Visibility Logic
 
-9. Create four **Public Booleans** (click the Eye icon): `ShowNorthWall`, `ShowSouthWall`, `ShowEastWall`, and `ShowWestWall`. In the **Details Panel**, make sure they are checked (True) by default.
+9. In the variables section on the left, create four **Public Booleans** (click the Eye icon): `ShowNorthWall`, `ShowSouthWall`, `ShowEastWall`, and `ShowWestWall`. In the **Details Panel**, make sure they are checked (True) by default.
 
-10. In the **Construction Script** tab, drag the wall components into the graph as **Get**. Drag off them to create `Set Visibility` nodes.
+---
+
+<div style="display:flex; gap:10px;">
+  <a href="{{ '/assets/images/blog/Part1-Step-3a.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-3a.png' | relative_url }}" style="width:100%;" alt="ShowNorthWall details" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-3b.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-3b.png' | relative_url }}" style="width:100%;" alt="ShowSouthWall details" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-3c.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-3c.png' | relative_url }}" style="width:100%;" alt="ShowEastWall details" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-3d.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-3d.png' | relative_url }}" style="width:100%;" alt="ShowWestWall details" class="post-image">
+  </a>
+</div>
+
+---
+
+> ### Why the Construction Script?
+>
+> In Unreal Engine, the **Construction Script** runs every time an object is created or changed in the editor, whereas the **Event Graph** only runs once the game actually starts.
+>
+> By putting our wall visibility logic here, we ensure that if we manually check or uncheck the "Show Wall" boxes in the editor details, the walls will disappear or reappear **instantly** in our viewport. This makes it much easier to test and see your changes without having to hit "Play" every time!
+
+---
+
+10. **The Construction Script Logic:**
+    - Click on the **Construction Script** tab at the top of your Blueprint editor.
+    - **Drag the Walls:** Go to the **Components** panel on the left. Click and hold `NorthWall`, then drag it directly into the center of the graph. When you let go, a small node will appear labeled **North Wall**.
+    - **Add the Visibility Node:** Drag a wire out from the blue pin (the output) of the `NorthWall` node. When you let go of the mouse, a search box will appear. Type `Set Visibility` and select it.
+    - **Connecting the Toggle:** Drag your `ShowNorthWall` variable from the Variables list into the graph and select **Get ShowNorthWall**. Connect its red pin to the **New Visibility** checkbox on the node.
+
+    **Pro-Tip for Beginners:**
+
+If you want to save time, you can drag the wall component into the graph, and then drag the Boolean variable directly onto the "New Visibility" pin of the Set Visibility node. Unreal will automatically create the "Get" node and connect it for you!
 
 11. Connect your booleans to the **New Visibility** pins and chain the execution wires together.
 
-<a href="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}" alt="Connecting the boolean variables to wall visibility" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part1-Step-3e.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-3e.png' | relative_url }}" style="width:50%;" alt="Connecting the boolean variables to wall visibility" class="post-image">
+  </a>
 
 ---
 
@@ -104,9 +142,33 @@ In this series, we are building a procedurally generated maze from scratch using
 
 14. Create one more variable named `GridArray`. Set its type to `BP_MazeCell` (Object Reference). Click the icon next to the type and change it to the **Grid icon** (Array).
 
-<a href="{{ '/assets/images/blog/Part1-Step-4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-4.png' | relative_url }}" alt="Creating the Generator variables and array" class="post-image">
-</a>
+---
+
+<div style="display:flex; gap:10px;">
+  <a href="{{ '/assets/images/blog/Part1-Step-4a.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4a.png' | relative_url }}" style="width:100%;" alt="Creating the Generator variables and array" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-4b.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4b.png' | relative_url }}" style="width:100%;" alt="Showing GridSizeX details" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-4c.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4c.png' | relative_url }}" style="width:100%;" alt="Showing GridSizeY details" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-4d.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4d.png' | relative_url }}" style="width:100%;" alt="Showing TileSpacing details" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-4e.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4e.png' | relative_url }}" style="width:100%;" alt="Showing MazeSeed details" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-4f.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4f.png' | relative_url }}" style="width:100%;" alt="Showing GridArray details" class="post-image">
+  </a>
+</div>
 
 ---
 
