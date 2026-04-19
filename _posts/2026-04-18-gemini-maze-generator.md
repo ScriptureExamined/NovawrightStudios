@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a Procedural Maze Generator in UE5 Blueprints Part 1"
-date: 2026-04-19
+date: 2026-04-18
 author: Roberta
 categories: [Tutorials]
 published: true
@@ -186,32 +186,79 @@ If you want to save time, you can drag the wall component into the graph, and th
 
 ---
 
+<a href="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}" style="width:100%;" alt="Showing setting MazeSeed" class="post-image">
+</a>
+
+---
+
 #### Step 6 — Spawning the Grid
 
-20. Drag your `GridArray` variable into the graph and select **Clear**. Connect this after `Set ActiveStream`.
+20. **Clearing the Memory:** Drag your `GridArray` variable from the Variables list into the graph. Drag a wire off the blue pin and search for **Clear**. Connect the white execution wire from `Set ActiveStream` into this **Clear** node.
 
-21. Drag a wire from **Clear** and add a **For Loop**. Drag `GridSizeX` in, **Subtract 1**, and plug into **Last Index**.
+    > _This ensures that every time the game starts, our list is empty and ready for a new maze._
 
-22. From the **Loop Body**, add a second **For Loop** using `GridSizeY - 1`.
+21. **The First Loop (X):** Drag a wire from the **Clear** node's execution pin and search for **For Loop**. Drag `GridSizeX` into the graph as **Get**. Drag a wire off `GridSizeX`, type `-` to find the **Subtract** node, type `1` in the bottom box, and plug the result into **Last Index**.
 
-23. From the **second** Loop Body, add a **SpawnActor from Class** node. Set the Class to `BP_MazeCell`.
+22. **The Second Loop (Y):** Drag a wire off the **Loop Body** of that first loop and add a second **For Loop**. Repeat the subtraction steps using `GridSizeY - 1` for this loop's **Last Index**.
 
-24. **Right-click** the orange **Spawn Transform** and yellow **Location** pins to **Split** them.
+23. **Spawning the Tile:** From the **Loop Body** of that _second_ loop, drag a wire and search for:
+    `SpawnActor from Class`.
+    In the **Class** dropdown on the node, select `BP_MazeCell`.
+
+24. **Opening the Pins:** The node starts with one orange pin for the location. To see the individual coordinates:
+    - **Right-click** the orange **Spawn Transform** pin and select **Split Struct Pin**.
+    - **Right-click** the new yellow **Location** pin that appears and select **Split Struct Pin** again.
+    - You should now see three green pins labeled **Location X**, **Location Y**, and **Location Z**.
+
+---
+
+<a href="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}" style="width:100%;" alt="A Blueprint graph showing the execution flow starting from a 'Clear GridArray' node into nested For Loops with subtracted indices and a split SpawnActor node." class="post-image">
+</a>
 
 ---
 
 #### Step 7 — Placement Math & Memory
 
-25. Add a **Get Actor Location** node. **Right-click** the orange pin and select **Split Struct Pin**.
+25. **Finding the Start Point:** Right-click and search for **Get Actor Location**.
+    - **Right-click** the orange **Return Value** pin and select **Split Struct Pin**.
+      > _This gives us the exact X, Y, and Z coordinates of where you placed the Generator in your level. Without this, the maze would always spawn at the center of the world (0,0,0) instead of where you want it._
 
-26. **X Location:** (X Loop Index × `TileSpacing`) + Actor Location X. Plug into **Spawn Transform Location X**.
-27. **Y Location:** (Y Loop Index × `TileSpacing`) + Actor Location Y. Plug into **Spawn Transform Location Y**.
+26. **Calculating the X Position:** \* Drag a wire from the **Index** pin of your first **For Loop** (the X loop).
+    - Type `*` and select **Multiply**. Plug your `TileSpacing` variable into the bottom of that node.
+    - Drag a wire from the result, type `+`, and select **Add**.
+    - Connect the other side of the **Add** node to the **Return Value X** from your Actor Location.
+    - Plug the final result into **Spawn Transform Location X**.
 
-28. **Save to Memory:** Drag `GridArray` into the graph. Drag off it and search for **Add**. Connect the blue **Return Value** of the Spawn node to the Add node. Connect the execution wire from Spawn to Add.
+27. **Calculating the Y Position:** \* Repeat the exact same steps for the Y axis: Multiply the **Index** of the second loop by `TileSpacing`, add it to the **Return Value Y**, and plug it into **Spawn Transform Location Y**.
 
-<a href="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}" alt="Complete grid spawning and array logic" class="post-image">
+28. **Save to Memory (The Array):** \* Drag your `GridArray` variable into the graph. Drag a wire off its pin and search for the **Add** node.
+    - **The Wire Connection:** Connect the white execution wire from the **SpawnActor** node into the **Add** node.
+    - **The Reference Connection:** Connect the blue **Return Value** (the actual cell we just created) from the Spawn node into the blue input pin of the **Add** node.
+
+<a href="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}" style="width:100%;" alt="Complete grid spawning logic showing the math for local-to-world coordinate conversion and adding the result to the GridArray." class="post-image">
 </a>
+
+---
+
+### Why the Math Matters
+
+Think of the Loop Index as a **Coordinate** (like 0, 1, 2) and the Tile Spacing as the **Size**.
+If your spacing is 100:
+
+- Tile 0 is at `0 * 100 = 0`.
+- Tile 1 is at `1 * 100 = 100`.
+- Tile 2 is at `2 * 100 = 200`.
+
+By adding the **Actor Location** at the end, we shift that entire grid to start wherever the Generator is sitting in your level!
+
+---
+
+### Why the Array Matters
+
+By using the **Add** node, we are taking the "Cell" we just spawned and putting it into our `GridArray` list. Because the loops run in order, **Index 0** in our list will always be the first tile (the Entrance), and the last index will be the far corner (the Exit).
 
 ---
 
@@ -237,3 +284,9 @@ By saving every cell into the **GridArray**, our generator now has a "Memory." W
 ### Expected result
 
 When you hit **Play**, a 10x10 square of walled tiles will appear. It looks like a waffle now, but because we have a **Seed** and a **GridArray**, we are ready to start carving a perfect, repeatable maze!
+
+---
+
+> Stay tuned for part 2.
+
+---
