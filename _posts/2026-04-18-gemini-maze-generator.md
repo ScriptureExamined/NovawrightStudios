@@ -31,7 +31,7 @@ In this series, we are building a procedurally generated maze from scratch using
 ---
 
 <a href="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}" style="width:10%;" alt="Creating a new Blueprint Actor" class="post-image">
+    <img src="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}" style="width:25%;" alt="Creating a new Blueprint Actor" class="post-image">
   </a>
 
 ---
