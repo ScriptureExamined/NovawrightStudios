@@ -1,17 +1,17 @@
 ---
 layout: post
 title: "Building a Procedural Maze Generator in UE5 Blueprints Part 1"
-date: 2026-04-17
+date: 2026-04-19
 author: Roberta
 categories: [Tutorials]
-published: false
+published: true
 excerpt: >
-  In Part 2, we completed the full maze generation logic using a stack-based depth-first search system. The maze now exists in memory, but it is not yet visible. In this part, we will read the grid data and begin building the maze visually in the world.
+  In this series, we build a procedurally generated maze from scratch using Unreal Engine 5. In Part 1, we lay the foundation: creating the Maze Cell, setting up the Random Seed engine, and spawning the initial Grid.
 ---
 
-# Procedural Maze Generation in UE5: Part 1 — The Grid
+# Procedural Maze Generation in UE5: Part 1 — The Foundation
 
-In this series, we are building a procedurally generated maze from scratch using **Unreal Engine 5**. We will start by building the "Grid"—the mathematical foundation of every maze.
+In this series, we are building a procedurally generated maze from scratch using **Unreal Engine 5**. We will start by building the "Grid", the mathematical foundation of every maze, and a "Random Engine" to make it repeatable.
 
 ---
 
@@ -28,170 +28,150 @@ In this series, we are building a procedurally generated maze from scratch using
 4. Name the file:
    `BP_MazeCell`
 
+---
+
 <a href="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}" alt="Creating a new Blueprint Actor" class="post-image">
 </a>
 
 ---
 
-#### Step 2 — Add the Floor Mesh
+#### Step 2 — Add the Floor and Walls
 
 5. Double-click `BP_MazeCell` to open the editor.
 
-6. Click the green **+ Add** button in the Components panel.
+6. Click the green **+ Add** button in the Components panel. Search for `Static Mesh` and rename it to `FloorMesh`. Set the **Static Mesh** to `Cube` and the **Scale** to: **X: 1.0, Y: 1.0, Z: 0.1**.
 
-7. Search for and select:
-   `Static Mesh` Rename it to FloorMesh.
+7. Click **+ Add** again and add another `Static Mesh`. Rename it to `NorthWall`. Set the **Static Mesh** to `Cube` and the **Scale** to: **X: 1.0, Y: 0.1, Z: 1.0**. Set its **Location** to **X: 50.0, Y: 0, Z: 50**.
 
-8. In the **Details Panel** (right side), find the **Static Mesh** dropdown and select:
-   `Cube`
+8. **Duplicate** the NorthWall three times to create the rest of the box:
 
-9. Under **Scale**, set the values to:
-   - **X:** 1.0
-   - **Y:** 1.0
-   - **Z:** 0.1
-
-<a href="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}" alt="Configuring the Floor Mesh scale and type" class="post-image">
-</a>
+| Wall Name     | Location (X, Y, Z) | Rotation (X, Y, Z) |
+| :------------ | :----------------- | :----------------- |
+| **SouthWall** | -50, 0, 50         | 0, 0, 0            |
+| **EastWall**  | 0, 50, 50          | 0, 0, 90           |
+| **WestWall**  | 0, -50, 50         | 0, 0, 90           |
 
 ---
-
-#### Step 3 — Create the Generator Actor
-
-10. In the **Content Browser**, right-click and select:
-    `Blueprint Class` -> `Actor`
-
-11. Name the file:
-    `BP_MazeGenerator`
-
-12. Double-click to open the editor.
-
----
-
-#### Step 4 — Setup Grid Variables
-
-13. In the **My Blueprint** panel, click the **+** next to **Variables**.
-
-14. Create `GridSizeX` (Type: **Integer**). Click the "Eye" icon to make it **Public**.
-
-15. Create `GridSizeY` (Type: **Integer**). Click the "Eye" icon to make it **Public**.
-
-16. Create `TileSpacing` (Type: **Float**). Click the "Eye" icon to make it **Public**.
-
-17. Click **Compile**, then set the **Default Values** in the Details panel:
-    - `GridSizeX`: 10
-    - `GridSizeY`: 10
-    - `TileSpacing`: 100.0
 
 <div style="display:flex; gap:10px;">
-  <a href="{{ '/assets/images/blog/Part1-Step-4a.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part1-Step-4a.png' | relative_url }}" style="width:100%;" alt="Configuring the Floor Mesh scale and type" class="post-image">
+  <a href="{{ '/assets/images/blog/Part1-Step-2a.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-2a.png' | relative_url }}" style="width:100%;" alt="Configuring the Floor Mesh" class="post-image">
   </a>
 
-  <a href="{{ '/assets/images/blog/Part1-Step-4b.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part1-Step-4b.png' | relative_url }}" style="width:100%;" alt="Configuring the Floor Mesh scale and type" class="post-image">
+  <a href="{{ '/assets/images/blog/Part1-Step-2b.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-2b.png' | relative_url }}" style="width:100%;" alt="Configuring the NorthWall mesh" class="post-image">
   </a>
 
-  <a href="{{ '/assets/images/blog/Part1-Step-4c.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part1-Step-4c.png' | relative_url }}" style="width:100%;" alt="Configuring the Floor Mesh scale and type" class="post-image">
+  <a href="{{ '/assets/images/blog/Part1-Step-2c.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-2c.png' | relative_url }}" style="width:100%;" alt="Configuring the SouthWall mesh" class="post-image">
   </a>
 
-  <a href="{{ '/assets/images/blog/Part1-Step-4d.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part1-Step-4d.png' | relative_url }}" style="width:100%;" alt="Configuring the Floor Mesh scale and type" class="post-image">
+  <a href="{{ '/assets/images/blog/Part1-Step-2d.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-2d.png' | relative_url }}" style="width:100%;" alt="Configuring the EastWall mesh" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-2e.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-2e.png' | relative_url }}" style="width:100%;" alt="Configuring the WestWall mesh" class="post-image">
   </a>
 </div>
 
 ---
 
-#### Step 5 — The Cleanup (Clear Children)
+#### Step 3 — Visibility Logic
 
-18. In `BP_MazeGenerator`, go to the **Construction Script** tab.
+9. Create four **Public Booleans** (click the Eye icon): `ShowNorthWall`, `ShowSouthWall`, `ShowEastWall`, and `ShowWestWall`. In the **Details Panel**, make sure they are checked (True) by default.
 
-19. Drag from the **Construction Script** node and search for:
-    `Clear Children`
+10. In the **Construction Script** tab, drag the wall components into the graph as **Get**. Drag off them to create `Set Visibility` nodes.
 
-20. Drag the **Default Scene Root** from the Components panel into the graph.
+11. Connect your booleans to the **New Visibility** pins and chain the execution wires together.
 
-21. Connect:
-    - `Default Scene Root` → **Target** (on the Clear Children node).
-
-<a href="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}" alt="Adding the Clear Children node for editor cleanup" class="post-image">
+<a href="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}" alt="Connecting the boolean variables to wall visibility" class="post-image">
 </a>
 
 ---
 
-#### Step 6 — Create the Nested Loops
+#### Step 4 — Setup the Generator & Variables
 
-22. Drag from the **Clear Children** execution pin and search for:
-    `For Loop`
+12. Create a new **Actor** Blueprint named `BP_MazeGenerator` and open it.
 
-23. Connect `GridSizeX` minus 1 to the **Last Index**. (This is the X Loop).
+13. In the **Variables** panel, create these four **Public** variables:
+    - `GridSizeX` (Integer) - Default: 10
+    - `GridSizeY` (Integer) - Default: 10
+    - `TileSpacing` (Float) - Default: 100.0
+    - `MazeSeed` (Integer) - Default: 0
 
-24. Drag from the **Loop Body** of the first loop and search for another:
-    `For Loop`
+14. Create one more variable named `GridArray`. Set its type to `BP_MazeCell` (Object Reference). Click the icon next to the type and change it to the **Grid icon** (Array).
 
-25. Connect `GridSizeY` minus 1 to the **Last Index**. (This is the Y Loop).
-
-<a href="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}" alt="Creating nested loops for a 2D grid" class="post-image">
+<a href="{{ '/assets/images/blog/Part1-Step-4.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part1-Step-4.png' | relative_url }}" alt="Creating the Generator variables and array" class="post-image">
 </a>
 
 ---
 
-#### Step 7 — Adding the Maze Cells
+#### Step 5 — The Random Engine (Maze Seed)
 
-26. Drag from the **Loop Body** of the **second** loop (the Y loop).
+15. Open the **Event Graph** of `BP_MazeGenerator`.
 
-27. Search for and select:
-    `Add Child Actor Component`
+16. Right-click and add a **Make RandomStream** node.
 
-28. In the Details panel, set **Child Actor Class** to:
-    `BP_MazeCell`
+17. Drag `MazeSeed` into the graph as **Get**. Connect the **Green** pin to **Initial Seed**.
 
-29. **Right-click** the blue **Relative Transform** pin and select **Split Struct Pin**.
+18. **Right-click** the **Blue** "Return Value" pin on the Make node and select **Promote to Variable**. Name it `ActiveStream`.
 
-30. **Right-click** the yellow **Relative Transform Location** pin and select **Split Struct Pin**.
+19. Connect **Event Begin Play** → **Set ActiveStream**.
 
 ---
 
-#### Step 8 — Calculate Grid Position
+#### Step 6 — Spawning the Grid
 
-31. Drag from the **Index** of the first loop (X) and connect to a `*` (Multiply) node.
-    - Multiply by `TileSpacing`.
-    - Connect the result to `Relative Transform Location X`.
+20. Drag your `GridArray` variable into the graph and select **Clear**. Connect this after `Set ActiveStream`.
 
-32. Drag from the **Index** of the second loop (Y) and connect to a `*` (Multiply) node.
-    - Multiply by `TileSpacing`.
-    - Connect the result to `Relative Transform Location Y`.
+21. Drag a wire from **Clear** and add a **For Loop**. Drag `GridSizeX` in, **Subtract 1**, and plug into **Last Index**.
 
-<a href="{{ '/assets/images/blog/Part1-Step-8.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-8.png' | relative_url }}" alt="Connecting indices to transform pins" class="post-image">
+22. From the **Loop Body**, add a second **For Loop** using `GridSizeY - 1`.
+
+23. From the **second** Loop Body, add a **SpawnActor from Class** node. Set the Class to `BP_MazeCell`.
+
+24. **Right-click** the orange **Spawn Transform** and yellow **Location** pins to **Split** them.
+
+---
+
+#### Step 7 — Placement Math & Memory
+
+25. Add a **Get Actor Location** node. **Right-click** the orange pin and select **Split Struct Pin**.
+
+26. **X Location:** (X Loop Index × `TileSpacing`) + Actor Location X. Plug into **Spawn Transform Location X**.
+27. **Y Location:** (Y Loop Index × `TileSpacing`) + Actor Location Y. Plug into **Spawn Transform Location Y**.
+
+28. **Save to Memory:** Drag `GridArray` into the graph. Drag off it and search for **Add**. Connect the blue **Return Value** of the Spawn node to the Add node. Connect the execution wire from Spawn to Add.
+
+<a href="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}" alt="Complete grid spawning and array logic" class="post-image">
 </a>
 
 ---
 
-### Connections Recap
+### Connections recap
 
-**Execution Flow:** Construction Script → Clear Children → For Loop (X) → For Loop (Y) → Add Child Actor Component
+**Execution flow:**
+Event Begin Play → Set ActiveStream → Clear GridArray → For Loop (X) → For Loop (Y) → SpawnActor → Add to GridArray
 
-**Data Flow:**
+**Data flow:**
 
-1. X Index × TileSpacing → Location X
-2. Y Index × TileSpacing → Location Y
-3. BP_MazeCell → Child Actor Class
-
----
-
-### Why This Matters
-
-A nested loop allows us to fill a 2D space. The "X" loop creates the rows, and for every row, the "Y" loop creates the columns.
-
-> Without the "Clear Children" node, Unreal would keep adding new tiles on top of old ones every time you moved the generator, eventually slowing down your computer.
+- `MazeSeed` → `ActiveStream` (Our Random Engine)
+- Loop Indices → World Position (Where the tile goes)
+- Spawned Actor → `GridArray` (Our Memory)
 
 ---
 
-### Expected Result
+### Why this matters
 
-Drag your `BP_MazeGenerator` into the level. You should see a 10x10 square of tiles. If you change the `GridSize` variables in the Details panel, the square will grow or shrink instantly!
+By saving every cell into the **GridArray**, our generator now has a "Memory." We can now tell it to look at Index 0 to create an entrance, or use the `ActiveStream` to randomly pick neighbors and carve a path through the "waffle."
+
+---
+
+### Expected result
+
+When you hit **Play**, a 10x10 square of walled tiles will appear. It looks like a waffle now, but because we have a **Seed** and a **GridArray**, we are ready to start carving a perfect, repeatable maze!
