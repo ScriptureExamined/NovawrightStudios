@@ -187,7 +187,7 @@ If you want to save time, you can drag the wall component into the graph, and th
 ---
 
 <a href="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}" style="width:100%;" alt="Showing setting MazeSeed" class="post-image">
+    <img src="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}" style="width:50%;" alt="Showing setting MazeSeed" class="post-image">
 </a>
 
 ---
