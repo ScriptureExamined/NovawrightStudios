@@ -25,11 +25,11 @@ Instead, we are building the **foundation** that everything else depends on.
 
 By the end of Part 1, you will have:
 
-- A clean project structure
-- Two reusable data structures (`S_NeighbourInfo`, `S_MazeCell`)
-- A fully set up `BP_MazeGenerator` Blueprint
-- All required variables configured
-- Instanced mesh components ready for rendering later
+- a clean project structure
+- two reusable data structures (`S_NeighborInfo`, `S_MazeCell`)
+- a fully set up `BP_MazeGenerator` Blueprint
+- all required variables configured
+- instanced mesh components ready for rendering later
 
 > This is the groundwork. If this part is wrong, everything later becomes confusing.
 
@@ -40,7 +40,7 @@ By the end of Part 1, you will have:
 Make sure you have:
 
 - Unreal Engine 5.3 or newer
-- A new **Blank** or **Third Person** project
+- a new **Blank** or **Third Person** project
 
 ---
 
@@ -58,7 +58,9 @@ This step prepares your project so everything stays organized and easy to follow
 
 ## Instructions
 
-### Step 1 — Create a new project
+### Step 1.1 — Create a new project
+
+#### Step 1.1.1 — Open the project browser
 
 1. Open Unreal Engine 5
 
@@ -66,13 +68,19 @@ This step prepares your project so everything stays organized and easy to follow
 
    **Games**
 
+#### Step 1.1.2 — Choose the project template
+
 3. Select:
 
    **Blank**
 
 4. Click:
 
-   **Next** (may not exeist depending on your version)
+   **Next**
+
+> Depending on your Unreal version, the exact button layout may look slightly different.
+
+#### Step 1.1.3 — Set the project options
 
 5. Choose:
    - Blueprint
@@ -87,7 +95,9 @@ This step prepares your project so everything stays organized and easy to follow
 
 ---
 
-### Step 2 — Create your folder structure
+### Step 1.2 — Create your folder structure
+
+#### Step 1.2.1 — Create the main folder
 
 1. Open the **Content Browser**
 
@@ -101,6 +111,8 @@ This step prepares your project so everything stays organized and easy to follow
 
    `MazeGenerator`
 
+#### Step 1.2.2 — Create the subfolders
+
 5. Double-click to open the folder
 
 6. Create two more folders:
@@ -110,13 +122,19 @@ This step prepares your project so everything stays organized and easy to follow
 
 ---
 
+### Screenshot Placeholder
+
+**[Screenshot: Content Browser showing the MazeGenerator folder with Blueprints and Meshes subfolders]**
+
+---
+
 <a href="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}" alt="Content Browser showing MazeGenerator folder with Blueprints and Meshes subfolders" class="post-image">
 </a>
 
 ---
 
-### Step 3 — Prepare placeholder meshes (recommended)
+### Step 1.3 — Prepare placeholder meshes
 
 For this tutorial, you need two mesh references later:
 
@@ -125,14 +143,14 @@ For this tutorial, you need two mesh references later:
 
 For beginners, the easiest option is to use Unreal’s built-in meshes instead of making your own custom assets.
 
-#### Option A — Use Unreal’s built-in meshes (recommended)
+---
+
+#### Step 1.3.1 — Option A: Use Unreal’s built-in meshes (recommended)
 
 Unreal Engine already includes basic shapes you can use immediately.  
 We will use these instead of creating custom meshes.
 
----
-
-### Step 1 — Show Engine Content (VERY IMPORTANT)
+##### Step 1.3.1.1 — Show Engine Content
 
 By default, Unreal hides built-in assets.
 
@@ -144,9 +162,7 @@ By default, Unreal hides built-in assets.
 
    ✔️ **Show Engine Content**
 
----
-
-### Step 2 — Locate the built-in meshes
+##### Step 1.3.1.2 — Locate the built-in meshes
 
 1. In the Content Browser, scroll down until you see a folder called:
 
@@ -163,9 +179,7 @@ By default, Unreal hides built-in assets.
 
 > These are built-in meshes provided by Unreal Engine.
 
----
-
-### Step 3 — Choose meshes for this tutorial
+##### Step 1.3.1.3 — Choose meshes for this tutorial
 
 For simplicity, use:
 
@@ -174,9 +188,7 @@ For simplicity, use:
 
 > We will scale them later, so using the same mesh is perfectly fine.
 
----
-
-### Step 4 — (Optional but recommended) Create references in your folder
+##### Step 1.3.1.4 — Create references in your folder (optional but recommended)
 
 To keep your project organized, you can create copies:
 
@@ -200,9 +212,7 @@ To keep your project organized, you can create copies:
 > If you skip this step, you can still use the Engine meshes directly.  
 > This step just keeps your project cleaner.
 
----
-
-### Step 5 — Verify the mesh
+##### Step 1.3.1.5 — Verify the mesh
 
 1. Double-click `SM_Floor` or `Cube`
 
@@ -214,11 +224,66 @@ To keep your project organized, you can create copies:
 
 ---
 
+### Screenshot Placeholder
+
+**[Screenshot: Engine Content BasicShapes folder showing Cube and Plane meshes]**
+
+---
+
+<a href="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}">
+  <img src="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}" alt="Engine Content BasicShapes folder showing Cube and Plane meshes" class="post-image">
+</a>
+
+---
+
+#### Step 1.3.2 — Option B: Import your own meshes
+
+If you already have custom meshes:
+
+##### Step 1.3.2.1 — Open the Meshes folder
+
+1. Open the **Content Browser**
+
+2. Open your:
+
+   `MazeGenerator/Meshes`
+
+   folder
+
+##### Step 1.3.2.2 — Import the files
+
+3. Click:
+
+   **Import**
+
+4. Select your mesh files from your computer
+
+5. Import:
+   - a floor mesh
+   - a wall mesh
+
+---
+
+### Connections recap
+
+**Project structure created:**
+
+- `MazeGenerator`
+- `MazeGenerator/Blueprints`
+- `MazeGenerator/Meshes`
+
+**Mesh preparation options:**
+
+- built-in Engine meshes
+- imported custom meshes
+
+---
+
 ## Why this matters
 
-- Gives you working meshes immediately
-- Avoids needing external 3D software
-- Keeps the focus on learning Blueprints
+- gives you working meshes immediately
+- avoids needing external 3D software
+- keeps the focus on learning Blueprints
 
 ---
 
@@ -239,70 +304,8 @@ To keep your project organized, you can create copies:
 
 ---
 
-## Expected result
-
-You now have access to:
-
-- a Cube mesh for walls
-- a Cube mesh for floors
-
-These will be assigned later in your Blueprint.
-
-Later, you can replace them with better-looking meshes.
-
-> We are only setting up the system right now. The exact art does not matter yet.
-
----
-
-<a href="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}" alt="Engine Content BasicShapes folder showing Cube and Plane meshes" class="post-image">
-</a>
-
----
-
-#### Option B — Import your own meshes
-
-If you already have custom meshes:
-
-1. Open the **Content Browser**
-
-2. Open your:
-
-   `MazeGenerator/Meshes`
-
-   folder
-
-3. Click:
-
-   **Import**
-
-4. Select your mesh files from your computer
-
-5. Import:
-   - a floor mesh
-   - a wall mesh
-
----
-
-## Why this matters
-
-You will assign these meshes to your maze generator later.
-
-If you do not have custom meshes yet, that is fine.
-
-> Built-in meshes are completely acceptable for learning and testing.
-
----
-
-## Common mistakes
-
 ❌ Creating assets in random folders  
 ✔️ Keep everything inside `MazeGenerator`
-
----
-
-❌ Skipping mesh setup  
-✔️ You will need meshes later for visualization
 
 ---
 
@@ -313,6 +316,8 @@ You now have:
 - `MazeGenerator/Blueprints`
 - `MazeGenerator/Meshes`
 - access to placeholder meshes for floor and wall use
+
+These will be assigned later in your Blueprint.
 
 ---
 
@@ -325,6 +330,7 @@ You now have:
 This step creates **custom data containers (structs)**.
 
 These will store:
+
 - maze cell data
 - neighbor relationships
 
@@ -332,39 +338,33 @@ These will store:
 
 ---
 
-## Step 2.1 — Create `S_NeighborInfo`
+## Instructions
 
----
+### Step 2.1 — Create `S_NeighborInfo`
 
-### What this step does
-
-This struct stores information about neighboring cells.
-
----
-
-### Instructions
+#### Step 2.1.1 — Add the structure asset
 
 1. Go to:
 
    `MazeGenerator → Blueprints`
 
-2. Right-click
+2. Right-click in empty space
 
 3. Search for:
 
-   **Structure**
+   `Structure`
 
-4. Name it:
+4. Create the structure
+
+5. Name it:
 
    `S_NeighborInfo`
 
----
+#### Step 2.1.2 — Add the variables
 
-### Step 2.1.1 — Add variables
+1. Double-click to open the struct
 
-Double click to open the struct:
-
-Add:
+2. Add:
 
 - `CellIndex` (Integer)
 - `DeltaX` (Integer)
@@ -372,62 +372,61 @@ Add:
 
 ---
 
-### Why this matters
+## Why this matters
 
 This struct tells your system:
+
 - which cell is a neighbor
 - in what direction it exists
 
 ---
 
-### Common mistakes
+## Common mistakes
 
 ❌ Using wrong variable types  
 ✔️ All must be **Integer**
 
 ---
 
-### Expected result
+## Expected result
 
 You now have a struct that describes neighbor relationships.
 
 ---
 
+### Screenshot Placeholder
+
+**[Screenshot: S_NeighborInfo struct with CellIndex, DeltaX, and DeltaY variables]**
+
+---
+
 <a href="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}" alt="S_NeighbourInfo struct with CellIndex, DeltaX, and DeltaY variables" class="post-image">
+  <img src="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}" alt="S_NeighborInfo struct with CellIndex, DeltaX, and DeltaY variables" class="post-image">
 </a>
 
 ---
 
-## Step 2.2 — Create `S_MazeCell`
+### Step 2.2 — Create `S_MazeCell`
 
----
-
-### What this step does
-
-This struct represents **one cell in the maze**.
-
----
-
-### Instructions
+#### Step 2.2.1 — Add the structure asset
 
 1. Right-click in `Blueprints`
 
 2. Search for:
 
-   **Structure**
+   `Structure`
 
-3. Name it:
+3. Create the structure
+
+4. Name it:
 
    `S_MazeCell`
 
----
+#### Step 2.2.2 — Add the variables
 
-### Step 2.2.1 — Add variables
+1. Double-click to open the struct
 
-Double click to open the struct:
-
-Add:
+2. Add:
 
 - `Row` (Integer)
 - `Col` (Integer)
@@ -439,9 +438,10 @@ Add:
 
 ---
 
-### Why this matters
+## Why this matters
 
 Each cell:
+
 - tracks its position
 - remembers if it was visited
 - stores all four walls
@@ -450,16 +450,22 @@ Each cell:
 
 ---
 
-### Common mistakes
+## Common mistakes
 
 ❌ Forgetting default values  
 ✔️ Walls must start as **True**
 
 ---
 
-### Expected result
+## Expected result
 
 You now have a full maze cell data structure.
+
+---
+
+### Screenshot Placeholder
+
+**[Screenshot: S_MazeCell struct showing Row, Col, bVisited, and four wall booleans]**
 
 ---
 
@@ -481,6 +487,10 @@ This creates the main Blueprint that controls everything.
 
 ## Instructions
 
+### Step 3.1 — Create the Blueprint
+
+#### Step 3.1.1 — Add the Blueprint Class
+
 1. Right-click inside:
 
    `Blueprints`
@@ -497,6 +507,8 @@ This creates the main Blueprint that controls everything.
 
    `BP_MazeGenerator`
 
+#### Step 3.1.2 — Open the Blueprint
+
 5. Double-click to open it
 
 ---
@@ -504,15 +516,29 @@ This creates the main Blueprint that controls everything.
 ## Why this matters
 
 This Blueprint will:
+
 - generate the maze
 - store all data
 - eventually render the maze
 
 ---
 
+## Common mistakes
+
+❌ Choosing the wrong class type  
+✔️ Use **Actor**
+
+---
+
 ## Expected result
 
 You now have an empty `BP_MazeGenerator`.
+
+---
+
+### Screenshot Placeholder
+
+**[Screenshot: Blueprint Class creation menu showing Actor selected for BP_MazeGenerator]**
 
 ---
 
@@ -532,37 +558,35 @@ This step defines all settings and components your maze will use.
 
 ---
 
-## Step 4.1 — Create Variables
+## Instructions
 
----
+### Step 4.1 — Create Variables
 
-### Instructions
+#### Step 4.1.1 — Open the Variables section
 
 Inside `BP_MazeGenerator`:
 
-Go to **My Blueprint → Variables**
+1. Go to:
+
+   **My Blueprint → Variables**
+
+#### Step 4.1.2 — Add the maze settings
 
 Add the following:
-
----
-
-### Maze Settings
 
 - `MazeWidth` (Integer, Default = 12)
 - `MazeHeight` (Integer, Default = 12)
 - `CellSize` (Float, Default = 200.0)
 - `MazeSeed` (Integer, Default = 42)
 
----
+#### Step 4.1.3 — Add the data variables
 
-### Data Storage
+Add:
 
 - `MazeGrid` (Array of `S_MazeCell`)
 - `RandomStream` (Random Stream)
 
----
-
-### Step 4.1.1 — Make variables editable
+#### Step 4.1.4 — Make the main settings editable
 
 For each variable you want to adjust in the level:
 
@@ -585,8 +609,8 @@ You do **not** need to make `MazeGrid` or `RandomStream` editable.
 
 ## Why this matters
 
-- Lets you tweak maze size and seed in the editor
-- Keeps your system flexible
+- lets you tweak maze size and seed in the editor
+- keeps your system flexible
 
 ---
 
@@ -608,23 +632,21 @@ Your main maze settings are now created and visible.
 
 ---
 
+### Screenshot Placeholder
+
+**[Screenshot: BP_MazeGenerator variables panel showing MazeWidth, MazeHeight, CellSize, MazeSeed, MazeGrid, and RandomStream]**
+
+---
+
 <a href="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}">
   <img src="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}" alt="BP_MazeGenerator variables panel showing maze settings and data variables" class="post-image">
 </a>
 
 ---
 
-## Step 4.2 — Add HISM Components
+### Step 4.2 — Add HISM Components
 
----
-
-### What this step does
-
-Adds components that will render the maze efficiently.
-
----
-
-### Instructions
+#### Step 4.2.1 — Add the FloorHISM component
 
 1. Open the **Components** panel inside `BP_MazeGenerator`
 
@@ -642,7 +664,7 @@ Adds components that will render the maze efficiently.
 
    `FloorHISM`
 
----
+#### Step 4.2.2 — Add the WallHISM component
 
 6. Repeat the process to add a second component
 
@@ -650,9 +672,7 @@ Adds components that will render the maze efficiently.
 
    `WallHISM`
 
----
-
-### Step 4.2.1 — Assign meshes
+#### Step 4.2.3 — Assign the floor mesh
 
 Select:
 
@@ -660,11 +680,11 @@ Select:
 
 Then in the **Details** panel:
 
-- Find **Static Mesh**
-- Assign `SM_Floor` if you duplicated the mesh
-- Or assign `Cube` if you are using the built-in mesh directly
+- find **Static Mesh**
+- assign `SM_Floor` if you duplicated the mesh
+- or assign `Cube` if you are using the built-in mesh directly
 
----
+#### Step 4.2.4 — Assign the wall mesh
 
 Select:
 
@@ -672,14 +692,29 @@ Select:
 
 Then:
 
-- Assign `SM_Wall` if you duplicated the mesh
-- Or assign `Cube` if you are using the built-in mesh directly
+- assign `SM_Wall` if you duplicated the mesh
+- or assign `Cube` if you are using the built-in mesh directly
+
+---
+
+### Connections recap
+
+**Components added:**
+
+- `FloorHISM`
+- `WallHISM`
+
+**Mesh assignments:**
+
+- floor mesh → `FloorHISM`
+- wall mesh → `WallHISM`
 
 ---
 
 ## Why this matters
 
 HISM allows:
+
 - many repeated meshes
 - much better performance than spawning separate mesh actors
 
@@ -712,6 +747,12 @@ You now have:
 - `WallHISM`
 
 Both are added as components and both have a mesh assigned.
+
+---
+
+### Screenshot Placeholder
+
+**[Screenshot: BP_MazeGenerator components panel showing FloorHISM and WallHISM with meshes assigned]**
 
 ---
 
