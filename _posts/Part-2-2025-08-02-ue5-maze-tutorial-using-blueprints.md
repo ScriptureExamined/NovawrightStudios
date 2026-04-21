@@ -1021,7 +1021,7 @@ this function removes the correct wall from both cells.
 Add these inputs:
 
 - `CurrentIndex` (Integer)
-- `NeighbourIndex` (Integer)
+- `NeighborIndex` (Integer)
 - `DeltaX` (Integer)
 - `DeltaY` (Integer)
 
@@ -1031,8 +1031,8 @@ Add these inputs:
 
 Create these **Local Variables**:
 
-- `CurrentCell` (`S_MazeCell`)
-- `NeighbourCell` (`S_MazeCell`)
+- `CurrentCell` (`S_MazeCell`) (single struct)
+- `NeighborCell` (`S_MazeCell`) (single struct)
 
 ---
 
@@ -1040,21 +1040,35 @@ Create these **Local Variables**:
 
 1. Drag `MazeGrid` into the graph as **Get**
 
-2. Drag from `MazeGrid`
+2. Drag from the `MazeGrid` pin
 
 3. Search for:
 
    `Get (a copy)`
 
-4. Connect:
+4. Click:
 
-- `CurrentIndex` → `Index`
+   `Get (a copy)`
 
-5. Drag `CurrentCell` into the graph as **Set**
+5. From the **function entry node**, drag from the input pin:
 
-6. Connect the output into `Set CurrentCell`
+   `CurrentIndex`
 
-7. Connect the white execution pin from:
+6. Connect:
+
+- `CurrentIndex` → `Index` on `Get (a copy)`
+
+---
+
+7. Drag `CurrentCell` into the graph as **Set**
+
+8. Connect:
+
+- output of `Get (a copy)` → value input on `Set CurrentCell`
+
+---
+
+9. Connect the white execution pin from:
 
    `RemoveWallBetween`
 
@@ -1064,31 +1078,73 @@ Create these **Local Variables**:
 
 ---
 
+### Connections recap
+
+**Execution flow:**  
+`RemoveWallBetween → Set CurrentCell`
+
+**Data flow:**
+
+- `MazeGrid` → `Get (a copy).Target Array`
+- `CurrentIndex` (function input) → `Get (a copy).Index`
+- `Get (a copy)` output → `Set CurrentCell`
+
+---
+
 ### Step 5 — Read the neighbor cell
 
 1. Drag `MazeGrid` into the graph as **Get**
 
-2. Drag from `MazeGrid`
+2. Drag from the `MazeGrid` pin
 
 3. Search for:
 
    `Get (a copy)`
 
-4. Connect:
+4. Click:
 
-- `NeighbourIndex` → `Index`
+   `Get (a copy)`
 
-5. Drag `NeighbourCell` into the graph as **Set**
+---
 
-6. Connect the output into `Set NeighbourCell`
+5. From the **function entry node**, drag from the input pin:
 
-7. Connect the white execution pin from:
+   `NeighborIndex`
+
+6. Connect:
+
+- `NeighborIndex` → `Index` on `Get (a copy)`
+
+---
+
+7. Drag `NeighborCell` into the graph as **Set**
+
+8. Connect:
+
+- output of `Get (a copy)` → value input on `Set NeighborCell`
+
+---
+
+9. Connect the white execution pin from:
 
    `Set CurrentCell`
 
    to
 
-   `Set NeighbourCell`
+   `Set NeighborCell`
+
+---
+
+### Connections recap
+
+**Execution flow:**  
+`Set CurrentCell → Set NeighborCell`
+
+**Data flow:**
+
+- `MazeGrid` → `Get (a copy).Target Array`
+- `NeighborIndex` (function input) → `Get (a copy).Index`
+- `Get (a copy)` output → `Set NeighborCell`
 
 ---
 
@@ -1096,66 +1152,522 @@ Create these **Local Variables**:
 
 If `DeltaY == -1`, then:
 
-- current cell loses its north wall
-- neighbor cell loses its south wall
+- the **current cell loses its North wall**
+- the **neighbor cell loses its South wall**
 
-1. Drag `DeltaY` into the graph as **Get**
+We will use the **Sequence** node so each direction check gets its own execution path.
 
-2. Drag from `DeltaY`
+For North, we will use:
 
-3. Search for:
+- `Sequence → Then 0`
+
+---
+
+### Step 6.1 — Add the Sequence node
+
+If you have not already done this, add it now.
+
+1. Right-click in empty graph space
+
+2. Search for:
+
+   `Sequence`
+
+3. Click:
+
+   `Sequence`
+
+4. Connect the white execution pin from:
+
+   `Set NeighborCell`
+
+   to
+
+   `Sequence`
+
+This creates separate execution outputs:
+
+- `Then 0`
+- `Then 1`
+- `Then 2`
+- `Then 3`
+
+For this step, we will use:
+
+- `Then 0` → North check
+
+---
+
+### Step 6.2 — Check if the direction is North
+
+1. From the **function entry node**, drag from the input pin:
+
+   `DeltaY`
+
+2. Search for:
 
    `==`
 
-4. Choose:
+3. Choose:
 
    `Integer == Integer`
 
-5. Set the second value to:
+4. Set the second input value to:
 
    `-1`
 
-6. Add a `Branch`
+---
 
-7. Connect the white execution pin from:
+5. Right-click in empty graph space
 
-   `Set NeighbourCell`
+6. Search for:
+
+   `Branch`
+
+7. Click:
+
+   `Branch`
+
+---
+
+8. Connect the white execution pin from:
+
+   `Sequence → Then 0`
 
    to
 
    `Branch`
 
-8. Connect:
+9. Connect:
 
 - `DeltaY == -1` → `Branch.Condition`
 
 ---
 
-If True:
+### Step 6.3 — If True, remove the North wall from the Current Cell
 
-9. Drag `CurrentCell` into the graph as **Set Members in S_MazeCell**
+10. Right-click in empty graph space
 
-10. Enable only:
+11. Search for:
+
+`Set Members in S_MazeCell`
+
+12. Click:
+
+`Set Members in S_MazeCell`
+
+---
+
+13. Connect:
+
+- `CurrentCell` → struct input (left side of the node)
+
+---
+
+14. In the **Details panel**, enable only:
 
 - `bWallNorth`
 
-11. Set:
+15. Set:
 
 - `bWallNorth = False`
 
-12. Connect the white execution pin from:
+---
+
+16. Connect the white execution pin from:
 
 `Branch.True`
 
 to
 
-`Set Members in S_MazeCell` for `CurrentCell`
+`Set Members in S_MazeCell` (CurrentCell)
 
 ---
 
-13. Drag `NeighbourCell` into the graph as **Set Members in S_MazeCell**
+### Step 6.4 — Remove the South wall from the Neighbor Cell
 
-14. Enable only:
+17. Right-click in empty graph space
+
+18. Search for:
+
+`Set Members in S_MazeCell`
+
+19. Click:
+
+`Set Members in S_MazeCell`
+
+---
+
+20. Connect:
+
+- `NeighborCell` → struct input (left side of the node)
+
+---
+
+21. In the **Details panel**, enable only:
+
+- `bWallSouth`
+
+22. Set:
+
+- `bWallSouth = False`
+
+---
+
+23. Connect the white execution pin from:
+
+`Set Members in S_MazeCell` (CurrentCell)
+
+to
+
+`Set Members in S_MazeCell` (NeighborCell)
+
+---
+
+### Connections recap
+
+**Execution flow:**  
+`Set NeighborCell → Sequence → Then 0 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+
+**Data flow:**
+
+- `DeltaY` (function input) → `Integer == Integer`
+- `DeltaY == -1` → `Branch.Condition`
+- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallNorth = False`)
+- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallSouth = False`)
+
+---
+
+## Why this matters
+
+Using a `Sequence` node lets each direction check run from its own execution output.
+
+That means:
+
+- North does not need to chain into East
+- East does not need to chain into South
+- South does not need to chain into West
+
+Each direction gets its own clean path.
+
+> This is much easier to manage than trying to force all direction checks into one long branch chain.
+
+---
+
+## Common mistakes
+
+❌ Connecting North directly from `Set NeighborCell` without a `Sequence`  
+✔️ Use `Sequence → Then 0`
+
+---
+
+❌ Trying to connect the end of North into East  
+✔️ Each direction should start from its own `Sequence` output
+
+---
+
+❌ Forgetting that `Set Members in S_MazeCell` only updates the local struct variable  
+✔️ You still need to write `CurrentCell` and `NeighborCell` back into `MazeGrid` later with `Set Array Elem`
+
+---
+
+## Expected result
+
+Your North direction check now runs from the `Sequence` node and correctly updates:
+
+- `CurrentCell.bWallNorth = False`
+- `NeighborCell.bWallSouth = False`
+
+when `DeltaY == -1`.
+
+---
+
+### Step 7 — Check direction: East
+
+If `DeltaX == 1`, then:
+
+- the **current cell loses its East wall**
+- the **neighbor cell loses its West wall**
+
+We will use the **Sequence** node so each direction check gets its own execution path.
+
+For East, we will use:
+
+- `Sequence → Then 1`
+
+---
+
+### Step 7.1 — Check if the direction is East
+
+1. From the **function entry node**, drag from the input pin:
+
+   `DeltaX`
+
+2. Search for:
+
+   `==`
+
+3. Choose:
+
+   `Integer == Integer`
+
+4. Set the second input value to:
+
+   `1`
+
+---
+
+5. Right-click in empty graph space
+
+6. Search for:
+
+   `Branch`
+
+7. Click:
+
+   `Branch`
+
+---
+
+8. Connect the white execution pin from:
+
+   `Sequence → Then 1`
+
+   to
+
+   `Branch`
+
+9. Connect:
+
+- `DeltaX == 1` → `Branch.Condition`
+
+---
+
+### Step 7.2 — If True, remove the East wall from the Current Cell
+
+10. Right-click in empty graph space
+
+11. Search for:
+
+`Set Members in S_MazeCell`
+
+12. Click:
+
+`Set Members in S_MazeCell`
+
+---
+
+13. Connect:
+
+- `CurrentCell` → struct input (left side of the node)
+
+---
+
+14. In the **Details panel**, enable only:
+
+- `bWallEast`
+
+15. Set:
+
+- `bWallEast = False`
+
+---
+
+16. Connect the white execution pin from:
+
+`Branch.True`
+
+to
+
+`Set Members in S_MazeCell` (CurrentCell)
+
+---
+
+### Step 7.3 — Remove the West wall from the Neighbor Cell
+
+17. Right-click in empty graph space
+
+18. Search for:
+
+`Set Members in S_MazeCell`
+
+19. Click:
+
+`Set Members in S_MazeCell`
+
+---
+
+20. Connect:
+
+- `NeighborCell` → struct input (left side of the node)
+
+---
+
+21. In the **Details panel**, enable only:
+
+- `bWallWest`
+
+22. Set:
+
+- `bWallWest = False`
+
+---
+
+23. Connect the white execution pin from:
+
+`Set Members in S_MazeCell` (CurrentCell)
+
+to
+
+`Set Members in S_MazeCell` (NeighborCell)
+
+---
+
+### Connections recap
+
+**Execution flow:**  
+`Set NeighborCell → Sequence → Then 1 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+
+**Data flow:**
+
+- `DeltaX` (function input) → `Integer == Integer`
+- `DeltaX == 1` → `Branch.Condition`
+- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallEast = False`)
+- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallWest = False`)
+
+---
+
+## Why this matters
+
+This step handles the case where the chosen neighbor is to the **East** of the current cell.
+
+If that happens:
+
+- the current cell must open its **East wall**
+- the neighbor cell must open its **West wall**
+
+> Both cells must agree that the wall between them is gone.
+
+---
+
+## Common mistakes
+
+❌ Connecting East from the end of the North block  
+✔️ East should start from `Sequence → Then 1`
+
+---
+
+❌ Using `DeltaY` instead of `DeltaX`  
+✔️ East and West use `DeltaX`
+
+---
+
+❌ Setting the wrong wall values  
+✔️ For East, use:
+
+- `CurrentCell.bWallEast = False`
+- `NeighborCell.bWallWest = False`
+
+---
+
+❌ Forgetting that these are still local struct changes  
+✔️ You still need to write `CurrentCell` and `NeighborCell` back into `MazeGrid` later with `Set Array Elem`
+
+---
+
+## Expected result
+
+When `DeltaX == 1`, this step now updates:
+
+- `CurrentCell.bWallEast = False`
+- `NeighborCell.bWallWest = False`
+
+using the East path from the `Sequence` node.
+
+---
+
+### Step 8 — Check direction: South
+
+If `DeltaY == 1`, then:
+
+- the **current cell loses its South wall**
+- the **neighbor cell loses its North wall**
+
+We will use the **Sequence** node so each direction check gets its own execution path.
+
+For South, we will use:
+
+- `Sequence → Then 2`
+
+---
+
+### Step 8.1 — Check if the direction is South
+
+1. From the **function entry node**, drag from the input pin:
+
+   `DeltaY`
+
+2. Search for:
+
+   `==`
+
+3. Choose:
+
+   `Integer == Integer`
+
+4. Set the second input value to:
+
+   `1`
+
+---
+
+5. Right-click in empty graph space
+
+6. Search for:
+
+   `Branch`
+
+7. Click:
+
+   `Branch`
+
+---
+
+8. Connect the white execution pin from:
+
+   `Sequence → Then 2`
+
+   to
+
+   `Branch`
+
+9. Connect:
+
+- `DeltaY == 1` → `Branch.Condition`
+
+---
+
+### Step 8.2 — If True, remove the South wall from the Current Cell
+
+10. Right-click in empty graph space
+
+11. Search for:
+
+`Set Members in S_MazeCell`
+
+12. Click:
+
+`Set Members in S_MazeCell`
+
+---
+
+13. Connect:
+
+- `CurrentCell` → struct input (left side of the node)
+
+---
+
+14. In the **Details panel**, enable only:
 
 - `bWallSouth`
 
@@ -1163,51 +1675,336 @@ to
 
 - `bWallSouth = False`
 
+---
+
 16. Connect the white execution pin from:
 
-`Set Members in S_MazeCell` for `CurrentCell`
+`Branch.True`
 
 to
 
-`Set Members in S_MazeCell` for `NeighbourCell`
+`Set Members in S_MazeCell` (CurrentCell)
 
 ---
 
-### Step 7 — Check direction: East
+### Step 8.3 — Remove the North wall from the Neighbor Cell
 
-Repeat the same pattern using:
+17. Right-click in empty graph space
 
-- `DeltaX == 1`
-- Current cell: `bWallEast = False`
-- Neighbor cell: `bWallWest = False`
+18. Search for:
+
+`Set Members in S_MazeCell`
+
+19. Click:
+
+`Set Members in S_MazeCell`
 
 ---
 
-### Step 8 — Check direction: South
+20. Connect:
 
-Repeat the same pattern using:
+- `NeighborCell` → struct input (left side of the node)
 
-- `DeltaY == 1`
-- Current cell: `bWallSouth = False`
-- Neighbor cell: `bWallNorth = False`
+---
+
+21. In the **Details panel**, enable only:
+
+- `bWallNorth`
+
+22. Set:
+
+- `bWallNorth = False`
+
+---
+
+23. Connect the white execution pin from:
+
+`Set Members in S_MazeCell` (CurrentCell)
+
+to
+
+`Set Members in S_MazeCell` (NeighborCell)
+
+---
+
+### Connections recap
+
+**Execution flow:**  
+`Set NeighborCell → Sequence → Then 2 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+
+**Data flow:**
+
+- `DeltaY` (function input) → `Integer == Integer`
+- `DeltaY == 1` → `Branch.Condition`
+- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallSouth = False`)
+- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallNorth = False`)
+
+---
+
+## Why this matters
+
+This step handles the case where the chosen neighbor is **below (South)** of the current cell.
+
+If that happens:
+
+- the current cell must open its **South wall**
+- the neighbor cell must open its **North wall**
+
+> Both cells must agree that the wall between them is removed.
+
+---
+
+## Common mistakes
+
+❌ Connecting South from the end of the East block  
+✔️ South must start from `Sequence → Then 2`
+
+---
+
+❌ Using `DeltaX` instead of `DeltaY`  
+✔️ North and South use `DeltaY`
+
+---
+
+❌ Setting the wrong wall values  
+✔️ For South, use:
+
+- `CurrentCell.bWallSouth = False`
+- `NeighborCell.bWallNorth = False`
+
+---
+
+❌ Forgetting that these are local struct changes  
+✔️ You still need to write both cells back into `MazeGrid` later
+
+---
+
+## Expected result
+
+When `DeltaY == 1`, this step now updates:
+
+- `CurrentCell.bWallSouth = False`
+- `NeighborCell.bWallNorth = False`
+
+using the South path from the `Sequence` node.
 
 ---
 
 ### Step 9 — Check direction: West
 
-Repeat the same pattern using:
+If `DeltaX == -1`, then:
 
-- `DeltaX == -1`
-- Current cell: `bWallWest = False`
-- Neighbor cell: `bWallEast = False`
+- the **current cell loses its West wall**
+- the **neighbor cell loses its East wall**
+
+We will use the **Sequence** node so each direction check gets its own execution path.
+
+For West, we will use:
+
+- `Sequence → Then 3`
+
+---
+
+### Step 9.1 — Check if the direction is West
+
+1. From the **function entry node**, drag from the input pin:
+
+   `DeltaX`
+
+2. Search for:
+
+   `==`
+
+3. Choose:
+
+   `Integer == Integer`
+
+4. Set the second input value to:
+
+   `-1`
+
+---
+
+5. Right-click in empty graph space
+
+6. Search for:
+
+   `Branch`
+
+7. Click:
+
+   `Branch`
+
+---
+
+8. Connect the white execution pin from:
+
+   `Sequence → Then 3`
+
+   to
+
+   `Branch`
+
+9. Connect:
+
+- `DeltaX == -1` → `Branch.Condition`
+
+---
+
+### Step 9.2 — If True, remove the West wall from the Current Cell
+
+10. Right-click in empty graph space
+
+11. Search for:
+
+`Set Members in S_MazeCell`
+
+12. Click:
+
+`Set Members in S_MazeCell`
+
+---
+
+13. Connect:
+
+- `CurrentCell` → struct input (left side of the node)
+
+---
+
+14. In the **Details panel**, enable only:
+
+- `bWallWest`
+
+15. Set:
+
+- `bWallWest = False`
+
+---
+
+16. Connect the white execution pin from:
+
+`Branch.True`
+
+to
+
+`Set Members in S_MazeCell` (CurrentCell)
+
+---
+
+### Step 9.3 — Remove the East wall from the Neighbor Cell
+
+17. Right-click in empty graph space
+
+18. Search for:
+
+`Set Members in S_MazeCell`
+
+19. Click:
+
+`Set Members in S_MazeCell`
+
+---
+
+20. Connect:
+
+- `NeighborCell` → struct input (left side of the node)
+
+---
+
+21. In the **Details panel**, enable only:
+
+- `bWallEast`
+
+22. Set:
+
+- `bWallEast = False`
+
+---
+
+23. Connect the white execution pin from:
+
+`Set Members in S_MazeCell` (CurrentCell)
+
+to
+
+`Set Members in S_MazeCell` (NeighborCell)
+
+---
+
+### Connections recap
+
+**Execution flow:**  
+`Set NeighborCell → Sequence → Then 3 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+
+**Data flow:**
+
+- `DeltaX` (function input) → `Integer == Integer`
+- `DeltaX == -1` → `Branch.Condition`
+- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallWest = False`)
+- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallEast = False`)
+
+---
+
+## Why this matters
+
+This step handles the case where the chosen neighbor is to the **West** of the current cell.
+
+If that happens:
+
+- the current cell must open its **West wall**
+- the neighbor cell must open its **East wall**
+
+> Both cells must agree that the wall between them is removed.
+
+---
+
+## Common mistakes
+
+❌ Connecting West from the end of the South block  
+✔️ West must start from `Sequence → Then 3`
+
+---
+
+❌ Using `DeltaY` instead of `DeltaX`  
+✔️ East and West use `DeltaX`
+
+---
+
+❌ Setting the wrong wall values  
+✔️ For West, use:
+
+- `CurrentCell.bWallWest = False`
+- `NeighborCell.bWallEast = False`
+
+---
+
+❌ Forgetting that these are local struct changes  
+✔️ You still need to write both cells back into `MazeGrid` later
+
+---
+
+## Expected result
+
+When `DeltaX == -1`, this step now updates:
+
+- `CurrentCell.bWallWest = False`
+- `NeighborCell.bWallEast = False`
+
+using the West path from the `Sequence` node.
 
 ---
 
 ### Step 10 — Write the updated current cell back into MazeGrid
 
+Now that the direction checks are finished, we need to write the updated `CurrentCell` back into the `MazeGrid` array.
+
+---
+
+### Step 10.1 — Add Set Array Elem for the Current Cell
+
 1. Drag `MazeGrid` into the graph as **Get**
 
-2. Drag from `MazeGrid`
+2. Drag from the `MazeGrid` pin
 
 3. Search for:
 
@@ -1217,10 +2014,87 @@ Repeat the same pattern using:
 
    `Set Array Elem`
 
-5. Connect:
+---
 
-- `CurrentIndex` → `Index`
-- updated `CurrentCell` → `Item`
+### Step 10.2 — Connect the Current Cell data
+
+5. From the **function entry node**, drag from the input pin:
+
+   `CurrentIndex`
+
+6. Connect:
+
+- `CurrentIndex` → `Index` on `Set Array Elem`
+
+---
+
+7. Drag `CurrentCell` into the graph as **Get**
+
+8. Connect:
+
+- `CurrentCell` → `Item` on `Set Array Elem`
+
+---
+
+9. Connect:
+
+- `MazeGrid` → `Target Array` on `Set Array Elem`
+
+---
+
+### Step 10.3 — Connect execution flow
+
+10. Connect the white execution pin from the **last direction path** into this node
+
+If you are using the Sequence setup for all four directions, this write-back step should happen **after** those direction checks are complete.
+
+---
+
+### Connections recap
+
+**Execution flow:**  
+`Direction checks complete → Set Array Elem (CurrentCell)`
+
+**Data flow:**
+
+- `MazeGrid` → `Set Array Elem.Target Array`
+- `CurrentIndex` (function input) → `Set Array Elem.Index`
+- `CurrentCell` (updated local variable) → `Set Array Elem.Item`
+
+---
+
+## Why this matters
+
+Up to this point, you have only modified the local variable:
+
+- `CurrentCell`
+
+That does **not** automatically change the array.
+
+> `Set Array Elem` is the step that writes the updated cell back into `MazeGrid`.
+
+---
+
+## Common mistakes
+
+❌ Forgetting to connect `MazeGrid` to `Target Array`  
+✔️ `Set Array Elem` needs to know which array to update
+
+---
+
+❌ Using the wrong index  
+✔️ Use `CurrentIndex` from the function input pin
+
+---
+
+❌ Using the old struct value instead of `CurrentCell`  
+✔️ The `Item` pin should receive the updated local variable
+
+---
+
+## Expected result
+
+The updated `CurrentCell` is now written back into `MazeGrid` at `CurrentIndex`.
 
 ---
 
