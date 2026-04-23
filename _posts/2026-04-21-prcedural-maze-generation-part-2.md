@@ -279,15 +279,9 @@ Your Construction Script now:
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: Construction Script clearing FloorHISM, WallHISM, MazeGrid, and setting RandomStream from MazeSeed]**
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-1.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-1.png' | relative_url }}" alt="Construction Script clearing HISM instances, clearing MazeGrid, and setting RandomStream from MazeSeed" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part2-Step-1.5.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-1.5.png' | relative_url }}" style="width:100%;" alt="Construction Script clearing FloorHISM, WallHISM, MazeGrid, and setting RandomStream from MazeSeed" class="post-image">
+  </a>
 
 ---
 
@@ -613,9 +607,9 @@ Your `InitializeGrid` function now creates a full array of maze cells.
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-2.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-2.png' | relative_url }}" alt="InitializeGrid function with Clear MazeGrid, For Loop, row and column calculations, Make S_MazeCell, and Add to MazeGrid" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part2-Step-2.8.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-2.8.png' | relative_url }}" style="width:100%;" alt="InitializeGrid function with Clear MazeGrid, For Loop, row and column calculations, Make S_MazeCell, and Add to MazeGrid" class="post-image">
+  </a>
 
 ---
 
@@ -678,6 +672,18 @@ In the function, create these **Local Variables**:
 - `CurrentCol` (Integer)
 - `LocalNeighbors` (Array of `S_NeighborInfo`)
 - `TestIndex` (Integer)
+
+---
+
+<div>
+<a href="{{ '/assets/images/blog/Part2-Step-3.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.2.png' | relative_url }}" style="width:100%;" alt="InitializeGrid function with Clear MazeGrid, For Loop, row and column calculations, Make S_MazeCell, and Add to MazeGrid" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part2-Step-3.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.3.png' | relative_url }}" style="width:100%;" alt="InitializeGrid function with Clear MazeGrid, For Loop, row and column calculations, Make S_MazeCell, and Add to MazeGrid" class="post-image">
+  </a>
+</div>
 
 ---
 
@@ -756,6 +762,12 @@ In the function, create these **Local Variables**:
    to
 
    `Set CurrentCol`
+
+---
+
+ <a href="{{ '/assets/images/blog/Part2-Step-3.5.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.5.png' | relative_url }}" style="width:100%;" alt="GetUnvisitedNeighbors function with Calculate CurrentRow and Calculate CurrentCol" class="post-image">
+  </a>
 
 ---
 
@@ -910,7 +922,7 @@ this second `Branch`
 
 37. Set:
 
-- `CellIndex = TestIndex`
+- `CellIndex = TestIndex` ( Drag `TestIndex` out and drop it on `CellIndex`)
 - `DeltaX = 0`
 - `DeltaY = -1`
 
@@ -940,48 +952,1050 @@ to
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-3.6.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.6.png' | relative_url }}" style="width:100%;" alt="CurrentRow > 0 → TestIndex = CurrentIndex - MazeWidth → MazeGrid[TestIndex] → NOT bVisited → Make S_NeighborInfo (0, -1) → Add to LocalNeighbors" class="post-image">
+  </a>
+
+---
+
 ### Step 3.7 — Check the East neighbor
 
-Repeat the same pattern, but use these values:
+Use this pattern for East:
 
-- Bounds check: `CurrentCol < MazeWidth - 1`
-- Index formula: `CurrentIndex + 1`
+CurrentCol < MazeWidth - 1  
+→ TestIndex = CurrentIndex + 1  
+→ MazeGrid[TestIndex]  
+→ NOT bVisited  
+→ Make S_NeighborInfo (1, 0)  
+→ Add to LocalNeighbors
+
+---
+
+## What this step does
+
+This section checks if there is a valid cell to the **right (East)** of the current cell.
+
+If that neighbor:
+
+- exists inside the maze
+- has NOT been visited
+
+then it is added as a valid movement option.
+
+---
+
+## IMPORTANT — Execution Flow
+
+Just like North:
+
+- DO NOT use a Sequence node
+- execution must continue whether East is valid or not
+
+---
+
+### Step 3.7.1 — Check east bounds
+
+1. Drag `CurrentCol` into the graph as **Get**
+
+2. Drag from the `CurrentCol` pin
+
+3. Search for:
+
+   `<`
+
+4. Choose:
+
+   `Integer < Integer`
+
+---
+
+5. Drag `MazeWidth` into the graph as **Get**
+
+6. Drag from `MazeWidth`
+
+7. Search for:
+
+   `Integer - Integer`
+
+8. Set the second input to:
+
+   `1`
+
+---
+
+9. Connect:
+
+- `MazeWidth` → first input
+- `1` → second input
+
+---
+
+10. Connect:
+
+- `CurrentCol` → first input of `<`
+- `(MazeWidth - 1)` → second input of `<`
+
+---
+
+11. Right-click in empty graph space
+
+12. Search for:
+
+`Branch`
+
+13. Click:
+
+`Branch`
+
+---
+
+14. Connect execution into this Branch
+
+You must connect TWO wires from the previous (North) section:
+
+- Connect `Branch.False` (from the North bounds check) → this Branch (Exec)
+
+- Connect the **execution output of the Add node** (the last step of the North success path) → this Branch (Exec)
+
+---
+
+## Why this is required
+
+Execution must continue to the East section no matter what:
+
+- If North is NOT valid → it flows through the False pin → goes to East
+
+- If North IS valid → it runs the logic → adds the neighbor → THEN goes to East
+
+---
+
+## Important
+
+Do NOT connect `Branch.True` directly to the next section.
+
+The True path must go through the full North logic first, and only then continue forward.
+
+---
+
+15. Connect:
+
+- `CurrentCol < MazeWidth - 1` → Branch.Condition
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.1a.png' | relative_url }}" style="width:100%;" alt="Exec pin connections from North to East and Branch node checking if CurrentCol is less than MazeWidth minus one to confirm an East neighbor exists within the grid bounds." class="post-image">
+  </a>
+
+---
+
+## Why this matters
+
+If `CurrentCol` is already at the far right edge:
+
+- there is NO East neighbor
+- we must skip this section
+
+---
+
+### Step 3.7.2 — Calculate TestIndex
+
+1. Drag from the **function entry node**:
+
+   `CurrentIndex`
+
+2. Search for:
+
+   `Integer + Integer`
+
+3. Set second value to:
+
+   `1`
+
+---
+
+4. Drag `TestIndex` into the graph as **Set**
+
+5. Connect the result into `Set TestIndex`
+
+---
+
+6. Connect execution:
+
+- `Branch.True` → `Set TestIndex`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.2.png' | relative_url }}" style="width:100%;" alt="Adding one to CurrentIndex to calculate TestIndex for the East neighbor position in the MazeGrid array." class="post-image">
+  </a>
+
+---
+
+## Why this matters
+
+Adding 1 moves one position to the right in the grid.
+
+---
+
+### Step 3.7.3 — Read the east cell
+
+1. Drag `MazeGrid` into the graph as **Get**
+
+2. Drag from the pin
+
+3. Search for:
+
+   `Get (a copy)`
+
+4. Click it
+
+---
+
+5. Connect:
+
+- `TestIndex` → Index
+
+---
+
+6. Drag from the output
+
+7. Search for:
+
+   `Break S_MazeCell`
+
+8. Click:
+
+   `Break S_MazeCell`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the MazeCell at TestIndex and breaking the struct to access properties like bVisited for the East neighbor." class="post-image">
+  </a>
+
+---
+
+### Step 3.7.4 — Check if east is unvisited
+
+1. Drag from `bVisited`
+
+2. Search for:
+
+   `NOT Boolean`
+
+3. Click:
+
+   `NOT Boolean`
+
+---
+
+4. Right-click → search:
+
+   `Branch`
+
+5. Click:
+
+   `Branch`
+
+---
+
+6. Connect:
+
+- `Set TestIndex` → Branch (Exec)
+
+7. Connect:
+
+- `NOT bVisited` → Branch.Condition
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.4.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.4.png' | relative_url }}" style="width:100%;" alt="Branch node verifying the East neighbor has not been visited before allowing it to be added to the neighbor list." class="post-image">
+  </a>
+
+---
+
+### Step 3.7.5 — Add the east neighbor
+
+#### Step 3.7.5.1 — Create the struct
+
+1. Right-click in empty graph space
+
+2. Search for:
+
+   `Make S_NeighborInfo`
+
+3. Click:
+
+   `Make S_NeighborInfo`
+
+---
+
+#### Step 3.7.5.2 — Set CellIndex
+
+1. Drag `TestIndex` into the graph as **Get**
+
+2. Connect:
+
+- `TestIndex` → `CellIndex`
+
+---
+
+#### Step 3.7.5.3 — Set direction values
+
+Set:
+
 - `DeltaX = 1`
 - `DeltaY = 0`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.5A.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.5A.png' | relative_url }}" style="width:100%;" alt="Make S_NeighborInfo node configured with CellIndex from TestIndex and DeltaX set to one and DeltaY set to zero to represent East movement." class="post-image">
+  </a>
+
+---
+
+#### Step 3.7.5.4 — Add to LocalNeighbors
+
+1. Drag `LocalNeighbors` into the graph as **Get**
+
+2. Drag from the pin
+
+3. Search for:
+
+   `Add`
+
+4. Click:
+
+   `Add`
+
+---
+
+5. Connect:
+
+- Branch.True → Add (Exec)
+
+6. Connect:
+
+- Make S_NeighborInfo → Add.Item
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.5B.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.5B.png' | relative_url }}" style="width:100%;" alt="Adding the East neighbor struct to the LocalNeighbors array when it passes both bounds and unvisited checks." class="post-image">
+  </a>
+
+---
+
+### Step 3.7.6 — Continue execution
+
+CRITICAL:
+
+Execution must continue regardless of result.
+
+---
+
+Connect BOTH:
+
+- Branch.False → South section
+- End of Add → South section
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.6.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.6.png' | relative_url }}" style="width:100%;" alt="Execution wiring showing both successful and failed East checks continuing forward to the South neighbor section." class="post-image">
+  </a>
+
+---
+
+## Expected Result
+
+If East is valid and unvisited:
+
+- it gets added to `LocalNeighbors`
+
+Otherwise:
+
+- it is skipped and execution continues
+
+---
+
+## Common Mistakes
+
+❌ Using `CurrentIndex - 1`  
+✔️ East uses `+ 1`
+
+---
+
+❌ Forgetting `MazeWidth - 1`  
+✔️ Needed for correct bounds
+
+---
+
+❌ Not connecting False execution  
+✔️ This breaks the chain
 
 Connect the white execution pin from the North section into the East section so the function continues cleanly.
 
 ---
 
-### Step 3.8 — Check the South neighbor
+# Step 3.8 — Check the South neighbor
 
-Repeat the same pattern, but use these values:
+Use this pattern for South:
 
-- Bounds check: `CurrentRow < MazeHeight - 1`
-- Index formula: `CurrentIndex + MazeWidth`
+CurrentRow < MazeHeight - 1  
+→ TestIndex = CurrentIndex + MazeWidth  
+→ MazeGrid[TestIndex]  
+→ NOT bVisited  
+→ Make S_NeighborInfo (0, 1)  
+→ Add to LocalNeighbors
+
+---
+
+## What this step does
+
+This section checks if there is a valid cell **below (South)** the current cell.
+
+If that neighbor:
+
+- exists inside the maze
+- has NOT been visited
+
+then it is added as a valid movement option.
+
+---
+
+## IMPORTANT — Execution Flow
+
+Just like previous sections:
+
+- DO NOT use a Sequence node
+- execution must continue whether South is valid or not
+
+---
+
+### Step 3.8.1 — Check south bounds
+
+1. Drag `CurrentRow` into the graph as **Get**
+
+2. Drag from the `CurrentRow` pin
+
+3. Search for:
+
+   `<`
+
+4. Choose:
+
+   `Integer < Integer`
+
+---
+
+5. Drag `MazeHeight` into the graph as **Get**
+
+6. Drag from `MazeHeight`
+
+7. Search for:
+
+   `Integer - Integer`
+
+8. Set the second input to:
+
+   `1`
+
+---
+
+9. Connect:
+
+- `MazeHeight` → first input
+- `1` → second input
+
+---
+
+10. Connect:
+
+- `CurrentRow` → first input of `<`
+- `(MazeHeight - 1)` → second input of `<`
+
+---
+
+11. Right-click in empty graph space
+
+12. Search for:
+
+`Branch`
+
+13. Click:
+
+`Branch`
+
+---
+
+14. Connect execution into this Branch
+
+You must connect TWO wires from the previous (North) section:
+
+- Connect `Branch.False` (from the North bounds check) → this Branch (Exec)
+
+- Connect the **execution output of the Add node** (the last step of the North success path) → this Branch (Exec)
+
+---
+
+## Why this is required
+
+Execution must continue to the East section no matter what:
+
+- If North is NOT valid → it flows through the False pin → goes to East
+
+- If North IS valid → it runs the logic → adds the neighbor → THEN goes to East
+
+---
+
+## Important
+
+Do NOT connect `Branch.True` directly to the next section.
+
+The True path must go through the full North logic first, and only then continue forward.
+
+15. Connect:
+
+- `CurrentRow < MazeHeight - 1` → Branch.Condition
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.8.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.8.1.png' | relative_url }}" style="width:100%;" alt="Exec pin connected from East to South and Branch node checking if CurrentRow is less than MazeHeight minus one to confirm a South neighbor exists within the grid bounds." class="post-image">
+  </a>
+
+---
+
+### Step 3.8.2 — Calculate TestIndex
+
+1. Drag from the **function entry node**:
+
+   `CurrentIndex`
+
+2. Search for:
+
+   `Integer + Integer`
+
+3. Drag `MazeWidth` into the graph as **Get**
+
+---
+
+4. Connect:
+
+- `CurrentIndex` → first input
+- `MazeWidth` → second input
+
+---
+
+5. Drag `TestIndex` into the graph as **Set**
+
+6. Connect result → `Set TestIndex`
+
+---
+
+7. Connect execution:
+
+- `Branch.True` → `Set TestIndex`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.8.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.8.2.png' | relative_url }}" style="width:100%;" alt="Adding MazeWidth to CurrentIndex to calculate TestIndex for the South neighbor position in the MazeGrid array." class="post-image">
+  </a>
+
+---
+
+## Why this matters
+
+Adding MazeWidth moves one full row down in the grid.
+
+---
+
+### Step 3.8.3 — Read the south cell
+
+1. Drag `MazeGrid` into the graph as **Get**
+
+2. Drag from the pin
+
+3. Search for:
+
+   `Get (a copy)`
+
+4. Click it
+
+---
+
+5. Connect:
+
+- `TestIndex` → Index
+
+---
+
+6. Drag from output
+
+7. Search for:
+
+   `Break S_MazeCell`
+
+8. Click it
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.8.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.8.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the MazeCell at TestIndex and breaking the struct to access the South neighbor properties including bVisited." class="post-image">
+  </a>
+
+---
+
+### Step 3.8.4 — Check if south is unvisited
+
+1. Drag from `bVisited`
+
+2. Search for:
+
+   `NOT Boolean`
+
+3. Click it
+
+---
+
+4. Add a **Branch**
+
+---
+
+5. Connect:
+
+- `Set TestIndex` → Branch (Exec)
+
+6. Connect:
+
+- `NOT bVisited` → Branch.Condition
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.8.4.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.8.4.png' | relative_url }}" style="width:100%;" alt="Branch node verifying that the South neighbor has not been visited before allowing it to be added to LocalNeighbors." class="post-image">
+  </a>
+
+---
+
+### Step 3.8.5 — Add the south neighbor
+
+#### Step 3.8.5.1 — Create the struct
+
+1. Right-click
+
+2. Search:
+
+   `Make S_NeighborInfo`
+
+---
+
+#### Step 3.8.5.2 — Set CellIndex
+
+1. Drag `TestIndex` into the graph as **Get**
+
+2. Connect:
+
+- `TestIndex` → `CellIndex`
+
+---
+
+#### Step 3.8.5.3 — Set direction values
+
+Set:
+
 - `DeltaX = 0`
 - `DeltaY = 1`
 
-Connect the white execution pin from the East section into the South section.
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.8.5A.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.8.5A.png' | relative_url }}" style="width:100%;" alt="Make S_NeighborInfo node configured with CellIndex from TestIndex and DeltaY set to one to represent South movement." class="post-image">
+  </a>
 
 ---
 
-### Step 3.9 — Check the West neighbor
+#### Step 3.8.5.4 — Add to LocalNeighbors
 
-Repeat the same pattern, but use these values:
+1. Drag `LocalNeighbors` as **Get**
 
-- Bounds check: `CurrentCol > 0`
-- Index formula: `CurrentIndex - 1`
+2. Search:
+
+   `Add`
+
+---
+
+3. Connect:
+
+- Branch.True → Add (Exec)
+
+4. Connect:
+
+- Make S_NeighborInfo → Add.Item
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.8.5B.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.8.5B.png' | relative_url }}" style="width:100%;" alt="Adding the South neighbor struct to the LocalNeighbors array after passing both bounds and unvisited checks." class="post-image">
+  </a>
+
+---
+
+### Step 3.8.6 — Continue execution
+
+CRITICAL:
+
+Execution must continue regardless of result.
+
+---
+
+# Step 3.9 — Check the West neighbor
+
+Use this pattern for West:
+
+CurrentCol > 0  
+→ TestIndex = CurrentIndex - 1  
+→ MazeGrid[TestIndex]  
+→ NOT bVisited  
+→ Make S_NeighborInfo (-1, 0)  
+→ Add to LocalNeighbors
+
+---
+
+## What this step does
+
+This section checks if there is a valid cell to the **left (West)** of the current cell.
+
+If that neighbor:
+
+- exists inside the maze
+- has NOT been visited
+
+then it is added as a valid movement option.
+
+---
+
+## IMPORTANT — Execution Flow
+
+- DO NOT use a Sequence node
+- execution must continue no matter what
+
+---
+
+## Step 3.9.1 — Check west bounds
+
+1. Drag `CurrentCol` into the graph as **Get**
+
+2. Drag from the `CurrentCol` pin
+
+3. Search for:
+
+   `>`
+
+4. Choose:
+
+   `Integer > Integer`
+
+5. Set the second input to:
+
+   `0`
+
+---
+
+6. Right-click in empty graph space
+
+7. Search for:
+
+   `Branch`
+
+8. Click:
+
+   `Branch`
+
+---
+
+9. Connect execution:
+
+- From the **South section outputs** → Branch (Exec)
+
+IMPORTANT: You must connect BOTH:
+
+- South Branch.False → this Branch
+- South Add (end of success path) → this Branch
+
+---
+
+10. Connect:
+
+- `CurrentCol > 0` → Branch.Condition
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.9.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.9.1.png' | relative_url }}" style="width:100%;" alt="Execution wiring showing both successful and failed South checks continuing forward into the West neighbor section. Branch node checking if CurrentCol is greater than zero to confirm a West neighbor exists within the maze bounds." class="post-image">
+  </a>
+
+---
+
+## Why this matters
+
+If `CurrentCol` is 0, you are already on the left edge and cannot go West.
+
+---
+
+## Step 3.9.2 — Calculate TestIndex
+
+1. Drag from the **function entry node**:
+
+   `CurrentIndex`
+
+2. Search for:
+
+   `Integer - Integer`
+
+3. Set the second input to:
+
+   `1`
+
+---
+
+4. Drag `TestIndex` into the graph as **Set**
+
+5. Connect:
+
+- subtraction result → `Set TestIndex`
+
+---
+
+6. Connect execution:
+
+- `Branch.True` → `Set TestIndex`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.9.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.9.2.png' | relative_url }}" style="width:100%;" alt="Subtracting one from CurrentIndex to calculate TestIndex for the West neighbor location in the MazeGrid array." class="post-image">
+  </a>
+
+---
+
+## Why this matters
+
+Subtracting 1 moves one cell to the left in the grid.
+
+---
+
+## Step 3.9.3 — Read the west cell
+
+1. Drag `MazeGrid` into the graph as **Get**
+
+2. Drag from the `MazeGrid` pin
+
+3. Search for:
+
+   `Get (a copy)`
+
+4. Click:
+
+   `Get (a copy)`
+
+---
+
+5. Connect:
+
+- `TestIndex` → Index
+
+---
+
+6. Drag from the output of `Get (a copy)`
+
+7. Search for:
+
+   `Break S_MazeCell`
+
+8. Click:
+
+   `Break S_MazeCell`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.9.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.9.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the MazeCell at TestIndex from MazeGrid and breaking the struct to access the West neighbor properties including bVisited." class="post-image">
+  </a>
+
+---
+
+## Step 3.9.4 — Check if west is unvisited
+
+1. Drag from `bVisited`
+
+2. Search for:
+
+   `NOT Boolean`
+
+3. Click:
+
+   `NOT Boolean`
+
+---
+
+4. Right-click in empty graph space
+
+5. Search for:
+
+   `Branch`
+
+6. Click:
+
+   `Branch`
+
+---
+
+7. Connect execution:
+
+- `Set TestIndex` → Branch (Exec)
+
+---
+
+8. Connect:
+
+- `NOT bVisited` → Branch.Condition
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.9.4.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.9.4.png' | relative_url }}" style="width:100%;" alt="Branch checking NOT bVisited to ensure the West neighbor has not already been visited before adding it to LocalNeighbors." class="post-image">
+  </a>
+
+---
+
+## Step 3.9.5 — Add the west neighbor
+
+### Step 3.9.5.1 — Create the struct
+
+1. Right-click in empty graph space
+
+2. Search for:
+
+   `Make S_NeighborInfo`
+
+3. Click:
+
+   `Make S_NeighborInfo`
+
+---
+
+### Step 3.9.5.2 — Set CellIndex
+
+1. Drag `TestIndex` into the graph as **Get**
+
+2. Connect:
+
+- `TestIndex` → `CellIndex`
+
+---
+
+### Step 3.9.5.3 — Set direction values
+
+Set:
+
 - `DeltaX = -1`
 - `DeltaY = 0`
 
-Connect the white execution pin from the South section into the West section.
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.9.5A.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.9.5A.png' | relative_url }}" style="width:100%;" alt="Make S_NeighborInfo node configured with CellIndex from TestIndex and direction values DeltaX negative one and DeltaY zero to represent movement to the West." class="post-image">
+  </a>
 
 ---
 
-### Step 3.10 — Final execution pattern
+### Step 3.9.5.4 — Add to LocalNeighbors
 
-#### Step 3.10.1 — Review the full branch chain
+1. Drag `LocalNeighbors` into the graph as **Get**
+
+2. Drag from the pin
+
+3. Search for:
+
+   `Add`
+
+4. Click:
+
+   `Add`
+
+---
+
+5. Connect execution:
+
+- `Branch.True` → Add (Exec)
+
+---
+
+6. Connect:
+
+- `Make S_NeighborInfo` → `Add.Item`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.9.5B.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.9.5B.png' | relative_url }}" style="width:100%;" alt="Adding the West neighbor struct into the LocalNeighbors array when it passes both bounds and unvisited checks." class="post-image">
+  </a>
+
+---
+
+### Step 3.10 — Return the LocalNeighbors array
+
+#### Step 3.10.1 — Connect the return value
+
+1. Drag your **Return Node** into view
+
+2. Drag `LocalNeighbors` into the graph as **Get**
+
+3. Connect:
+
+- `LocalNeighbors` → `Neighbors` on the Return Node
+
+4. Connect the white execution pin from the final West section into the Return Node
+
+This is the final direction.
+
+Execution must now go to the Return Node.
+
+---
+
+Connect BOTH:
+
+- Branch.False → Return Node
+- Add (exec output) → Return Node
+
+---
+
+## Final Result
+
+Your West section now:
+
+- correctly checks bounds
+- reads the correct neighbor
+- verifies it has not been visited
+- adds it to the neighbor list
+- continues execution properly
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.10.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.10.1.png' | relative_url }}" style="width:100%;" alt="Final execution flow showing both successful and failed West checks connecting into the Return Node to complete the function." class="post-image">
+  </a>
+---
+
+### Step 3.11 — Final execution pattern
+
+#### Step 3.11.1 — Review the full branch chain
 
 When all four directions are connected, the full function should flow like this:
 
@@ -996,25 +2010,9 @@ If a direction is valid, its internal logic runs before execution continues to t
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: Full GetUnvisitedNeighbors directional branch chain showing North, East, South, and West sections connected in order]**
-
----
-
-### Step 3.11 — Return the LocalNeighbors array
-
-#### Step 3.11.1 — Connect the return value
-
-1. Drag your **Return Node** into view
-
-2. Drag `LocalNeighbors` into the graph as **Get**
-
-3. Connect:
-
-- `LocalNeighbors` → `Neighbors` on the Return Node
-
-4. Connect the white execution pin from the final West section into the Return Node
+<a href="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="width:100%;" alt="Full GetUnvisitedNeighbors directional branch chain showing North, East, South, and West sections connected in order" class="post-image">
+  </a>
 
 ---
 
@@ -1077,12 +2075,6 @@ Your `GetUnvisitedNeighbors` function now returns all valid unvisited neighbors 
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-3.png' | relative_url }}" alt="GetUnvisitedNeighbors function checking north east south and west neighbors and returning valid S_NeighborInfo entries" class="post-image">
-</a>
-
----
-
 # Step 4 — Create the `RemoveWallBetween` Function
 
 Now we need a helper function that removes the wall between two connected cells.
@@ -1139,6 +2131,18 @@ Create these **Local Variables**:
 
 ---
 
+<div>
+<a href="{{ '/assets/images/blog/Part2-Step-4.2.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="width:100%;" alt="RemoveWallBetween function showing inputs" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part2-Step-4.3.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="width:100%;" alt="RemoveWallBetween fuction showing local variables" class="post-image">
+  </a>
+  </div>
+
+---
+
 ### Step 4.4 — Read the current cell
 
 #### Step 4.4.1 — Read from MazeGrid
@@ -1178,6 +2182,13 @@ Create these **Local Variables**:
    to
 
    `Set CurrentCell`
+
+---
+
+   <a href="{{ '/assets/images/blog/Part2-Step-4.4.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.4.2.png' | relative_url }}" style="width:100%;" alt="Get the cell from the MazeGrid array at CurrentIndex and store it in the CurrentCell variable after RemoveWallBetween executes." class="post-image">
+  </a>
+  </div>
 
 ---
 
@@ -1236,6 +2247,10 @@ Create these **Local Variables**:
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-4.5.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.5.2.png' | relative_url }}" style="width:100%;" alt="Retrieve a cell from MazeGrid using the NeighborIndex and store it in the NeighborCell variable immediately after CurrentCell is set" class="post-image">
+  </a>
+
 ### Connections recap
 
 **Execution flow:**  
@@ -1287,9 +2302,9 @@ We will use them like this:
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: Sequence node connected after Set NeighborCell with Then 0, Then 1, Then 2, and Then 3 visible]**
+<a href="{{ '/assets/images/blog/Part2-Step-4.6.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.6.1.png' | relative_url }}" style="width:100%;" alt="Sequence node connected after Set NeighborCell with Then 0, Then 1, Then 2, and Then 3 visible" class="post-image">
+  </a>
 
 ---
 
@@ -1407,6 +2422,12 @@ to
 to
 
 `Set Members in S_MazeCell` (NeighborCell)
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-4.7.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.7.3.png' | relative_url }}" style="width:100%;" alt="If DeltaY equals -1, the execution branch sets bWallNorth to false for the CurrentCell and then sets bWallSouth to false for the NeighborCell" class="post-image">
+  </a>
 
 ---
 
@@ -1582,6 +2603,12 @@ to
 to
 
 `Set Members in S_MazeCell` (NeighborCell)
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-4.8.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.8.3.png' | relative_url }}" style="width:100%;" alt="If DeltaX equals 1, the execution branch sets bWallEast to false for the CurrentCell and then sets bWallWest to false for the NeighborCell" class="post-image">
+  </a>
 
 ---
 
@@ -1765,6 +2792,12 @@ to
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-4.9.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.9.3.png' | relative_url }}" style="width:100%;" alt="If DeltaX equals 1, the execution branch sets bWallEast to false for the CurrentCell and then sets bWallWest to false for the NeighborCell" class="post-image">
+  </a>
+
+---
+
 ### Connections recap
 
 **Execution flow:**  
@@ -1787,44 +2820,6 @@ If that happens:
 
 - the current cell must open its **South wall**
 - the neighbor cell must open its **North wall**
-
-> Both cells must agree that the wall between them is removed.
-
----
-
-## Common mistakes
-
-❌ Connecting South from the end of the East block  
-✔️ South must start from `Sequence → Then 2`
-
----
-
-❌ Using `DeltaX` instead of `DeltaY`  
-✔️ North and South use `DeltaY`
-
----
-
-❌ Setting the wrong wall values  
-✔️ For South, use:
-
-- `CurrentCell.bWallSouth = False`
-- `NeighborCell.bWallNorth = False`
-
----
-
-❌ Forgetting that these are local struct changes  
-✔️ You still need to write both cells back into `MazeGrid` later
-
----
-
-## Expected result
-
-When `DeltaY == 1`, this step now updates:
-
-- `CurrentCell.bWallSouth = False`
-- `NeighborCell.bWallNorth = False`
-
-using the South path from the `Sequence` node.
 
 ---
 
@@ -1885,11 +2880,11 @@ For West, we will use:
 
 11. Search for:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
 12. Click:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
 13. Connect:
 
@@ -1905,11 +2900,11 @@ For West, we will use:
 
 16. Connect the white execution pin from:
 
-`Branch.True`
+    `Branch.True`
 
-to
+    to
 
-`Set Members in S_MazeCell` (CurrentCell)
+    `Set Members in S_MazeCell` (CurrentCell)
 
 #### Step 4.10.3 — Remove the East wall from the Neighbor Cell
 
@@ -1917,11 +2912,11 @@ to
 
 18. Search for:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
 19. Click:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
 20. Connect:
 
@@ -1937,18 +2932,23 @@ to
 
 23. Connect the white execution pin from:
 
-`Set Members in S_MazeCell` (CurrentCell)
+    `Set Members in S_MazeCell` (CurrentCell)
 
-to
+    to
 
-`Set Members in S_MazeCell` (NeighborCell)
+    `Set Members in S_MazeCell` (NeighborCell)
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-4.10.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.10.3.png' | relative_url }}" style="width:100%;" alt="If DeltaX equals -1, the execution branch sets bWallWest to false for the CurrentCell and then sets bWallEast to false for the NeighborCell" class="post-image">
+  </a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
-`Set NeighborCell → Sequence → Then 3 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+**Execution flow:** `Sequence → Then 3 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
 
 **Data flow:**
 
@@ -1961,311 +2961,98 @@ to
 
 ## Why this matters
 
-This step handles the case where the chosen neighbor is to the **West** of the current cell.
+This step handles the case where the chosen neighbor is to the **Left (West)** of the current cell.
 
-If that happens:
+To create a passage:
 
 - the current cell must open its **West wall**
-- the neighbor cell must open its **East wall**
-
-> Both cells must agree that the wall between them is removed.
-
----
-
-## Common mistakes
-
-❌ Connecting West from the end of the South block  
-✔️ West must start from `Sequence → Then 3`
-
----
-
-❌ Using `DeltaY` instead of `DeltaX`  
-✔️ East and West use `DeltaX`
-
----
-
-❌ Setting the wrong wall values  
-✔️ For West, use:
-
-- `CurrentCell.bWallWest = False`
-- `NeighborCell.bWallEast = False`
-
----
-
-❌ Forgetting that these are local struct changes  
-✔️ You still need to write both cells back into `MazeGrid` later
-
----
-
-## Expected result
-
-When `DeltaX == -1`, this step now updates:
-
-- `CurrentCell.bWallWest = False`
-- `NeighborCell.bWallEast = False`
-
-using the West path from the `Sequence` node.
+- the neighbor cell (the one on the left) must open its **East wall**
 
 ---
 
 ### Step 4.11 — Write the updated CurrentCell back into MazeGrid
 
-Now that all direction checks have run, we need to write the updated `CurrentCell` back into the `MazeGrid`.
+In previous steps, we modified the **CurrentCell** variable. However, because this variable is just a local copy, we must formally save those changes back into the actual **MazeGrid** array to update the maze structure.
 
-With the Sequence setup, we will add one final execution output that runs **after all direction checks are complete**.
+For this final save process, we will use:
 
-#### Step 4.11.1 — Add Set Array Elem for the Current Cell
+- `Sequence → Then 4`
 
-1. Drag `MazeGrid` into the graph as **Get**
+#### Step 4.11.1 — Set the element for CurrentCell
 
-2. Drag from the `MazeGrid` pin
-
-3. Search for:
-
-   `Set Array Elem`
-
-4. Click:
-
-   `Set Array Elem`
-
-#### Step 4.11.2 — Connect the Current Cell data
-
-5. From the **function entry node**, drag from the input pin:
-
-   `CurrentIndex`
-
-6. Connect:
-
-- `CurrentIndex` → `Index` on `Set Array Elem`
-
-7. Drag `CurrentCell` into the graph as **Get**
-
-8. Connect:
-
-- `CurrentCell` → `Item` on `Set Array Elem`
-
-9. Connect:
-
-- `MazeGrid` → `Target Array` on `Set Array Elem`
-
-#### Step 4.11.3 — Connect execution flow
-
-10. On the `Sequence` node, click **Add Pin** so it creates:
-
-- `Then 4`
-
-11. Connect the white execution pin from:
-
-`Sequence → Then 4`
-
-to
-
-`Set Array Elem` (CurrentCell)
+1.  From the **Variables** panel, drag `MazeGrid` into the graph and choose:
+    `Get MazeGrid`
+2.  Drag off the `MazeGrid` pin and search for:
+    `Set Array Elem`
+3.  Connect the white execution pin from:
+    `Sequence → Then 4`
+    to
+    `Set Array Elem`
+4.  Connect:
+    - `CurrentCell` → **Item**
+    - `CurrentIndex` → **Index**
+5.  **Important:** Ensure **Size to Fit** is **unchecked** in the node details.
 
 ---
 
-### Connections recap
-
-**Execution flow:**  
-`Set NeighborCell → Sequence → Then 4 → Set Array Elem (CurrentCell)`
-
-**Data flow:**
-
-- `MazeGrid` → `Set Array Elem.Target Array`
-- `CurrentIndex` (function input) → `Set Array Elem.Index`
-- `CurrentCell` (updated local variable) → `Set Array Elem.Item`
-
----
-
-## Why this matters
-
-The `Sequence` node runs each output in order:
-
-- `Then 0` → North
-- `Then 1` → East
-- `Then 2` → South
-- `Then 3` → West
-- `Then 4` → Write updated data back
-
-By the time execution reaches `Then 4`, all direction checks have already been evaluated.
-
-> This guarantees that any wall changes made to `CurrentCell` are complete before writing it back into `MazeGrid`.
-
----
-
-## Common mistakes
-
-❌ Connecting write-back to `Then 3` (West)  
-✔️ This breaks the West branch  
-✔️ Always use a new pin (`Then 4`) for write-back
-
----
-
-❌ Forgetting to add the extra Sequence pin  
-✔️ You need a dedicated execution path after all direction checks
-
----
-
-❌ Forgetting to connect `MazeGrid` to `Target Array`  
-✔️ `Set Array Elem` must know which array to modify
-
----
-
-❌ Using the wrong index  
-✔️ Use `CurrentIndex` from the function input pin
-
----
-
-## Expected result
-
-The updated `CurrentCell` is now written back into `MazeGrid` at `CurrentIndex`.
-
-This ensures that all wall changes made during the direction checks are saved correctly.
+<a href="{{ '/assets/images/blog/Part2-Step-4.11.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.11.png' | relative_url }}" style="width:100%;" alt="Writing the updated CurrentCell back into MazeGrid using Set Array Elem and CurrentIndex." class="post-image">
+</a>
 
 ---
 
 ### Step 4.12 — Write the updated NeighborCell back into MazeGrid
 
-Now we need to write the updated `NeighborCell` back into the `MazeGrid` array.
+Just like the CurrentCell, the **NeighborCell** needs its wall updates committed to the main grid array so the passage is fully opened.
 
-#### Step 4.12.1 — Add Set Array Elem for the Neighbor Cell
+#### Step 4.12.1 — Set the element for NeighborCell
 
-1. Drag `MazeGrid` into the graph as **Get**
-
-2. Drag from the `MazeGrid` pin
-
-3. Search for:
-
-   `Set Array Elem`
-
-4. Click:
-
-   `Set Array Elem`
-
-#### Step 4.12.2 — Connect the Neighbor Cell data
-
-5. From the **function entry node**, drag from the input pin:
-
-   `NeighborIndex`
-
-6. Connect:
-
-- `NeighborIndex` → `Index` on `Set Array Elem`
-
-7. Drag `NeighborCell` into the graph as **Get**
-
-8. Connect:
-
-- `NeighborCell` → `Item` on `Set Array Elem`
-
-9. Connect:
-
-- `MazeGrid` → `Target Array` on `Set Array Elem`
-
-#### Step 4.12.3 — Connect execution flow
-
-10. Connect the white execution pin from:
-
-`Set Array Elem` (CurrentCell)
-
-to
-
-`Set Array Elem` (NeighborCell)
+1.  Add another:
+    `Set Array Elem`
+2.  Connect the white execution pin from:
+    `Set Array Elem` (CurrentCell)
+    to
+    `Set Array Elem` (NeighborCell)
+3.  Connect:
+    - `MazeGrid` → **Target Array**
+    - `NeighborCell` → **Item**
+    - `NeighborIndex` → **Index**
 
 ---
 
-### Connections recap
-
-**Execution flow:**  
-`Set Array Elem (CurrentCell) → Set Array Elem (NeighborCell)`
-
-**Data flow:**
-
-- `MazeGrid` → `Set Array Elem.Target Array`
-- `NeighborIndex` (function input) → `Set Array Elem.Index`
-- `NeighborCell` (updated local variable) → `Set Array Elem.Item`
-
----
-
-## Why this matters
-
-Up to this point, you have only modified the local variable:
-
-- `NeighborCell`
-
-That does **not** automatically update the array.
-
-> This step writes the updated `NeighborCell` back into `MazeGrid`.
-
-Both cells must be written back correctly, or the wall removal will only exist on one side.
-
----
-
-## Common mistakes
-
-❌ Using `CurrentIndex` here  
-✔️ This step must use `NeighborIndex`
-
----
-
-❌ Using the old struct instead of `NeighborCell`  
-✔️ Connect the updated local variable into `Item`
-
----
-
-❌ Forgetting to connect this after the first `Set Array Elem`  
-✔️ Write back the current cell first, then the neighbor cell
-
----
-
-## Expected result
-
-The updated `NeighborCell` is now written back into `MazeGrid` at `NeighborIndex`.
-
-Your `RemoveWallBetween` function now correctly stores both sides of the wall removal.
-
----
-
-### Screenshot Placeholder
-
-**[Screenshot: Full RemoveWallBetween function showing Set CurrentCell, Set NeighborCell, Sequence, all four direction checks, Then 4, and both Set Array Elem nodes]**
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-4.png' | relative_url }}" alt="RemoveWallBetween function updating both current and neighbor cells and writing them back to MazeGrid" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-4.12.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.12.png' | relative_url }}" style="width:100%;" alt="Writing the updated NeighborCell back into MazeGrid using Set Array Elem and NeighborIndex." class="post-image">
 </a>
 
 ---
 
 ### Step 4.13 — Full function overview
 
-#### Step 4.13.1 — Review the full execution flow
-
-Before moving on, step back and look at the complete execution flow for `RemoveWallBetween`.
-
-Your function should now look like this:
-
-`RemoveWallBetween  
-→ Set CurrentCell  
-→ Set NeighborCell  
-→ Sequence  
-   Then 0 → North check  
-   Then 1 → East check  
-   Then 2 → South check  
-   Then 3 → West check  
-   Then 4 → Set Array Elem (CurrentCell)  
-→ Set Array Elem (NeighborCell)`
-
-> This full overview is important because it shows how the direction checks and the write-back stage fit together in one complete system.
+Your `RemoveWallBetween` function is now complete. By using the **Sequence** node, the function determines which walls to flip on the local variables first (Steps 4.7–4.10), and then performs a final "commit" to the array.
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: Zoomed-out full RemoveWallBetween function overview with labels for Sequence outputs Then 0 through Then 4]**
+<a href="{{ '/assets/images/blog/Part2-Step-4.13.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.13.png' | relative_url }}" style="width:100%;" alt="Complete RemoveWallBetween function showing all direction checks and final updates to MazeGrid." class="post-image">
+</a>
 
 ---
+
+### Connections recap
+
+**Execution flow:** `Sequence → Then 4 → Set Array Elem (CurrentCell) → Set Array Elem (NeighborCell)`
+
+**Data flow:**
+
+- `MazeGrid` → `Target Array` (on both nodes)
+- `CurrentCell` + `CurrentIndex` → `Set Array Elem` (Current)
+- `NeighborCell` + `NeighborIndex` → `Set Array Elem` (Neighbor)
+
+---
+
+## Why this matters
+
+In Unreal Engine, when you "Break" a struct or "Get" an array element, you are often working with a temporary local copy. Using **Sequence → Then 4** to save the data at the very end is a clean way to ensure that no matter which direction was chosen, the modified data is always written back to the **MazeGrid**. Without these steps, your walls would never actually disappear in the game world.
 
 # Step 5 — Create the `GenerateMaze` Function
 
@@ -2315,6 +3102,34 @@ Create these **Local Variables**:
 
 ---
 
+<div>
+<a href="{{ '/assets/images/blog/Part2-Step-5.2.1a.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1a.png' | relative_url }}" style="width:100%;" alt="Local variable Stack" class="post-image">
+</a>
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.2.1b.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1b.png' | relative_url }}" style="width:100%;" alt="Local variable CurrentIndex" class="post-image">
+</a>
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.2.1c.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1c.png' | relative_url }}" style="width:100%;" alt="Local variable Neighbors" class="post-image">
+</a>
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.2.1d.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1d.png' | relative_url }}" style="width:100%;" alt="Local variable ChosenNeighbor" class="post-image">
+</a>
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.2.1e.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1e.png' | relative_url }}" style="width:100%;" alt="Local variable StackTopIndex" class="post-image">
+</a>
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.2.1f.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1f.png' | relative_url }}" style="width:100%;" alt="Local variable RandomNeighborIndex" class="post-image">
+</a>
+</div>
+
+---
+
 ### Step 5.3 — Choose the starting cell
 
 #### Step 5.3.1 — Calculate the max index
@@ -2358,6 +3173,12 @@ Create these **Local Variables**:
 to
 
 `Set CurrentIndex`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.3.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.3.2.png' | relative_url }}" style="width:100%;" alt="Calculating the total grid size minus one to determine the maximum index, then using a Random Stream to pick and store a starting value in CurrentIndex" class="post-image">
+</a>
 
 ---
 
@@ -2466,14 +3287,28 @@ You now have a valid random starting cell stored in `CurrentIndex`.
 
 to
 
+`Set Members in S_MazeCell`
+
+17. Then connect the white execution pin from:
+
+`Set Members in S_MazeCell`
+
+to
+
 `Set Array Elem`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.4.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.4.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the starting cell from MazeGrid using CurrentIndex, setting bVisited to true, and writing the updated cell back into the array with proper execution flow through Set Members and Set Array Elem" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
 **Execution flow:**  
-`Set CurrentIndex → Set Array Elem`
+`Set CurrentIndex → Set Members in S_MazeCell → Set Array Elem`
 
 **Data flow:**
 
@@ -2530,6 +3365,13 @@ The starting cell is now marked as visited in `MazeGrid`.
 6. Connect:
 
 - `CurrentIndex` → `Add.Item`
+- `Stack` Array → `Add` Array
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.5.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.5.1.png' | relative_url }}" style="width:100%;" alt="Adding the starting CurrentIndex to the Stack array using the Add node to begin the maze generation process" class="post-image">
+</a>
 
 ---
 
@@ -2616,6 +3458,12 @@ The starting cell is now the first item in `Stack`.
 12. Connect the result into:
 
 `While Loop.Condition`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.6.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.6.1.png' | relative_url }}" style="width:100%;" alt="A While Loop conditioned to run as long as the Stack Length is greater than 0" class="post-image">
+</a>
 
 ---
 
@@ -2730,6 +3578,12 @@ to
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-5.7.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.7.2.png' | relative_url }}" style="width:100%;" alt="The While Loop body calculates the last index of the Stack (Length - 1), stores it in StackTopIndex, and uses it to update CurrentIndex with the top value from the stack" class="post-image">
+</a>
+
+---
+
 ### Connections recap
 
 **Execution flow:**  
@@ -2795,10 +3649,16 @@ At the start of each loop pass, `CurrentIndex` now holds the current active cell
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-5.8.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.8.2.png' | relative_url }}" style="width:100%;" alt="Calling GetUnvisitedNeighbors with the CurrentIndex and storing the resulting array in the Neighbors variable" class="post-image">
+</a>
+
+---
+
 ### Connections recap
 
 **Execution flow:**  
-`Set CurrentIndex → Set Neighbors`
+`Set CurrentIndex → GetUnvisitedNeighbors → Set Neighbors`
 
 **Data flow:**
 
@@ -2875,6 +3735,12 @@ to
 12. Connect:
 
 - `Length(Neighbors) > 0` → `Branch.Condition`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.9.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.9.2.png' | relative_url }}" style="width:100%;" alt="Calling GetUnvisitedNeighbors with the CurrentIndex and storing the resulting array in the Neighbors variable" class="post-image">
+</a>
 
 ---
 
@@ -3008,6 +3874,12 @@ to
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-5.10.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.10.32.png' | relative_url }}" style="width:100%;" alt="Calculating a random index based on the Neighbors array length, picking a random neighbor from the stream, and storing it in ChosenNeighbor" class="post-image">
+</a>
+
+---
+
 ### Connections recap
 
 **Execution flow:**  
@@ -3048,7 +3920,16 @@ You now have one random valid neighbor stored in `ChosenNeighbor`.
 
 ### Step 5.11 — Remove the wall between the Current Cell and the ChosenNeighbor
 
-#### Step 5.11.1 — Call RemoveWallBetween
+#### Step 5.11.1 — Call `RemoveWallBetween`
+
+Now we will call the helper function that actually opens the wall between the current cell and the chosen neighbor.
+
+This step is important because selecting a neighbor is not enough by itself.  
+You must also remove the wall between the two cells, or the maze will still remain closed.
+
+---
+
+##### Step 5.11.1.1 — Add the function call node
 
 1. Right-click in empty graph space
 
@@ -3058,55 +3939,141 @@ You now have one random valid neighbor stored in `ChosenNeighbor`.
 
 3. Click the function call
 
-4. Connect:
+You should now see a `RemoveWallBetween` node with these inputs:
 
-- `CurrentIndex` → `CurrentIndex`
-- `ChosenNeighbor.CellIndex` → `NeighborIndex`
-- `ChosenNeighbor.DeltaX` → `DeltaX`
-- `ChosenNeighbor.DeltaY` → `DeltaY`
+- `CurrentIndex`
+- `NeighborIndex`
+- `DeltaX`
+- `DeltaY`
 
-5. Connect the white execution pin from:
-
-   `Set ChosenNeighbor`
-
-   to
-
-   `RemoveWallBetween`
+And it should also have white execution pins.
 
 ---
 
-### Connections recap
+##### Step 5.11.1.2 — Connect the CurrentIndex input
+
+4. Drag `CurrentIndex` into the graph as **Get**
+
+5. Connect:
+
+- `CurrentIndex` → `CurrentIndex` on `RemoveWallBetween`
+
+This tells the function which cell you are currently standing on.
+
+---
+
+##### Step 5.11.1.3 — Connect the chosen neighbor index
+
+6. Drag `ChosenNeighbor` into the graph as **Get**
+
+7. Drag from the `ChosenNeighbor` pin
+
+8. Search for:
+
+   `Break S_NeighborInfo`
+
+9. Click:
+
+   `Break S_NeighborInfo`
+
+This lets you access the values stored inside `ChosenNeighbor`.
+
+10. Connect:
+
+- `CellIndex` from `Break S_NeighborInfo` → `NeighborIndex` on `RemoveWallBetween`
+
+This tells the function which neighboring cell was selected.
+
+---
+
+##### Step 5.11.1.4 — Connect the direction values
+
+11. Connect:
+
+- `DeltaX` from `Break S_NeighborInfo` → `DeltaX` on `RemoveWallBetween`
+- `DeltaY` from `Break S_NeighborInfo` → `DeltaY` on `RemoveWallBetween`
+
+These two values tell the function which wall to remove.
+
+For example:
+
+- East neighbor = `DeltaX = 1`, `DeltaY = 0`
+- North neighbor = `DeltaX = 0`, `DeltaY = -1`
+
+Without these values, the function would not know which side of each cell to open.
+
+---
+
+##### Step 5.11.1.5 — Connect execution flow
+
+12. Connect the white execution pin from:
+
+`Set ChosenNeighbor`
+
+to
+
+`RemoveWallBetween`
+
+This makes sure the wall is removed only after the chosen neighbor has been selected and stored.
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.11.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.11.1.png' | relative_url }}" style="width:100%;" alt="Calling RemoveWallBetween with CurrentIndex and ChosenNeighbor values by breaking the S_NeighborInfo struct and connecting CellIndex DeltaX and DeltaY into the function inputs." class="post-image">
+  </a>
+
+---
+
+#### Connections recap
 
 **Execution flow:**  
 `Set ChosenNeighbor → RemoveWallBetween`
 
 **Data flow:**
 
-- `CurrentIndex` → current cell input
-- `ChosenNeighbor.CellIndex` → neighbor cell input
-- `ChosenNeighbor.DeltaX` → direction input
-- `ChosenNeighbor.DeltaY` → direction input
+- `CurrentIndex` → `RemoveWallBetween.CurrentIndex`
+- `ChosenNeighbor` → `Break S_NeighborInfo`
+- `Break S_NeighborInfo.CellIndex` → `RemoveWallBetween.NeighborIndex`
+- `Break S_NeighborInfo.DeltaX` → `RemoveWallBetween.DeltaX`
+- `Break S_NeighborInfo.DeltaY` → `RemoveWallBetween.DeltaY`
 
 ---
 
 ## Why this matters
 
-This is the moment where the maze path is physically carved into your data.
+This is the step where the path is actually carved into the maze.
+
+Before this step:
+
+- you know which neighbor was chosen
+
+After this step:
+
+- the wall between the two cells is removed
+- the maze path becomes real in your data
 
 ---
 
 ## Common mistakes
 
-❌ Sending the wrong direction values  
-✔️ Use the `DeltaX` and `DeltaY` stored in `ChosenNeighbor`
+❌ Forgetting to break `ChosenNeighbor`  
+✔️ You need `Break S_NeighborInfo` to access `CellIndex`, `DeltaX`, and `DeltaY`
+
+---
+
+❌ Connecting `ChosenNeighbor` directly into `NeighborIndex`  
+✔️ `NeighborIndex` needs only the `CellIndex` value
+
+---
+
+❌ Forgetting to connect the execution wire  
+✔️ `RemoveWallBetween` must be part of the white execution chain
 
 ---
 
 ## Expected result
 
-The wall between the current cell and the chosen neighbor is now removed.
-
----
+The wall between the current cell and the chosen neighbor is now removed correctly based on the direction stored in `ChosenNeighbor`.
 
 ### Step 5.12 — Mark the ChosenNeighbor as visited
 
@@ -3124,53 +4091,81 @@ The wall between the current cell and the chosen neighbor is now removed.
 
    `Get (a copy)`
 
-5. Connect:
+5. Drag `ChosenNeighbor` into the graph as **Get**
 
-- `ChosenNeighbor.CellIndex` → `Index`
-
-#### Step 5.12.2 — Set bVisited to True
-
-6. Drag from the returned struct
+6. Drag from the `ChosenNeighbor` pin
 
 7. Search for:
 
-   `Set Members in S_MazeCell`
+   `Break S_NeighborInfo`
 
 8. Click:
 
+   `Break S_NeighborInfo`
+
+9. Connect:
+
+- `CellIndex` → `Index` on `Get (a copy)`
+
+---
+
+#### Step 5.12.2 — Set bVisited to True
+
+1. Drag from the output of `Get (a copy)`
+
+2. Search for:
+
    `Set Members in S_MazeCell`
 
-9. Enable only:
+3. Click:
+
+   `Set Members in S_MazeCell`
+
+4. Connect:
+
+- output of `Get (a copy)` → struct input on `Set Members in S_MazeCell`
+
+5. Enable only:
 
 - `bVisited`
 
-10. Set:
+6. Set:
 
 - `bVisited = True`
 
+---
+
 #### Step 5.12.3 — Write the updated cell back
 
-11. Drag `MazeGrid` into the graph as **Get**
+1. Drag `MazeGrid` into the graph as **Get**
 
-12. Drag from the `MazeGrid` pin
+2. Drag from the `MazeGrid` pin
 
-13. Search for:
+3. Search for:
 
-`Set Array Elem`
+   `Set Array Elem`
 
-14. Click:
+4. Click:
 
-`Set Array Elem`
+   `Set Array Elem`
 
-15. Connect:
+5. Connect:
 
 - `MazeGrid` → `Target Array`
-- `ChosenNeighbor.CellIndex` → `Index`
-- updated struct → `Item`
+- `CellIndex` (from `Break S_NeighborInfo`) → `Index`
+- output of `Set Members in S_MazeCell` → `Item`
 
-16. Connect the white execution pin from:
+6. Connect the white execution pin from:
 
 `RemoveWallBetween`
+
+to
+
+`Set Members in S_MazeCell`
+
+7. Then connect the white execution pin from:
+
+`Set Members in S_MazeCell`
 
 to
 
@@ -3178,30 +4173,47 @@ to
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-5.12.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.12.3.png' | relative_url }}" style="width:100%;" alt="Breaking ChosenNeighbor to access CellIndex, retrieving the cell from MazeGrid, setting bVisited to true, and writing the updated struct back using Set Members and Set Array Elem with proper execution flow." class="post-image">
+</a>
+
+---
+
 ### Connections recap
 
 **Execution flow:**  
-`RemoveWallBetween → Set Array Elem`
+`RemoveWallBetween → Set Members in S_MazeCell → Set Array Elem`
 
 **Data flow:**
 
-- `ChosenNeighbor.CellIndex` → `MazeGrid.Get`
+- `ChosenNeighbor` → `Break S_NeighborInfo`
+- `CellIndex` → `MazeGrid.Get`
 - returned cell → `Set Members in S_MazeCell`
 - updated cell → `Set Array Elem`
-- `ChosenNeighbor.CellIndex` → `Set Array Elem.Index`
+- `CellIndex` → `Set Array Elem.Index`
 
 ---
 
 ## Why this matters
 
-Once the algorithm enters a cell, that cell must be marked visited.
+Once the algorithm enters a cell, that cell must be marked as visited to prevent revisiting and breaking the maze logic.
 
 ---
 
 ## Common mistakes
 
-❌ Forgetting to update `bVisited`  
-✔️ The algorithm depends on visited tracking to work correctly
+❌ Forgetting to break `ChosenNeighbor`  
+✔️ Use `Break S_NeighborInfo` to access `CellIndex`
+
+---
+
+❌ Not connecting the struct into `Set Members`  
+✔️ Always connect the output of `Get (a copy)`
+
+---
+
+❌ Skipping the execution path through `Set Members`  
+✔️ Execution must flow through every modifying node
 
 ---
 
@@ -3227,47 +4239,36 @@ The chosen neighbor is now marked as visited in `MazeGrid`.
 
    `Add`
 
-5. Connect the white execution pin from:
+5. Drag `ChosenNeighbor` into the graph as **Get**
 
-   `Set Array Elem`
+6. Drag from the `ChosenNeighbor` pin
 
-   to
+7. Search for:
 
-   `Add`
+   `Break S_NeighborInfo`
 
-6. Connect:
+8. Click:
 
-- `ChosenNeighbor.CellIndex` → `Add.Item`
+   `Break S_NeighborInfo`
 
----
+9. Connect:
 
-### Connections recap
+- `Stack` → `Add.Target Array`
+- `CellIndex` → `Add.Item`
 
-**Execution flow:**  
-`Set Array Elem → Stack.Add`
+10. Connect the white execution pin from:
 
-**Data flow:**
+`Set Array Elem`
 
-- `ChosenNeighbor.CellIndex` → `Stack.Add`
+to
 
----
-
-## Why this matters
-
-This is what pushes the algorithm deeper into the maze path.
+`Add`
 
 ---
 
-## Common mistakes
-
-❌ Forgetting this step  
-✔️ Without it, the algorithm will not continue correctly
-
----
-
-## Expected result
-
-The chosen neighbor is now the new top of the stack.
+<a href="{{ '/assets/images/blog/Part2-Step-5.13.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.13.1.png' | relative_url }}" style="width:100%;" alt="Adding the ChosenNeighbor’s CellIndex to the Stack array after breaking its struct, continuing the execution flow from Set Array Elem" class="post-image">
+</a>
 
 ---
 
@@ -3289,17 +4290,26 @@ From the **False** output of the Branch:
 
    `Remove Index`
 
-5. Connect:
+5. Drag `StackTopIndex` into the graph as **Get**
 
-- `StackTopIndex` → `Index`
+6. Connect:
 
-6. Connect the white execution pin from:
+- `Stack` → `Remove Index.Target Array`
+- `StackTopIndex` → `Remove Index.Index`
+
+7. Connect the white execution pin from:
 
    `Branch.False`
 
    to
 
    `Remove Index`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.14.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.14.1.png' | relative_url }}" style="width:100%;" alt="Adding the ChosenNeighbor’s CellIndex to the Stack array after breaking its struct, continuing the execution flow from Set Array Elem" class="post-image">
+</a>
 
 ---
 
@@ -3310,6 +4320,7 @@ From the **False** output of the Branch:
 
 **Data flow:**
 
+- `Stack` → `Remove Index.Target Array`
 - `StackTopIndex` → `Remove Index.Index`
 
 ---
@@ -3407,7 +4418,9 @@ Your `GenerateMaze` function now generates a full maze in memory using a stack-b
 
 ### Screenshot Placeholder
 
-**[Screenshot: Full GenerateMaze function showing start cell selection, visited update, stack setup, While Loop, neighbor selection, RemoveWallBetween call, and backtracking]**
+<a href="{{ '/assets/images/blog/Part2-Step-5-Final.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5-Final.png' | relative_url }}" style="width:100%;" alt="Full GenerateMaze function showing start cell selection, visited update, stack initialization, While Loop execution, neighbor selection, RemoveWallBetween call, and backtracking through the stack." class="post-image">
+</a>
 
 ---
 

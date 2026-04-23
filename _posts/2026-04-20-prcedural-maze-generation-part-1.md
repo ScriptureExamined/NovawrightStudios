@@ -122,15 +122,9 @@ This step prepares your project so everything stays organized and easy to follow
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: Content Browser showing the MazeGenerator folder with Blueprints and Meshes subfolders]**
-
----
-
-<a href="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-1.png' | relative_url }}" alt="Content Browser showing MazeGenerator folder with Blueprints and Meshes subfolders" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part1-Step-1.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-1.2.png' | relative_url }}" style="width:100%;" alt="Content Browser showing MazeGenerator folder with Blueprints and Meshes subfolders" class="post-image">
+  </a>
 
 ---
 
@@ -224,15 +218,9 @@ To keep your project organized, you can create copies:
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: Engine Content BasicShapes folder showing Cube and Plane meshes]**
-
----
-
-<a href="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-2.png' | relative_url }}" alt="Engine Content BasicShapes folder showing Cube and Plane meshes" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part1-Step-1.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-1.3.png' | relative_url }}" style="width:100%;" alt="Engine Content BasicShapes folder showing Cube and Plane meshes" class="post-image">
+  </a>
 
 ---
 
@@ -394,15 +382,9 @@ You now have a struct that describes neighbor relationships.
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: S_NeighborInfo struct with CellIndex, DeltaX, and DeltaY variables]**
-
----
-
-<a href="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-3.png' | relative_url }}" alt="S_NeighborInfo struct with CellIndex, DeltaX, and DeltaY variables" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part1-Step-2.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-2.1.png' | relative_url }}" style="width:100%;" alt="S_NeighborInfo struct with CellIndex, DeltaX, and DeltaY variables" class="post-image">
+  </a>
 
 ---
 
@@ -463,15 +445,9 @@ You now have a full maze cell data structure.
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: S_MazeCell struct showing Row, Col, bVisited, and four wall booleans]**
-
----
-
-<a href="{{ '/assets/images/blog/Part1-Step-4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-4.png' | relative_url }}" alt="S_MazeCell struct showing row, column, visited state, and four wall booleans" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part1-Step-2.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-2.2.png' | relative_url }}" style="width:100%;" alt="S_MazeCell struct showing row, column, visited state, and four wall booleans" class="post-image">
+  </a>
 
 ---
 
@@ -536,15 +512,9 @@ You now have an empty `BP_MazeGenerator`.
 
 ---
 
-### Screenshot Placeholder
-
-**[Screenshot: Blueprint Class creation menu showing Actor selected for BP_MazeGenerator]**
-
----
-
-<a href="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-5.png' | relative_url }}" alt="Blueprint Class creation menu showing Actor selected for BP_MazeGenerator" class="post-image">
-</a>
+<a href="{{ '/assets/images/blog/Part1-Step-3.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-23.1.png' | relative_url }}" style="width:100%;" alt="Blueprint Class creation menu showing Actor selected for BP_MazeGenerator" class="post-image">
+  </a>
 
 ---
 
@@ -632,15 +602,32 @@ Your main maze settings are now created and visible.
 
 ---
 
-### Screenshot Placeholder
+<div>
+<a href="{{ '/assets/images/blog/Part1-Step-4.1.2a.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.1.2a.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator variables panel showing MazeWidth" class="post-image">
+  </a>
 
-**[Screenshot: BP_MazeGenerator variables panel showing MazeWidth, MazeHeight, CellSize, MazeSeed, MazeGrid, and RandomStream]**
+  <a href="{{ '/assets/images/blog/Part1-Step-4.1.2b.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.1.2b.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator variables panel showing MazeHeight" class="post-image">
+  </a>
 
----
+  <a href="{{ '/assets/images/blog/Part1-Step-4.1.2c.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.1.2c.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator variables panel showing CellSize" class="post-image">
+  </a>
 
-<a href="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-6.png' | relative_url }}" alt="BP_MazeGenerator variables panel showing maze settings and data variables" class="post-image">
-</a>
+  <a href="{{ '/assets/images/blog/Part1-Step-4.1.2d.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.1.2d.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator variables panel showing MazeSeed" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-4.1.3a.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.1.3a.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator variables panel showing MazeGrid" class="post-image">
+  </a>
+
+  <a href="{{ '/assets/images/blog/Part1-Step-4.1.3b.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.1.3b.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator variables panel showing RandomStream" class="post-image">
+  </a>
+
+</div>
 
 ---
 
@@ -750,15 +737,15 @@ Both are added as components and both have a mesh assigned.
 
 ---
 
-### Screenshot Placeholder
+<div>
+<a href="{{ '/assets/images/blog/Part1-Step-4.2a.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.2a.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator Details panel showing FloorHISM with assigned mesh" class="post-image">
+  </a>
 
-**[Screenshot: BP_MazeGenerator components panel showing FloorHISM and WallHISM with meshes assigned]**
-
----
-
-<a href="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part1-Step-7.png' | relative_url }}" alt="BP_MazeGenerator components panel showing FloorHISM and WallHISM with assigned meshes" class="post-image">
-</a>
+  <a href="{{ '/assets/images/blog/Part1-Step-4.2b.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part1-Step-4.2b.png' | relative_url }}" style="width:100%;" alt="BP_MazeGenerator Details panel showing WallHISM with assigned mesh" class="post-image">
+  </a>
+</div>
 
 ---
 
