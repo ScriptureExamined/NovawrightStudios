@@ -109,14 +109,6 @@ You should now have a new empty function graph named:
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-1.1.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.1.png' | relative_url }}" alt="BuildMazeVisuals function created in My Blueprint" class="post-image">
-</a>
-
----
-
 # Step 1.2 — Add a For Loop
 
 ---
@@ -238,8 +230,8 @@ Your For Loop should now run once for every cell in `MazeGrid`.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-1.2.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.2.png' | relative_url }}" alt="For Loop iterating from 0 to MazeGrid Length minus 1" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-1.2.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.2.png' | relative_url }}" style="width:100%;" alt="For Loop iterating from 0 to MazeGrid Length minus 1" class="post-image">
 </a>
 
 ---
@@ -342,8 +334,8 @@ You should now be able to see the current cell’s row, column, and wall boolean
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-1.3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.3.png' | relative_url }}" alt="MazeGrid Get a copy connected to Break S_MazeCell" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-1.3.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.3.png' | relative_url }}" style="width:100%;" alt="MazeGrid Get a copy connected to Break S_MazeCell" class="post-image">
 </a>
 
 ---
@@ -372,7 +364,7 @@ So we convert the grid position into a world location.
 
 ### Step 1.4.1 — Calculate X location
 
-1. From `Break S_MazeCell`, find:
+1. From `Break S_MazeCell`, locate:
 
    `Col`
 
@@ -382,26 +374,46 @@ So we convert the grid position into a world location.
 
    `*`
 
-4. Choose:
+4. Click:
 
-   `Integer * Float`
+   `Multiply`
 
-   or
-
-   `Float * Float`
-
-5. Connect or enter:
-
-- `Col`
-- `CellSize`
-
-This gives you the X location.
+   (This automatically connects `Col` to the first input)
 
 ---
 
+5. Now we need to connect `CellSize`:
+
+6. Drag `CellSize` into the graph as **Get**
+
+7. Drag from the `CellSize` pin
+
+8. Connect it to the empty input pin on the `Multiply` node
+
+---
+
+## What you should see
+
+The `Multiply` node should now have:
+
+- one input connected to `Col`
+- one input connected to `CellSize`
+
+---
+
+## Why this matters
+
+This calculation:
+
+`Col × CellSize`
+
+converts the grid column into a world X position.
+
+## Each step in the grid is spaced out by `CellSize`, so this places the cell in the correct horizontal position.
+
 ### Step 1.4.2 — Calculate Y location
 
-1. From `Break S_MazeCell`, find:
+1. From `Break S_MazeCell`, locate:
 
    `Row`
 
@@ -411,20 +423,42 @@ This gives you the X location.
 
    `*`
 
-4. Choose:
+4. Click:
 
-   `Integer * Float`
+   `Multiply`
 
-   or
+   (This automatically connects `Row` to the first input)
 
-   `Float * Float`
+---
 
-5. Connect or enter:
+5. Now we need to connect `CellSize`:
 
-- `Row`
-- `CellSize`
+6. Drag `CellSize` into the graph as **Get**
 
-This gives you the Y location.
+7. Find your last `CellSize` you just dragged in.
+
+8. Connect it to the empty input pin on the `Multiply` node
+
+---
+
+## What you should see
+
+The `Multiply` node should now have:
+
+- one input connected to `Row`
+- one input connected to `CellSize`
+
+---
+
+## Why this matters
+
+This calculation:
+
+`Row × CellSize`
+
+converts the grid row into a world Y position.
+
+Each step in the grid is spaced by `CellSize`, so this places the cell in the correct vertical position.
 
 ---
 
@@ -489,10 +523,10 @@ You should now have a world location for the current maze cell.
 
 ---
 
-### Screenshot Placeholder
+**Note:** I switched the wires on Col and CellSize to keep the wires from crossing in the screenshot
 
-<a href="{{ '/assets/images/blog/Part3-Step-1.4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.4.png' | relative_url }}" alt="Make Vector using Col times CellSize and Row times CellSize" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-1.4.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.4.png' | relative_url }}" style="width:100%;" alt="Make Vector using Col times CellSize and Row times CellSize" class="post-image">
 </a>
 
 ---
@@ -555,6 +589,28 @@ This step adds one floor instance at the cell’s world location.
 
    `Make Transform.Location`
 
+---
+
+### Step — Connect the cell location to the transform
+
+1.  Find the `Make Transform` node you just created
+
+2.  Find the `Location` pin on the `Make Transform` node  
+    (this is the top input pin labeled “Location”)
+
+3.  Now find your **cell location vector**
+
+This is the `Make Vector` node you created earlier in Step 1.4  
+ (the one using `Col * CellSize` and `Row * CellSize`)
+
+4.  Drag from the **output pin** of that `Make Vector` node
+
+5.  Connect it to:
+
+    `Make Transform → Location`
+
+---
+
 5. Set Rotation to:
 
 - X = `0`
@@ -581,7 +637,7 @@ This step adds one floor instance at the cell’s world location.
 
 **Data flow:**
 
-- `Cell Location Vector → Make Transform.Location`
+- `Cell Location Make Vector → Make Transform.Location`
 - `Make Transform → FloorHISM Add Instance.Instance Transform`
 
 ---
@@ -612,10 +668,8 @@ When the function runs, every cell in the maze should receive a floor mesh.
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-1.5.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.5.png' | relative_url }}" alt="FloorHISM Add Instance with Make Transform connected" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-1.5.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.5.png' | relative_url }}" style="width:100%;" alt="FloorHISM Add Instance with Make Transform connected" class="post-image">
 </a>
 
 ---
@@ -641,11 +695,17 @@ If it is false, we do not add that wall.
 
 ## Important concept
 
-The floor is placed at the center of the cell.
+The floor was placed at the center of the cell.
 
-Walls are placed around the edges of the cell.
+Walls need to be placed around the edges of the cell.
 
-So each wall starts from the cell location and then uses an offset.
+So each wall uses this pattern:
+
+`Cell Location + Wall Offset = Final Wall Location`
+
+Then that final wall location goes into:
+
+`Make Transform → WallHISM Add Instance`
 
 ---
 
@@ -655,13 +715,14 @@ So each wall starts from the cell location and then uses an offset.
 
 ## What this step does
 
-The north wall is placed above the center of the cell.
+The north wall is placed on the north edge of the cell.
 
 It uses:
 
 - `bWallNorth`
 - Y offset = `-CellSize / 2`
 - Z offset = `CellSize / 2`
+- Rotation Z = `0`
 
 ---
 
@@ -692,6 +753,16 @@ It uses:
 
 ### Step 1.6.1.2 — Create the north wall offset
 
+We are creating this offset:
+
+- X = `0`
+- Y = `-CellSize / 2`
+- Z = `CellSize / 2`
+
+---
+
+#### Step A — Create the offset Make Vector node
+
 1. Right-click in empty graph space
 
 2. Search for:
@@ -705,81 +776,208 @@ It uses:
 4. Set:
 
 - X = `0`
-- Y = `-CellSize / 2`
-- Z = `CellSize / 2`
 
-To make `-CellSize / 2`:
+---
+
+#### Step B — Create `CellSize / 2`
 
 1. Drag `CellSize` into the graph as **Get**
 
-2. Divide it by `2`
+2. Drag from the `CellSize` pin
 
-3. Multiply the result by `-1`
+3. Search for:
+
+   `/`
+
+4. Click:
+
+   `Divide`
+
+5. Set the second value to:
+
+   `2`
+
+This gives you:
+
+`CellSize / 2`
+
+---
+
+#### Step C — Connect Z
+
+1. Drag from the output of the `Divide` node
+
+2. Connect it to:
+
+   `Make Vector → Z`
+
+---
+
+#### Step D — Create the negative Y value
+
+1. Drag from the output of the `Divide` node again
+
+2. Search for:
+
+   `Multiply`
+
+3. Click:
+
+   `Multiply`
+
+4. Set the second value to:
+
+   `-1`
+
+This gives you:
+
+`-CellSize / 2`
+
+---
+
+#### Step E — Connect Y
+
+1. Drag from the output of the `Multiply` node
+
+2. Connect it to:
+
+   `Make Vector → Y`
+
+---
+
+## What you should see
+
+Your north wall offset `Make Vector` should have:
+
+- X = `0`
+- Y = `(CellSize / 2) * -1`
+- Z = `CellSize / 2`
+
+---
+
+### Screenshot Placeholder
+
+<a href="{{ '/assets/images/blog/Part3-Step-1.6.1.2.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.6.1.2.png' | relative_url }}" style="width:100%;" alt="North wall offset vector using CellSize divided by 2 for Y and Z" class="post-image">
+</a>
 
 ---
 
 ### Step 1.6.1.3 — Add the offset to the cell location
 
-1. Drag from your original cell location vector
+In Step 1.4, you created a `Make Vector` node for the cell location.
 
-2. Search for:
+That node used:
+
+- `Col * CellSize` → X
+- `Row * CellSize` → Y
+- `0` → Z
+
+Now we will add the north wall offset to that cell location.
+
+---
+
+#### Step A — Create the Add node
+
+1. Find your original cell location `Make Vector` node from Step 1.4
+
+2. Drag from the output pin of that `Make Vector` node
+
+3. Search for:
 
    `+`
 
-3. Choose:
+4. Click:
 
-   `Vector + Vector`
+   `Add`
 
-4. Connect:
-
-- Cell location vector → first input
-- North wall offset vector → second input
+Unreal will create a vector Add node.
 
 ---
 
-### Step 1.6.1.4 — Add the north wall instance
+#### Step B — Connect the north wall offset
 
-1. Drag `WallHISM` into the graph as **Get**
+1. Find the north wall offset `Make Vector` node you created in Step 1.6.1.2
 
-2. Drag from it and search:
+2. Drag from its output pin
 
-   `Add Instance`
-
-3. Click:
-
-   `Add Instance`
-
-4. Connect:
-
-- `Branch.True` → `WallHISM Add Instance`
+3. Connect it to the empty input pin on the `Add` node
 
 ---
 
-### Step 1.6.1.5 — Make the north wall transform
+## What you should see
 
-1. Add:
+Your `Add` node should now have:
+
+- first input → cell location vector
+- second input → north wall offset vector
+
+The output of this `Add` node is the final north wall location.
+
+---
+
+### Screenshot Placeholder
+
+<a href="{{ '/assets/images/blog/Part3-Step-1.6.1.3.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.6.1.3.png' | relative_url }}" style="width:100%;" alt="North wall offset vector added to the cell location vector" class="post-image">
+</a>
+
+---
+
+### Step 1.6.1.4 — Create the north wall transform
+
+1. Right-click in empty graph space
+
+2. Search for:
 
    `Make Transform`
 
-2. Connect:
+3. Click:
 
-- Final north wall location → `Make Transform.Location`
+   `Make Transform`
 
-3. Set Rotation to:
+4. Drag from the output pin of the `Add` node  
+   from Step 1.6.1.3
+
+5. Connect it to:
+
+   `Make Transform → Location`
+
+6. Set Rotation to:
 
 - X = `0`
 - Y = `0`
 - Z = `0`
 
-4. Set Scale to:
+7. Set Scale to:
 
 - X = `1`
 - Y = `1`
 - Z = `1`
 
+---
+
+### Step 1.6.1.5 — Add the north wall instance
+
+1. Drag `WallHISM` into the graph as **Get**
+
+2. Drag from `WallHISM`
+
+3. Search for:
+
+   `Add Instance`
+
+4. Click:
+
+   `Add Instance`
+
 5. Connect:
 
-- `Make Transform` → `WallHISM Add Instance.Instance Transform`
+- `Branch.True` → `WallHISM Add Instance`
+
+6. Connect:
+
+- North wall `Make Transform` → `Add Instance.Instance Transform`
 
 ---
 
@@ -787,15 +985,15 @@ To make `-CellSize / 2`:
 
 **Execution flow:**
 
-`FloorHISM Add Instance → Branch bWallNorth`
+`FloorHISM Add Instance → bWallNorth Branch`
 
-`Branch.True → WallHISM Add Instance`
+`bWallNorth Branch.True → WallHISM Add Instance`
 
 **Data flow:**
 
 - `bWallNorth → Branch.Condition`
-- `Cell location + North offset → Make Transform.Location`
-- `Make Transform → WallHISM Add Instance.Instance Transform`
+- `Cell Location + North Offset → North Wall Make Transform.Location`
+- `North Wall Make Transform → WallHISM Add Instance.Instance Transform`
 
 ---
 
@@ -807,8 +1005,8 @@ A north wall is added only when `bWallNorth` is true.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-1.6.1.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.6.1.png' | relative_url }}" alt="North wall branch and WallHISM Add Instance setup" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-1.6.1.5.png' | relative_url }}"style="flex:1;">
+<img src="{{ '/assets/images/blog/Part3-Step-1.6.1.5.png' | relative_url }}" style="width:100%;" alt="Complete north wall setup with branch offset transform and WallHISM Add Instance" class="post-image">
 </a>
 
 ---
@@ -819,14 +1017,14 @@ A north wall is added only when `bWallNorth` is true.
 
 ## What this step does
 
-The east wall is placed to the right of the center of the cell.
+The east wall is placed on the east edge of the cell.
 
 It uses:
 
 - `bWallEast`
 - X offset = `CellSize / 2`
 - Z offset = `CellSize / 2`
-- Yaw rotation = `90`
+- Rotation Z = `90`
 
 ---
 
@@ -850,19 +1048,21 @@ It uses:
 
 5. Connect the execution flow into this Branch.
 
-If your north wall Branch already exists:
+For now, connect:
 
-- connect from the previous wall check’s finished execution path into this Branch
+- `North Wall Add Instance` execution output → `bWallEast Branch`
+
+Later, we will clean up the false path so the east wall check still runs even if there is no north wall.
+
+6. Connect:
+
+- `bWallEast` → `Branch.Condition`
 
 ---
 
 ### Step 1.6.2.2 — Create the east wall offset
 
-1. Add:
-
-   `Make Vector`
-
-2. Set:
+We are creating this offset:
 
 - X = `CellSize / 2`
 - Y = `0`
@@ -870,58 +1070,139 @@ If your north wall Branch already exists:
 
 ---
 
+#### Step A — Create the offset Make Vector node
+
+1. Right-click in empty graph space
+
+2. Search for:
+
+   `Make Vector`
+
+3. Click:
+
+   `Make Vector`
+
+4. Set:
+
+- Y = `0`
+
+---
+
+#### Step B — Create `CellSize / 2`
+
+1. Drag `CellSize` into the graph as **Get**
+
+2. Drag from the `CellSize` pin
+
+3. Search for:
+
+   `/`
+
+4. Click:
+
+   `Divide`
+
+5. Set the second value to:
+
+   `2`
+
+---
+
+#### Step C — Connect X and Z
+
+1. Drag from the output of the `Divide` node
+
+2. Connect it to:
+
+   `Make Vector → X`
+
+3. Drag from the output of the same `Divide` node again
+
+4. Connect it to:
+
+   `Make Vector → Z`
+
+---
+
 ### Step 1.6.2.3 — Add the offset to the cell location
 
-1. Add:
+1. Find your original cell location `Make Vector` node from Step 1.4
 
-   `Vector + Vector`
+2. Drag from its output pin
 
-2. Connect:
+3. Search for:
 
-- Cell location vector → first input
-- East wall offset vector → second input
+   `+`
 
----
+4. Click:
 
-### Step 1.6.2.4 — Add the east wall instance
+   `Add`
 
-1. Drag `WallHISM` into the graph as **Get**
+5. Find the east wall offset `Make Vector`
 
-2. Drag from it and search:
+6. Drag from its output pin
 
-   `Add Instance`
-
-3. Connect:
-
-- `Branch.True` → `WallHISM Add Instance`
+7. Connect it to the empty input pin on the `Add` node
 
 ---
 
-### Step 1.6.2.5 — Make the east wall transform
+### Step 1.6.2.4 — Create the east wall transform
 
-1. Add:
+1. Right-click in empty graph space
+
+2. Search for:
 
    `Make Transform`
 
-2. Connect:
+3. Click:
 
-- Final east wall location → `Make Transform.Location`
+   `Make Transform`
 
-3. Set Rotation to:
+4. Connect:
+
+- East wall final location Add node → `Make Transform.Location`
+
+5. Set Rotation to:
 
 - X = `0`
 - Y = `0`
 - Z = `90`
 
-4. Set Scale to:
+6. Set Scale to:
 
 - X = `1`
 - Y = `1`
 - Z = `1`
 
+---
+
+### Step 1.6.2.5 — Add the east wall instance
+
+1. Drag `WallHISM` into the graph as **Get**
+
+2. Drag from `WallHISM`
+
+3. Search for:
+
+   `Add Instance`
+
+4. Click:
+
+   `Add Instance`
+
 5. Connect:
 
-- `Make Transform` → `WallHISM Add Instance.Instance Transform`
+- `bWallEast Branch.True` → `WallHISM Add Instance`
+
+6. Connect:
+
+- East wall `Make Transform` → `Add Instance.Instance Transform`
+
+---
+
+<a href="{{ '/assets/images/blog/Part3-Step-1.6.2.5.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.6.2.5.png' | relative_url }}" style="width:100%;" alt="Complete east wall setup with branch offset transform and WallHISM Add Instance" class="post-image">
+</a>
 
 ---
 
@@ -931,28 +1212,20 @@ An east wall is added only when `bWallEast` is true.
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-1.6.2.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.6.2.png' | relative_url }}" alt="East wall branch and WallHISM Add Instance setup" class="post-image">
-</a>
-
----
-
 # Step 1.6.3 — Add the South Wall
 
 ---
 
 ## What this step does
 
-The south wall is placed below the center of the cell.
+The south wall is placed on the south edge of the cell.
 
 It uses:
 
 - `bWallSouth`
 - Y offset = `CellSize / 2`
 - Z offset = `CellSize / 2`
-- Yaw rotation = `180`
+- Rotation Z = `180`
 
 ---
 
@@ -976,15 +1249,21 @@ It uses:
 
 5. Connect the execution flow into this Branch.
 
+For now, connect:
+
+- `East Wall Add Instance` execution output → `bWallSouth Branch`
+
+Later, we will clean up the false path so the south wall check still runs even if there is no east wall.
+
+6. Connect:
+
+- `bWallSouth` → `Branch.Condition`
+
 ---
 
 ### Step 1.6.3.2 — Create the south wall offset
 
-1. Add:
-
-   `Make Vector`
-
-2. Set:
+We are creating this offset:
 
 - X = `0`
 - Y = `CellSize / 2`
@@ -992,58 +1271,133 @@ It uses:
 
 ---
 
+#### Step A — Create the offset Make Vector node
+
+1. Right-click in empty graph space
+
+2. Search for:
+
+   `Make Vector`
+
+3. Click:
+
+   `Make Vector`
+
+4. Set:
+
+- X = `0`
+
+---
+
+#### Step B — Create `CellSize / 2`
+
+1. Drag `CellSize` into the graph as **Get**
+
+2. Drag from the `CellSize` pin
+
+3. Search for:
+
+   `/`
+
+4. Click:
+
+   `Divide`
+
+5. Set the second value to:
+
+   `2`
+
+---
+
+#### Step C — Connect Y and Z
+
+1. Drag from the output of the `Divide` node
+
+2. Connect it to:
+
+   `Make Vector → Y`
+
+3. Drag from the output of the same `Divide` node again
+
+4. Connect it to:
+
+   `Make Vector → Z`
+
+---
+
 ### Step 1.6.3.3 — Add the offset to the cell location
 
-1. Add:
+1. Find your original cell location `Make Vector` node from Step 1.4
 
-   `Vector + Vector`
+2. Drag from its output pin
 
-2. Connect:
+3. Search for:
 
-- Cell location vector → first input
-- South wall offset vector → second input
+   `+`
 
----
+4. Click:
 
-### Step 1.6.3.4 — Add the south wall instance
+   `Add`
 
-1. Drag `WallHISM` into the graph as **Get**
+5. Find the south wall offset `Make Vector`
 
-2. Drag from it and search:
+6. Drag from its output pin
 
-   `Add Instance`
-
-3. Connect:
-
-- `Branch.True` → `WallHISM Add Instance`
+7. Connect it to the empty input pin on the `Add` node
 
 ---
 
-### Step 1.6.3.5 — Make the south wall transform
+### Step 1.6.3.4 — Create the south wall transform
 
-1. Add:
+1. Right-click in empty graph space
+
+2. Search for:
 
    `Make Transform`
 
-2. Connect:
+3. Click:
 
-- Final south wall location → `Make Transform.Location`
+   `Make Transform`
 
-3. Set Rotation to:
+4. Connect:
+
+- South wall final location Add node → `Make Transform.Location`
+
+5. Set Rotation to:
 
 - X = `0`
 - Y = `0`
 - Z = `180`
 
-4. Set Scale to:
+6. Set Scale to:
 
 - X = `1`
 - Y = `1`
 - Z = `1`
 
+---
+
+### Step 1.6.3.5 — Add the south wall instance
+
+1. Drag `WallHISM` into the graph as **Get**
+
+2. Drag from `WallHISM`
+
+3. Search for:
+
+   `Add Instance`
+
+4. Click:
+
+   `Add Instance`
+
 5. Connect:
 
-- `Make Transform` → `WallHISM Add Instance.Instance Transform`
+- `bWallSouth Branch.True` → `WallHISM Add Instance`
+
+6. Connect:
+
+- South wall `Make Transform` → `Add Instance.Instance Transform`
 
 ---
 
@@ -1053,10 +1407,8 @@ A south wall is added only when `bWallSouth` is true.
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-1.6.3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.6.3.png' | relative_url }}" alt="South wall branch and WallHISM Add Instance setup" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-1.6.3.5.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.6.3.5.png' | relative_url }}" style="width:100%;" alt="Complete south wall setup with branch offset transform and WallHISM Add Instance" class="post-image">
 </a>
 
 ---
@@ -1067,14 +1419,14 @@ A south wall is added only when `bWallSouth` is true.
 
 ## What this step does
 
-The west wall is placed to the left of the center of the cell.
+The west wall is placed on the west edge of the cell.
 
 It uses:
 
 - `bWallWest`
 - X offset = `-CellSize / 2`
 - Z offset = `CellSize / 2`
-- Yaw rotation = `-90`
+- Rotation Z = `-90`
 
 ---
 
@@ -1098,15 +1450,21 @@ It uses:
 
 5. Connect the execution flow into this Branch.
 
+For now, connect:
+
+- `South Wall Add Instance` execution output → `bWallWest Branch`
+
+Later, we will clean up the false path so the west wall check still runs even if there is no south wall.
+
+6. Connect:
+
+- `bWallWest` → `Branch.Condition`
+
 ---
 
 ### Step 1.6.4.2 — Create the west wall offset
 
-1. Add:
-
-   `Make Vector`
-
-2. Set:
+We are creating this offset:
 
 - X = `-CellSize / 2`
 - Y = `0`
@@ -1114,58 +1472,165 @@ It uses:
 
 ---
 
+#### Step A — Create the offset Make Vector node
+
+1. Right-click in empty graph space
+
+2. Search for:
+
+   `Make Vector`
+
+3. Click:
+
+   `Make Vector`
+
+4. Set:
+
+- Y = `0`
+
+---
+
+#### Step B — Create `CellSize / 2`
+
+1. Drag `CellSize` into the graph as **Get**
+
+2. Drag from the `CellSize` pin
+
+3. Search for:
+
+   `/`
+
+4. Click:
+
+   `Divide`
+
+5. Set the second value to:
+
+   `2`
+
+---
+
+#### Step C — Connect Z
+
+1. Drag from the output of the `Divide` node
+
+2. Connect it to:
+
+   `Make Vector → Z`
+
+---
+
+#### Step D — Create the negative X value
+
+1. Drag from the output of the `Divide` node again
+
+2. Search for:
+
+   `Multiply`
+
+3. Click:
+
+   `Multiply`
+
+4. Set the second value to:
+
+   `-1`
+
+This gives you:
+
+`-CellSize / 2`
+
+---
+
+#### Step E — Connect X
+
+1. Drag from the output of the `Multiply` node
+
+2. Connect it to:
+
+   `Make Vector → X`
+
+---
+
 ### Step 1.6.4.3 — Add the offset to the cell location
 
-1. Add:
+1. Find your original cell location `Make Vector` node from Step 1.4
 
-   `Vector + Vector`
+2. Drag from its output pin
 
-2. Connect:
+3. Search for:
 
-- Cell location vector → first input
-- West wall offset vector → second input
+   `+`
 
----
+4. Click:
 
-### Step 1.6.4.4 — Add the west wall instance
+   `Add`
 
-1. Drag `WallHISM` into the graph as **Get**
+5. Find the west wall offset `Make Vector`
 
-2. Drag from it and search:
+6. Drag from its output pin
 
-   `Add Instance`
-
-3. Connect:
-
-- `Branch.True` → `WallHISM Add Instance`
+7. Connect it to the empty input pin on the `Add` node
 
 ---
 
-### Step 1.6.4.5 — Make the west wall transform
+### Step 1.6.4.4 — Create the west wall transform
 
-1. Add:
+1. Right-click in empty graph space
+
+2. Search for:
 
    `Make Transform`
 
-2. Connect:
+3. Click:
 
-- Final west wall location → `Make Transform.Location`
+   `Make Transform`
 
-3. Set Rotation to:
+4. Connect:
+
+- West wall final location Add node → `Make Transform.Location`
+
+5. Set Rotation to:
 
 - X = `0`
 - Y = `0`
 - Z = `-90`
 
-4. Set Scale to:
+6. Set Scale to:
 
 - X = `1`
 - Y = `1`
 - Z = `1`
 
+---
+
+### Step 1.6.4.5 — Add the west wall instance
+
+1. Drag `WallHISM` into the graph as **Get**
+
+2. Drag from `WallHISM`
+
+3. Search for:
+
+   `Add Instance`
+
+4. Click:
+
+   `Add Instance`
+
 5. Connect:
 
-- `Make Transform` → `WallHISM Add Instance.Instance Transform`
+- `bWallWest Branch.True` → `WallHISM Add Instance`
+
+6. Connect:
+
+- West wall `Make Transform` → `Add Instance.Instance Transform`
+
+---
+
+<a href="{{ '/assets/images/blog/Part3-Step-1.6.4.5.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.6.4.5.png' | relative_url }}" style="width:100%;" alt="Complete west wall setup with branch offset transform and WallHISM Add Instance" class="post-image">
+</a>
 
 ---
 
@@ -1175,10 +1640,161 @@ A west wall is added only when `bWallWest` is true.
 
 ---
 
+# Step 1.6.5 — Fix the Wall Execution Flow
+
+---
+
+## What this step does
+
+This is important.
+
+Each wall check must continue to the next wall check whether the wall exists or not.
+
+If you only connect the `True` pins, the function may stop checking walls whenever one wall boolean is false.
+
+---
+
+## Correct wall check order
+
+The execution should check walls in this order:
+
+`North → East → South → West`
+
+---
+
+## Beginner-friendly setup
+
+For each wall Branch:
+
+- `True` means: add the wall, then continue
+- `False` means: skip adding the wall, then continue
+
+That means both paths need to eventually reach the next wall Branch.
+
+---
+
+## How to connect North to East
+
+1. Find the `bWallNorth` Branch
+
+2. Find the `bWallEast` Branch
+
+3. Connect:
+
+- `bWallNorth Branch.False` → `bWallEast Branch`
+
+4. Connect:
+
+- `North Wall Add Instance` execution output → `bWallEast Branch`
+
+Now the east wall check runs whether the north wall was added or skipped.
+
+---
+
+## How to connect East to South
+
+1. Find the `bWallEast` Branch
+
+2. Find the `bWallSouth` Branch
+
+3. Connect:
+
+- `bWallEast Branch.False` → `bWallSouth Branch`
+
+4. Connect:
+
+- `East Wall Add Instance` execution output → `bWallSouth Branch`
+
+Now the south wall check runs whether the east wall was added or skipped.
+
+---
+
+## How to connect South to West
+
+1. Find the `bWallSouth` Branch
+
+2. Find the `bWallWest` Branch
+
+3. Connect:
+
+- `bWallSouth Branch.False` → `bWallWest Branch`
+
+4. Connect:
+
+- `South Wall Add Instance` execution output → `bWallWest Branch`
+
+Now the west wall check runs whether the south wall was added or skipped.
+
+---
+
+## What about West?
+
+West is the last wall check.
+
+So after west:
+
+- if `bWallWest` is true, add the wall
+- if `bWallWest` is false, the loop simply moves on to the next cell
+
+---
+
+## Common mistakes
+
+❌ Only connecting the True pins  
+✔️ Connect both paths so the next wall check always happens
+
+---
+
+❌ Letting execution stop after a false Branch  
+✔️ The False pin should go to the next wall Branch
+
+---
+
+❌ Letting execution stop after Add Instance  
+✔️ The Add Instance output should also go to the next wall Branch
+
+---
+
+## Expected result
+
+For every cell, Unreal checks:
+
+- north wall
+- east wall
+- south wall
+- west wall
+
+Even if one wall is missing, the remaining walls are still checked.
+
+---
+
+# Step 1.6.6 — Final Result for Wall Placement
+
+---
+
+## What you have built
+
+Your wall system now:
+
+- checks each wall boolean
+- creates a wall offset
+- adds that offset to the cell location
+- creates a wall transform
+- adds a wall instance
+- continues checking the remaining walls
+
+---
+
+## Expected result
+
+Each maze cell now places only the walls that still exist.
+
+---
+
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-1.6.4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.6.4.png' | relative_url }}" alt="West wall branch and WallHISM Add Instance setup" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-1.6-AllWalls.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-1.6-AllWalls.png' | relative_url }}" style="width:100%;" alt="Complete wall placement setup for north east south and west walls" class="post-image">
 </a>
 
 ---
@@ -1248,14 +1864,6 @@ For each cell, the function checks all four wall booleans and adds the needed wa
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-1.7.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.7.png' | relative_url }}" alt="Complete wall execution flow checking north east south and west walls" class="post-image">
-</a>
-
----
-
 # Step 1.8 — Final Result for `BuildMazeVisuals`
 
 ---
@@ -1275,14 +1883,6 @@ Your `BuildMazeVisuals` function now:
 ## Expected result
 
 When this function runs, the maze should become visible.
-
----
-
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-1.8.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-1.8.png' | relative_url }}" alt="Full BuildMazeVisuals function overview" class="post-image">
-</a>
 
 ---
 
@@ -1347,14 +1947,6 @@ You should now have a new empty function called:
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-2.1.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.1.png' | relative_url }}" alt="CreateEntranceAndExit function created in My Blueprint" class="post-image">
-</a>
-
----
-
 # Step 2.2 — Create a Local Border Index Array
 
 ---
@@ -1399,8 +1991,8 @@ You should now have a local Integer Array named:
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.2.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.2.png' | relative_url }}" alt="BorderIndices local integer array created" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.2.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.2.png' | relative_url }}" style="width:100%;" alt="BorderIndices local integer array created" class="post-image">
 </a>
 
 ---
@@ -1437,18 +2029,88 @@ If a cell is on the border, we add its index to `BorderIndices`.
 
 1. Drag `MazeGrid` into the graph as **Get**
 
-2. Drag from `MazeGrid`
+2. Drag from the `MazeGrid` pin
 
 3. Search for:
 
    `Length`
 
-4. Subtract `1`
+4. Click:
 
-5. Connect:
+   `Length`
 
-- `First Index` = `0`
-- `Length - 1` → `Last Index`
+---
+
+## Step A — Subtract 1 from the length
+
+5. Drag from the output pin of the `Length` node
+
+6. Search for:
+
+   `-`
+
+7. Click:
+
+   `Subtract`
+
+   (This creates an Integer - Integer node)
+
+8. In the second input box, type:
+
+   `1`
+
+---
+
+## Step B — Connect the For Loop range
+
+9. Set:
+
+- `First Index` = `0` (type 0 directly into the First Index field)
+
+10. Connect:
+
+- Output of the `Subtract` node → `For Loop.Last Index`
+
+---
+
+## What you should see
+
+- `MazeGrid → Length`
+- `Length → Subtract`
+- `Subtract (Length - 1) → For Loop.Last Index`
+
+---
+
+## Why this matters
+
+Arrays start at index `0`.
+
+So if your array has 10 elements:
+
+- First index = `0`
+- Last index = `9`
+
+That’s why we use:
+
+`Length - 1`
+
+---
+
+## Common mistakes
+
+❌ Connecting `Length` directly to Last Index  
+✔️ Always subtract 1
+
+---
+
+❌ Forgetting to type `1` into the Subtract node  
+✔️ The second input must be `1`
+
+---
+
+## Expected result
+
+Your For Loop will now correctly loop through every element in `MazeGrid` without going out of bounds.
 
 ---
 
@@ -1465,16 +2127,10 @@ If a cell is on the border, we add its index to `BorderIndices`.
 
 ---
 
-## Expected result
-
-The function will now loop through every cell in `MazeGrid`.
-
----
-
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.3.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.3.png' | relative_url }}" alt="CreateEntranceAndExit For Loop through MazeGrid" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.3.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.3.png' | relative_url }}" style="width:100%;" alt="CreateEntranceAndExit For Loop through MazeGrid" class="post-image">
 </a>
 
 ---
@@ -1538,8 +2194,8 @@ for the current cell.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.4.png' | relative_url }}" alt="MazeGrid current cell broken inside CreateEntranceAndExit" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.4.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.4.png' | relative_url }}" style="width:100%;" alt="MazeGrid current cell broken inside CreateEntranceAndExit" class="post-image">
 </a>
 
 ---
@@ -1585,17 +2241,107 @@ This checks:
 
 ### Step 2.5.2 — Check bottom border
 
-1. Drag from `MazeHeight`
+We want to check:
 
-2. Subtract:
+`Row == MazeHeight - 1`
+
+This means: “Is this cell on the last row?”
+
+---
+
+## Step A — Get MazeHeight
+
+1. Drag `MazeHeight` into the graph as **Get**
+
+---
+
+## Step B — Subtract 1 from MazeHeight
+
+2. Drag from the `MazeHeight` pin
+
+3. Search for:
+
+   `-`
+
+4. Click:
+
+   `Subtract`
+
+   (This creates a node that subtracts one value from another)
+
+5. In the second input box on the Subtract node, type:
 
    `1`
 
-3. Compare:
+Now you have:
 
-   `Row == MazeHeight - 1`
+`MazeHeight - 1`
 
 ---
+
+## Step C — Compare Row to MazeHeight - 1
+
+6. From `Break S_MazeCell`, find:
+
+   `Row`
+
+7. Drag from the `Row` pin
+
+8. Search for:
+
+   `==`
+
+9. Click:
+
+   `Equal (Integer)`
+
+---
+
+## Step D — Connect the comparison
+
+10. Connect:
+
+- `Row` → first input of the Equal node
+- Output of the `Subtract` node (`MazeHeight - 1`) → second input
+
+---
+
+## What you should see
+
+- `MazeHeight → Subtract (1)`
+- `Row → Equal`
+- `Subtract output → Equal`
+
+This forms:
+
+`Row == MazeHeight - 1`
+
+---
+
+## Why this matters
+
+- `Row == 0` → top edge
+- `Row == MazeHeight - 1` → bottom edge
+
+So this condition checks if the cell is on the **bottom border** of the maze.
+
+---
+
+## Common mistakes
+
+❌ Comparing `Row == MazeHeight`  
+✔️ Must use `MazeHeight - 1`
+
+---
+
+❌ Forgetting to subtract 1  
+✔️ Arrays start at 0, so the last row is one less than the height
+
+---
+
+## Expected result
+
+## This node returns **true** only when the current cell is on the bottom edge of the maze.
 
 ### Step 2.5.3 — Check left border
 
@@ -1617,31 +2363,261 @@ This checks:
 
 ### Step 2.5.4 — Check right border
 
-1. Drag from `MazeWidth`
+We want to check:
 
-2. Subtract:
+`Col == MazeWidth - 1`
+
+This means: “Is this cell on the last column (right edge)?”
+
+---
+
+## Step A — Get MazeWidth
+
+1. Drag `MazeWidth` into the graph as **Get**
+
+---
+
+## Step B — Subtract 1 from MazeWidth
+
+2. Drag from the `MazeWidth` pin
+
+3. Search for:
+
+   `-`
+
+4. Click:
+
+   `Subtract`
+
+   (This creates an Integer - Integer node)
+
+5. In the second input box on the Subtract node, type:
 
    `1`
 
-3. Compare:
+Now you have:
 
-   `Col == MazeWidth - 1`
+`MazeWidth - 1`
+
+---
+
+## Step C — Compare Col to MazeWidth - 1
+
+6. From `Break S_MazeCell`, find:
+
+   `Col`
+
+7. Drag from the `Col` pin
+
+8. Search for:
+
+   `==`
+
+9. Click:
+
+   `Equal (Integer)`
+
+---
+
+## Step D — Connect the comparison
+
+10. Connect:
+
+- `Col` → first input of the Equal node
+- Output of the `Subtract` node (`MazeWidth - 1`) → second input
+
+---
+
+## What you should see
+
+- `MazeWidth → Subtract (1)`
+- `Col → Equal`
+- `Subtract output → Equal`
+
+This forms:
+
+`Col == MazeWidth - 1`
+
+---
+
+## Why this matters
+
+- `Col == 0` → left edge
+- `Col == MazeWidth - 1` → right edge
+
+So this condition checks if the cell is on the **right border** of the maze.
+
+---
+
+## Common mistakes
+
+❌ Comparing `Col == MazeWidth`  
+✔️ Must use `MazeWidth - 1`
+
+---
+
+❌ Forgetting to subtract 1  
+✔️ The last column index is one less than the total width
+
+---
+
+## Expected result
+
+This node returns **true** only when the current cell is on the right edge of the maze.
 
 ---
 
 ### Step 2.5.5 — Combine the checks with OR nodes
 
-1. Drag from one comparison result
+We now have four separate True/False results:
+
+- `Row == 0` (top border)
+- `Row == MazeHeight - 1` (bottom border)
+- `Col == 0` (left border)
+- `Col == MazeWidth - 1` (right border)
+
+We need to combine them into one final True/False result using OR nodes.
+
+---
+
+## Step A — Create the first OR node
+
+1. Drag from the output pin of one of your comparison nodes  
+   (for example: `Row == 0`)
 
 2. Search for:
 
    `OR`
 
-3. Use Boolean OR nodes to combine all four checks
+3. Click:
 
-The final condition should mean:
+   `OR (Boolean)`
 
-`Top Border OR Bottom Border OR Left Border OR Right Border`
+---
+
+## Step B — Connect the first two conditions
+
+4. Connect:
+
+- `Row == 0` → first input
+- `Row == MazeHeight - 1` → second input
+
+This gives:
+
+`Top OR Bottom`
+
+---
+
+## Step C — Add a second OR node
+
+5. Drag from the output pin of the first OR node
+
+6. Search for:
+
+   `OR`
+
+7. Click:
+
+   `OR (Boolean)`
+
+---
+
+## Step D — Add the third condition
+
+8. Connect:
+
+- Output of first OR → first input
+- `Col == 0` → second input
+
+This gives:
+
+`(Top OR Bottom) OR Left`
+
+---
+
+## Step E — Add a third OR node
+
+9. Drag from the output pin of the second OR node
+
+10. Search for:
+
+`OR`
+
+11. Click:
+
+`OR (Boolean)`
+
+---
+
+## Step F — Add the final condition
+
+12. Connect:
+
+- Output of second OR → first input
+- `Col == MazeWidth - 1` → second input
+
+This gives:
+
+`(Top OR Bottom OR Left) OR Right`
+
+---
+
+<a href="{{ '/assets/images/blog/Part3-Step-2.5.5.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.5.5.png' | relative_url }}" style="width:100%;" alt="Checking to see if the cell is on one of the edges" class="post-image">
+</a>
+
+---
+
+## What you should see
+
+You should now have a chain of OR nodes combining all four checks.
+
+The final output is a single Boolean value.
+
+---
+
+## Final meaning
+
+This final result is TRUE if:
+
+- the cell is on the top edge  
+  OR
+- the bottom edge  
+  OR
+- the left edge  
+  OR
+- the right edge
+
+---
+
+## Why this matters
+
+We only want to select cells that are on the outside of the maze.
+
+This combined condition identifies all border cells.
+
+---
+
+## Common mistakes
+
+❌ Trying to connect all four conditions into one OR node  
+✔️ Use multiple OR nodes chained together
+
+---
+
+❌ Leaving one condition unconnected  
+✔️ Make sure all four comparisons are included
+
+---
+
+❌ Mixing up AND and OR  
+✔️ Use OR — only one condition needs to be true
+
+---
+
+## Expected result
+
+You now have a single Boolean output that is TRUE for any border cell.
 
 ---
 
@@ -1707,14 +2683,6 @@ The Branch returns true only when the current cell is on the outside edge of the
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part3-Step-2.5.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.5.png' | relative_url }}" alt="Border condition using Row Col MazeHeight MazeWidth and OR nodes" class="post-image">
-</a>
-
----
-
 # Step 2.6 — Add Border Cells to the BorderIndices Array
 
 ---
@@ -1776,8 +2744,8 @@ Every border cell index is added to `BorderIndices`.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.6.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.6.png' | relative_url }}" alt="Adding border cell indexes to BorderIndices array" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.6.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.6.png' | relative_url }}" style="width:100%;" alt="Adding border cell indexes to BorderIndices array" class="post-image">
 </a>
 
 ---
@@ -1806,76 +2774,353 @@ Do not use the `Loop Body` pin for this step.
 
 ### Step 2.7.2 — Get BorderIndices length
 
+We need the size of the `BorderIndices` array, then subtract 1 so we get the highest valid index.
+
+---
+
+## Step A — Get the array length
+
 1. Drag `BorderIndices` into the graph as **Get**
 
-2. Drag from it and search:
+2. Drag from the `BorderIndices` pin
+
+3. Search for:
 
    `Length`
 
-3. Subtract:
+4. Click:
+
+   `Length`
+
+---
+
+## Step B — Subtract 1 from the length
+
+5. Drag from the output pin of the `Length` node
+
+6. Search for:
+
+   `-`
+
+7. Click:
+
+   `Subtract`
+
+   (This creates an Integer - Integer node)
+
+8. In the second input box, type:
 
    `1`
 
-This gives the highest valid random array index.
+Now you have:
+
+`BorderIndices Length - 1`
 
 ---
 
-### Step 2.7.3 — Get random integer in range from stream
+## What you should see
 
-1. Drag `RandomStream` into the graph as **Get**
-
-2. Drag from it and search for:
-
-   `Random Integer in Range from Stream`
-
-3. Set:
-
-- Min = `0`
-- Max = `BorderIndices Length - 1`
+- `BorderIndices → Length`
+- `Length → Subtract`
+- `Subtract (Length - 1)` output
 
 ---
 
-### Step 2.7.4 — Get the entrance cell index
+## Why this matters
 
-1. Drag `BorderIndices` into the graph as **Get**
+Arrays start at index `0`.
 
-2. Drag from it and search:
+So if your array has 5 items:
 
-   `Get`
+- First index = `0`
+- Last index = `4`
 
-3. Choose:
+That’s why we use:
 
-   `Get (a copy)`
-
-4. Connect:
-
-- Random Integer → `Get (a copy).Index`
-
-The output is your entrance cell index.
+`Length - 1`
 
 ---
 
-## Beginner note
+## Common mistakes
 
-There are two different indexes involved here:
+❌ Using `Length` directly  
+✔️ Always subtract 1 for the last index
 
-- the random index inside `BorderIndices`
-- the actual maze cell index stored inside `BorderIndices`
+---
 
-The value you get out of `BorderIndices` is the actual cell index in `MazeGrid`.
+❌ Forgetting to type `1` into the Subtract node  
+✔️ The second input must be `1`
 
 ---
 
 ## Expected result
 
-You now have one random border cell index that will become the entrance.
+You now have the **maximum valid index** you can safely use when picking a random value from `BorderIndices`.
 
 ---
 
-### Screenshot Placeholder
+### Step 2.7.3 — Get random integer in range from stream
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.7.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.7.png' | relative_url }}" alt="Selecting random entrance index from BorderIndices using RandomStream" class="post-image">
+We are going to generate a random number between:
+
+`0` and `BorderIndices Length - 1`
+
+---
+
+## Step A — Add the Random node
+
+1. Drag `RandomStream` into the graph as **Get**
+
+2. Drag from the `RandomStream` pin
+
+3. Search for:
+
+   `Random Integer in Range from Stream`
+
+4. Click:
+
+   `Random Integer in Range from Stream`
+
+---
+
+## Step B — Set the minimum value
+
+5. Click in the **Min** field on the node
+
+6. Type:
+
+   `0`
+
+---
+
+## Step C — Connect the maximum value
+
+We already created this value in the previous step:
+
+`BorderIndices Length - 1`
+
+7. Find your **Subtract node** from Step 2.7.2  
+   (this is the node that calculates `Length - 1`)
+
+8. Drag from the **output pin** of that Subtract node
+
+9. Connect it to:
+
+   `Random Integer in Range from Stream → Max`
+
+---
+
+## What you should see
+
+- `RandomStream` connected into the Random node
+- Min = `0`
+- Max = `Length - 1` (from your Subtract node)
+
+---
+
+## Why this matters
+
+This random number is used to pick an index from the `BorderIndices` array.
+
+- `0` = first item
+- `Length - 1` = last item
+
+So this ensures we always pick a **valid index**.
+
+---
+
+## Common mistakes
+
+❌ Typing a number into Max manually  
+✔️ Use the Subtract node (`Length - 1`)
+
+---
+
+❌ Forgetting to connect RandomStream  
+✔️ This version uses the seeded random stream for consistent results
+
+---
+
+❌ Using plain "Random Integer in Range" instead  
+✔️ Make sure it says **“from Stream”**
+
+---
+
+## Expected result
+
+You now have a random integer that safely points to an index inside `BorderIndices`.
+
+---
+
+### Step 2.7.4 — Get the entrance cell index
+
+We are now using the random number to pick a value from the `BorderIndices` array.
+
+---
+
+## Step A — Add the Get node
+
+1. Drag `BorderIndices` into the graph as **Get**
+
+2. Drag from the `BorderIndices` pin
+
+3. Search for:
+
+   `Get`
+
+4. Click:
+
+   `Get (a copy)`
+
+---
+
+## Note
+
+You do NOT need to drag in a new `BorderIndices` node each time.
+
+You can reuse the same one already in your graph.
+
+All Get nodes reference the same data.
+
+---
+
+## Step B — Connect the random index
+
+5. Find the output of your node from Step 2.7.3  
+   (`Random Integer in Range from Stream`)
+
+6. Drag from the **output pin** of that node
+
+7. Connect it to:
+
+   `Get (a copy) → Index`
+
+---
+
+## What you should see
+
+- `BorderIndices → Get (a copy)`
+- Random Integer → connected to the **Index** pin
+- The Get node now has a value coming out of its right side
+
+---
+
+## Very important concept (read this carefully)
+
+There are TWO different indexes here:
+
+1. The random number you generated  
+   → this is the position inside the `BorderIndices` array
+
+2. The value stored inside `BorderIndices`  
+   → this is the actual index of a cell in `MazeGrid`
+
+This step converts:
+
+`Random position in BorderIndices`
+→ into  
+`Actual MazeGrid cell index`
+
+---
+
+## Simple way to think about it
+
+- `BorderIndices` = a list of valid border cells
+- Random number = “pick one spot in that list”
+- Get node = “give me the value at that spot”
+
+---
+
+## Common mistakes
+
+❌ Thinking the random number is already the MazeGrid index  
+✔️ It is only the position inside BorderIndices
+
+---
+
+❌ Forgetting to connect the Random node to the Index pin  
+✔️ The Get node will not work without an Index
+
+---
+
+## Expected result
+
+The output of `Get (a copy)` is the **EntranceIndex** —  
+a valid index that points to a cell in `MazeGrid`.
+
+---
+
+## Beginner note — Two different indexes (important)
+
+There are two different indexes being used here:
+
+1. The **random index**
+   - This comes from `Random Integer in Range`
+   - It is used to pick a position inside the `BorderIndices` array
+
+2. The **maze cell index**
+   - This is the value stored inside the `BorderIndices` array
+   - This points to a specific cell inside `MazeGrid`
+
+---
+
+## What just happened
+
+You used:
+
+`Random Integer → BorderIndices Get`
+
+This means:
+
+- “Pick a random position in the BorderIndices array”
+- “Give me the value stored at that position”
+
+---
+
+## Example (this helps a lot)
+
+If `BorderIndices` contains:
+
+`[3, 7, 12, 20]`
+
+And your random number is:
+
+`2`
+
+Then:
+
+`BorderIndices[2] = 12`
+
+So:
+
+- `2` = random position
+- `12` = actual MazeGrid index
+
+---
+
+## Why this matters
+
+We do NOT want a random number from the entire maze.
+
+We only want a random **border cell**.
+
+This step ensures that the selected cell is always on the edge.
+
+---
+
+## Expected result
+
+You now have:
+
+- a valid index that points to a cell in `MazeGrid`
+- that cell is guaranteed to be on the border
+
+This will be used as the entrance.
+
+---
+
+<a href="{{ '/assets/images/blog/Part3-Step-2.7.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.7.png' | relative_url }}" style="width:100%;" alt="Selecting random entrance index from BorderIndices using RandomStream" class="post-image">
 </a>
 
 ---
@@ -1894,17 +3139,100 @@ The exit must not be the same as the entrance.
 
 ## Instructions
 
-### Step 2.8.1 — Create a local variable for EntranceIndex
+### Step 2.8.1 — Create and set EntranceIndex
 
-1. Create a local variable named:
+---
+
+## Step A — Create the local variable
+
+1. In the `CreateEntranceAndExit` function, find the **Local Variables** section
+
+2. Click:
+
+   `+ Local Variable`
+
+3. Name it:
 
    `EntranceIndex`
 
-2. Set its type to:
+4. Set the type to:
 
-   `Integer`
+   `Integer` (single value, not array)
 
-3. Set `EntranceIndex` using the entrance cell index from Step 2.7
+---
+
+## Step B — Add the Set node
+
+5. Drag `EntranceIndex` into the graph
+
+6. Choose:
+
+   `Set`
+
+---
+
+## Step C — Connect execution from the loop
+
+7. Find your `For Loop` node
+
+8. Locate the pin labeled:
+
+   `Completed`
+
+9. Drag from `Completed`
+
+10. Connect it to:
+
+`Set EntranceIndex`
+
+---
+
+## Step D — Connect the value
+
+11. Find the output of your:
+
+`BorderIndices → Get (a copy)` node
+
+12. Drag from that output pin
+
+13. Connect it to:
+
+`Set EntranceIndex → Value`
+
+---
+
+## What you should see
+
+- A `Set EntranceIndex` node in your graph
+- The value input connected from `Get (a copy)`
+- An execution wire flowing into the Set node
+
+---
+
+## Why this matters
+
+This stores the randomly selected border cell so we can:
+
+- compare it later (when picking the exit)
+- open the correct wall for the entrance
+
+---
+
+## Common mistakes
+
+❌ Creating the variable but never setting it  
+✔️ You must use a **Set node**
+
+---
+
+❌ Connecting the random number instead of the array value  
+✔️ Use the output of `BorderIndices Get`, not the random index
+
+---
+
+## Expected result
+
+You now have a variable called `EntranceIndex` that stores a valid border cell index from `MazeGrid`.
 
 ---
 
@@ -1996,8 +3324,8 @@ They should not be the same.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.8.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.8.png' | relative_url }}" alt="Selecting random exit index and checking it is different from EntranceIndex" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.8.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.8.png' | relative_url }}" style="width:100%;" alt="Selecting random exit index and checking it is different from EntranceIndex" class="post-image">
 </a>
 
 ---
@@ -2133,8 +3461,8 @@ The entrance cell now has one outside wall removed.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.9.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.9.png' | relative_url }}" alt="Opening entrance wall and writing updated cell back into MazeGrid" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.9.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.9.png' | relative_url }}" style="width:100%;" alt="Opening entrance wall and writing updated cell back into MazeGrid" class="post-image">
 </a>
 
 ---
@@ -2235,8 +3563,8 @@ The exit cell now has one outside wall removed.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.10.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.10.png' | relative_url }}" alt="Opening exit wall and writing updated cell back into MazeGrid" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.10.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.10.png' | relative_url }}" style="width:100%;" alt="Opening exit wall and writing updated cell back into MazeGrid" class="post-image">
 </a>
 
 ---
@@ -2269,8 +3597,8 @@ The maze now has:
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-2.11.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-2.11.png' | relative_url }}" alt="Full CreateEntranceAndExit function overview" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-2.11.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-2.11.png' | relative_url }}" style="width:100%;" alt="Full CreateEntranceAndExit function overview" class="post-image">
 </a>
 
 ---
@@ -2617,8 +3945,8 @@ Your Construction Script now rebuilds the full maze correctly whenever the actor
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-3.10.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-3.10.png' | relative_url }}" alt="Full Construction Script showing clear initialize generate entrance exit and build visuals order" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-3.10.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-3.10.png' | relative_url }}" style="width:100%;" alt="Full Construction Script showing clear initialize generate entrance exit and build visuals order" class="post-image">
 </a>
 
 ---
@@ -2701,8 +4029,8 @@ Using the same `MazeSeed` again should recreate the same layout.
 
 ### Screenshot Placeholder
 
-<a href="{{ '/assets/images/blog/Part3-Step-4.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part3-Step-4.png' | relative_url }}" alt="Generated maze visible in the Unreal Engine level" class="post-image">
+<a href="{{ '/assets/images/blog/Part3-Step-4.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part3-Step-4.png' | relative_url }}" style="width:100%;" alt="Generated maze visible in the Unreal Engine level" class="post-image">
 </a>
 
 ---

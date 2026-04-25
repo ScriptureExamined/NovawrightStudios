@@ -4516,8 +4516,8 @@ Your Construction Script now builds the full maze in memory every time the Bluep
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}">
-  <img src="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}" alt="Construction Script calling InitializeGrid and GenerateMaze after clearing data and setting RandomStream" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}" style="width:100%;" alt="Construction Script calling InitializeGrid and GenerateMaze after clearing data and setting RandomStream" class="post-image">
 </a>
 
 ---
