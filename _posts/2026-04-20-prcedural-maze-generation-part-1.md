@@ -186,19 +186,13 @@ For simplicity, use:
 
 To keep your project organized, you can create copies:
 
-1. Right-click on:
+1. Left-click on `Cube`.
 
-   `Cube`
-
-2. Click:
-
-   **Duplicate**
-
-3. Move or drag the duplicated asset into:
+2. Drag it twice to:
 
    `MazeGenerator/Meshes`
 
-4. Rename:
+3. Rename:
 
 - `SM_Floor`
 - `SM_Wall`
@@ -342,9 +336,9 @@ These will store:
 
    `Structure`
 
-4. Create the structure
+4. Click Structure in the results menu
 
-5. Name it:
+5. A new asset will appear, rename it to:
 
    `S_NeighborInfo`
 
@@ -357,6 +351,7 @@ These will store:
 - `CellIndex` (Integer)
 - `DeltaX` (Integer)
 - `DeltaY` (Integer)
+- Default value is 0. You do not need to change this
 
 ---
 
@@ -408,7 +403,7 @@ You now have a struct that describes neighbor relationships.
 
 1. Double-click to open the struct
 
-2. Add:
+2. Click on Add Variable and add:
 
 - `Row` (Integer)
 - `Col` (Integer)
@@ -417,6 +412,10 @@ You now have a struct that describes neighbor relationships.
 - `bWallEast` (Boolean, default = True)
 - `bWallSouth` (Boolean, default = True)
 - `bWallWest` (Boolean, default = True)
+
+3. Click on Default Values and add the values above
+
+- Default values for integers can remain 0. A checked box in a boolean is always true
 
 ---
 
@@ -477,7 +476,7 @@ This creates the main Blueprint that controls everything.
 
 3. Select:
 
-   **Actor**
+   **Actor** - this is the base class for objects that can exist in the world but don't need movement or player input built in.
 
 4. Name it:
 
@@ -485,7 +484,7 @@ This creates the main Blueprint that controls everything.
 
 #### Step 3.1.2 — Open the Blueprint
 
-5. Double-click to open it
+5. Double-click to open it. After creating and opening a Blueprint, don't forget to save (Ctrl+S). UE5 won't always auto-save new assets
 
 ---
 
@@ -513,7 +512,7 @@ You now have an empty `BP_MazeGenerator`.
 ---
 
 <a href="{{ '/assets/images/blog/Part1-Step-3.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part1-Step-23.1.png' | relative_url }}" style="width:100%;" alt="Blueprint Class creation menu showing Actor selected for BP_MazeGenerator" class="post-image">
+    <img src="{{ '/assets/images/blog/Part1-Step-3.1.png' | relative_url }}" style="width:100%;" alt="Blueprint Class creation menu showing Actor selected for BP_MazeGenerator" class="post-image">
   </a>
 
 ---
@@ -540,7 +539,11 @@ Inside `BP_MazeGenerator`:
 
    **My Blueprint → Variables**
 
+2. Click the + button next to Variables in the My Blueprint panel. A new variable will appear. Rename it, then set its type in the Details panel on the right.
+
 #### Step 4.1.2 — Add the maze settings
+
+- **Note:** In the upper left corner, you must click on compile after adding variables to be able to enter the default values in the Details panel.
 
 Add the following:
 
@@ -554,6 +557,11 @@ Add the following:
 Add:
 
 - `MazeGrid` (Array of `S_MazeCell`)
+
+1. Set the type to S_MazeCell
+
+2. In the Details panel, click the grid/array icon next to the type dropdown to change it from a single value to an Array
+
 - `RandomStream` (Random Stream)
 
 #### Step 4.1.4 — Make the main settings editable
@@ -561,10 +569,9 @@ Add:
 For each variable you want to adjust in the level:
 
 1. Select the variable
-
 2. In the **Details** panel:
 
-   ✔️ Check **Instance Editable**
+   ✔️ Check **Instance Editable** (You can also click the eye next to the right of the variable name. Open is editable, closed is not)
 
 For this tutorial, that usually means:
 
@@ -635,6 +642,8 @@ Your main maze settings are now created and visible.
 
 #### Step 4.2.1 — Add the FloorHISM component
 
+- HISM (Hierarchical Instanced Static Mesh) lets you render thousands of repeated meshes efficiently. You'll use one for floors and one for walls.
+
 1. Open the **Components** panel inside `BP_MazeGenerator`
 
 2. Click:
@@ -663,11 +672,11 @@ Your main maze settings are now created and visible.
 
 Select:
 
-`FloorHISM`
+`FloorHISM` in the components panel at the top left
 
 Then in the **Details** panel:
 
-- find **Static Mesh**
+- find **Static Mesh** in the Detaols panel. You may have to expand the category
 - assign `SM_Floor` if you duplicated the mesh
 - or assign `Cube` if you are using the built-in mesh directly
 
@@ -675,7 +684,7 @@ Then in the **Details** panel:
 
 Select:
 
-`WallHISM`
+`WallHISM` in the components panel at the top left
 
 Then:
 

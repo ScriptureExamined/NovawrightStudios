@@ -71,12 +71,13 @@ You should also already have these components:
 
 - `FloorHISM`
 - `WallHISM`
+- If anything is missing, go back to Part 1 before continuing.
 
 ---
 
 # Step 1 — Build the Construction Script Setup
 
-Before we create the maze functions, we need to prepare the Construction Script.
+Before we create the maze functions, we need to prepare the Construction Script. At the top of the Blueprint editor, you will see tabs. Click the **Construction Script** tab. If you don't see it, look in the **My Blueprint** panel under Functions and double-click **Construction Script**.
 
 ---
 
@@ -111,7 +112,7 @@ This step sets up the Construction Script so it:
 
 #### Step 1.2.1 — Add the FloorHISM clear node
 
-1. Drag `FloorHISM` from the **Components** panel into the graph as **Get**
+1. Drag `FloorHISM` from the **Components** panel into the graph.
 
 2. Drag from the `FloorHISM` pin
 
@@ -129,7 +130,7 @@ This step sets up the Construction Script so it:
 
 #### Step 1.3.1 — Add the WallHISM clear node
 
-1. Drag `WallHISM` from the **Components** panel into the graph as **Get**
+1. Drag `WallHISM` from the **Components** panel
 
 2. Drag from the `WallHISM` pin
 
@@ -165,7 +166,7 @@ This step sets up the Construction Script so it:
 
 #### Step 1.4.1 — Add the Clear node
 
-1. Drag `MazeGrid` into the graph as **Get**
+1. Drag `MazeGrid` into the graph. When dragging a variable into the graph, a small menu will appear asking Get or Set. Choose **Get** here.
 
 2. Drag from the `MazeGrid` pin
 
@@ -176,6 +177,24 @@ This step sets up the Construction Script so it:
 4. Click:
 
    `Clear`
+
+---
+
+## Beginner note
+
+Use plain `Clear` here because `MazeGrid` is an array.
+
+Do NOT use `Clear Instances`.
+
+- `Clear` removes all items from an array
+- `Clear Instances` removes spawned mesh instances from an HISM component
+
+So:
+
+- `MazeGrid` → use `Clear`
+- `FloorHISM` / `WallHISM` → use `Clear Instances`
+
+---
 
 #### Step 1.4.2 — Connect execution flow
 
@@ -193,7 +212,7 @@ This step sets up the Construction Script so it:
 
 #### Step 1.5.1 — Create the stream
 
-1. Drag `MazeSeed` into the graph as **Get**
+1. Drag `MazeSeed` into the graph. When dragging a variable into the graph, a small menu will appear asking Get or Set. Choose **Get** here.
 
 2. Drag from the `MazeSeed` pin
 
@@ -211,7 +230,7 @@ This step sets up the Construction Script so it:
 
 6. Connect the output of `Make Random Stream` into the value pin on `Set RandomStream`
 
-**_Pro tip: If you drag `RandomStream` and drop it on the `Return Value` pin, Blueprints will create the Set node automatically._**
+> Pro tip: If you drag `RandomStream` and drop it on the `Return Value` pin, Blueprints will create the Set node automatically.
 
 #### Step 1.5.3 — Connect execution flow
 
@@ -411,11 +430,31 @@ We want the loop to run once for every cell in the maze.
 
 9. Choose:
 
-   `Integer - Integer`
+   `Subtract`
 
 10. Set the second input to:
 
 `1`
+
+---
+
+> ## Beginner note
+
+> `MazeWidth × MazeHeight` gives the total number of cells in the maze.
+
+> But arrays start counting at `0`.
+
+> So if the maze has 100 cells, the indexes go from:
+
+> `0` to `99`
+
+> That means the last valid index is:
+
+> `Total Cells - 1`
+
+> This prevents the loop from trying to use an index that does not exist.
+
+---
 
 #### Step 2.4.3 — Connect to the For Loop
 
@@ -441,7 +480,7 @@ We want the loop to run once for every cell in the maze.
 
 3. Choose:
 
-   `Integer / Integer`
+   `Divide`
 
 4. Drag another `MazeWidth` into the graph as **Get**
 
@@ -462,6 +501,8 @@ This gives you:
 
 1. Drag from the `Index` pin again
 
+> You can drag multiple connections from the same output pin, just drag from it again.
+
 2. Search for:
 
    `%`
@@ -481,7 +522,26 @@ This gives you:
 
 `Col = Index % MazeWidth`
 
+> Note: I did not need to drag in another MazeWidth. I could have used the one I dragged in earlier a second time. But I am adding another because it makes a cleaner screenshot when you don't have wires crossing all over the place.
+
 ---
+
+> ## Beginner note
+
+> The `%` (modulo) operator gives the remainder after division.
+
+> This is how we convert a single index into a column.
+
+> Example:
+
+> If `MazeWidth = 10`:
+
+> - Index 0 → `0 % 10 = 0`
+> - Index 7 → `7 % 10 = 7`
+> - Index 10 → `10 % 10 = 0` (new row starts)
+> - Index 13 → `13 % 10 = 3`
+
+> So `% MazeWidth` gives you the position across the row (the column).
 
 ### Step 2.7 — Create the MazeCell struct
 
@@ -506,7 +566,7 @@ This gives you:
 
 #### Step 2.7.3 — Set default values
 
-5. Set:
+5. Confirm the default values are already set correctly. These should match what you defined in S_MazeCell in Part 1:
 
 - `bVisited = False`
 - `bWallNorth = True`
@@ -595,15 +655,14 @@ Every cell now has:
 
 ---
 
-## Expected result
-
-Your `InitializeGrid` function now creates a full array of maze cells.
+❌ Picking `For Loop With Break` instead of `For Loop`  
+✔️ Make sure you pick `For Loop`
 
 ---
 
-### Screenshot Placeholder
+## Expected result
 
-**[Screenshot: InitializeGrid function with Clear MazeGrid, For Loop, row and column math, Make S_MazeCell, and Add node]**
+Your `InitializeGrid` function now creates a full array of maze cells.
 
 ---
 
@@ -632,17 +691,36 @@ It returns them as an array of `S_NeighborInfo`.
 
 ---
 
+## Coordinate system used in this function
+
+Before building this function, it helps to understand the direction convention:
+
+| Direction | DeltaX | DeltaY | Index change |
+| --------- | ------ | ------ | ------------ |
+| North     | 0      | -1     | − MazeWidth  |
+| East      | 1      | 0      | + 1          |
+| South     | 0      | 1      | + MazeWidth  |
+| West      | -1     | 0      | − 1          |
+
+> You will use these values when creating `S_NeighborInfo` structs for each direction.
+
+---
+
 ## Instructions
 
 ### Step 3.1 — Create the function
 
 #### Step 3.1.1 — Add the function
 
-1. In the **Functions** section, click **+ Function**
+1. In the **My Blueprint** panel, find **Functions**
 
-2. Name it:
+2. Click the **+** button next to **Functions**
+
+3. Name the function:
 
    `GetUnvisitedNeighbors`
+
+4. Press **Enter**
 
 ---
 
@@ -650,48 +728,118 @@ It returns them as an array of `S_NeighborInfo`.
 
 #### Step 3.2.1 — Add the input
 
-In the **Details** panel for the function, add:
+1. In the **Details** panel for the function, find **Inputs**
 
-- `CurrentIndex` (Integer)
+2. Click the **+** button
+
+3. Name it:
+
+   `CurrentIndex`
+
+4. Set the type to:
+
+   **Integer**
 
 #### Step 3.2.2 — Add the output
 
-Add:
+1. In the **Details** panel, find **Outputs**
 
-- `Neighbors` (Array of `S_NeighborInfo`)
+2. Click the **+** button
+
+3. Name it:
+
+   `Neighbors`
+
+4. Set the type to:
+
+   **Array of S_NeighborInfo**
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.2.png' | relative_url }}" style="width:100%;" alt="GetUnvisitedNeighbors function with input and output" class="post-image">
+  </a>
 
 ---
 
 ### Step 3.3 — Add local variables
 
-#### Step 3.3.1 — Create local variables
+Local variables only exist inside this function. They are added differently from regular Blueprint variables.
 
-In the function, create these **Local Variables**:
+#### Step 3.3.1 — Find the Local Variables section
+
+1. Look in the **My Blueprint** panel
+
+2. Find the section labeled:
+
+   **Local Variables**
+
+> This section only appears when you are inside a function graph. If you do not see it, make sure you have the `GetUnvisitedNeighbors` graph open.
+
+#### Step 3.3.2 — Add the local variables
+
+3. Click the **+** button next to **Local Variables**
+
+4. Add the following one at a time:
 
 - `CurrentRow` (Integer)
 - `CurrentCol` (Integer)
 - `LocalNeighbors` (Array of `S_NeighborInfo`)
 - `TestIndex` (Integer)
 
----
-
-<div>
-<a href="{{ '/assets/images/blog/Part2-Step-3.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.2.png' | relative_url }}" style="width:100%;" alt="InitializeGrid function with Clear MazeGrid, For Loop, row and column calculations, Make S_MazeCell, and Add to MazeGrid" class="post-image">
-  </a>
-
-  <a href="{{ '/assets/images/blog/Part2-Step-3.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.3.png' | relative_url }}" style="width:100%;" alt="InitializeGrid function with Clear MazeGrid, For Loop, row and column calculations, Make S_MazeCell, and Add to MazeGrid" class="post-image">
-  </a>
-</div>
+> `TestIndex` will be reused for each direction. This is safe because each direction's logic completes fully before the next one begins.
 
 ---
 
-### Step 3.4 — Calculate CurrentRow
+<a href="{{ '/assets/images/blog/Part2-Step-3.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.3.png' | relative_url }}" style="width:100%;" alt="GetUnvisitedNeighbors function with local variables" class="post-image">
+  </a>
 
-#### Step 3.4.1 — Divide CurrentIndex by MazeWidth
+---
 
-1. From the **function entry node**, drag from the input pin:
+### Step 3.4 — Add comment boxes
+
+Before placing any nodes, you will set up comment boxes to keep the graph organised.
+
+Comment boxes let you label groups of nodes so you can always tell which direction you are working on.
+
+#### Step 3.4.1 — Add the North comment box
+
+1. Left-click and drag in empty graph space to select an area
+
+2. Press **C**
+
+3. A comment box will appear
+
+4. Name it:
+
+   `North`
+
+#### Step 3.4.2 — Add the remaining comment boxes
+
+5. Repeat this process three more times, placing each box to the right of the previous one
+
+6. Name them:
+
+- `East`
+- `South`
+- `West`
+
+> You do not need to be precise yet. You can resize and reposition comment boxes at any time by dragging their edges or title bar.
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-3.4.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.4.png' | relative_url }}" style="width:100%;" alt="Four comment boxes labeled North, East, South, and West arranged in a column in the Blueprint graph" class="post-image">
+</a>
+
+---
+
+### Step 3.5 — Calculate CurrentRow and CurrentCol
+
+#### Step 3.5.1 — Calculate CurrentRow
+
+1. From the **function entry node**, drag from:
 
    `CurrentIndex`
 
@@ -701,36 +849,28 @@ In the function, create these **Local Variables**:
 
 3. Choose:
 
-   `Integer / Integer`
+   `Divide`
 
 4. Drag `MazeWidth` into the graph as **Get**
 
 5. Connect:
-
-- `CurrentIndex` → first input
-- `MazeWidth` → second input
-
-#### Step 3.4.2 — Store the result
+   - `MazeWidth` → second input of `/`
 
 6. Drag `CurrentRow` into the graph as **Set**
 
-7. Connect the result into `Set CurrentRow`
+7. Connect the division result into `Set CurrentRow`
 
 8. Connect the white execution pin from:
 
-   `GetUnvisitedNeighbors`
+   `GetUnvisitedNeighbors` (function entry node)
 
    to
 
    `Set CurrentRow`
 
----
+#### Step 3.5.2 — Calculate CurrentCol
 
-### Step 3.5 — Calculate CurrentCol
-
-#### Step 3.5.1 — Use modulo with MazeWidth
-
-1. From the **function entry node**, drag from the input pin:
+1. From the **function entry node**, drag from:
 
    `CurrentIndex`
 
@@ -745,11 +885,7 @@ In the function, create these **Local Variables**:
 4. Drag `MazeWidth` into the graph as **Get**
 
 5. Connect:
-
-- `CurrentIndex` → first input
-- `MazeWidth` → second input
-
-#### Step 3.5.2 — Store the result
+   - `MazeWidth` → second input of `%`
 
 6. Drag `CurrentCol` into the graph as **Set**
 
@@ -765,9 +901,9 @@ In the function, create these **Local Variables**:
 
 ---
 
- <a href="{{ '/assets/images/blog/Part2-Step-3.5.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.5.png' | relative_url }}" style="width:100%;" alt="GetUnvisitedNeighbors function with Calculate CurrentRow and Calculate CurrentCol" class="post-image">
-  </a>
+<a href="{{ '/assets/images/blog/Part2-Step-3.5.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.5.png' | relative_url }}" style="width:100%;" alt="GetUnvisitedNeighbors function showing CurrentIndex divided by MazeWidth stored in CurrentRow and CurrentIndex modulo MazeWidth stored in CurrentCol" class="post-image">
+</a>
 
 ---
 
@@ -775,7 +911,40 @@ In the function, create these **Local Variables**:
 
 Use this pattern for North:
 
-`CurrentRow > 0 → TestIndex = CurrentIndex - MazeWidth → MazeGrid[TestIndex] → NOT bVisited → Make S_NeighborInfo (0, -1) → Add to LocalNeighbors`
+```
+CurrentRow > 0
+→ TestIndex = CurrentIndex - MazeWidth
+→ MazeGrid[TestIndex]
+→ NOT bVisited
+→ Make S_NeighborInfo (DeltaX=0, DeltaY=-1)
+→ Add to LocalNeighbors
+```
+
+---
+
+## What this step does
+
+This section checks if there is a valid cell **above (North)** the current cell.
+
+If that neighbor:
+
+- exists inside the maze
+- has NOT been visited
+
+then it is added as a valid movement option.
+
+---
+
+## IMPORTANT — Execution Flow
+
+This is the first direction check and establishes the pattern all other directions follow:
+
+- DO NOT use a Sequence node
+- execution must continue whether North is valid or not
+
+---
+
+Place all nodes for this section **inside the North comment box**.
 
 #### Step 3.6.1 — Check north bounds
 
@@ -789,7 +958,7 @@ Use this pattern for North:
 
 4. Choose:
 
-   `Integer > Integer`
+   `Greater`
 
 5. Set the second input to:
 
@@ -801,9 +970,11 @@ Use this pattern for North:
 
    `Branch`
 
-8. Click:
+8. Choose the plain:
 
    `Branch`
+
+> Do not choose **Branch (Enum)** or any other variant.
 
 9. Connect the white execution pin from:
 
@@ -811,150 +982,167 @@ Use this pattern for North:
 
    to
 
-   `Branch`
+   `Branch` (North bounds check)
 
 10. Connect:
+    - `CurrentRow > 0` → `Branch.Condition`
 
-- `CurrentRow > 0` → `Branch.Condition`
+---
 
 #### Step 3.6.2 — Calculate TestIndex
 
-11. From the **function entry node**, drag from the input pin:
+1. From the **function entry node**, drag from:
 
-`CurrentIndex`
+   `CurrentIndex`
 
-12. Drag `MazeWidth` into the graph as **Get**
+2. Search for:
 
-13. Search for:
+   `-`
 
-`Integer - Integer`
+3. Choose:
 
-14. Connect:
+   `Subtract`
 
-- `CurrentIndex` → first input
-- `MazeWidth` → second input
+4. Drag `MazeWidth` into the graph as **Get**
 
-15. Drag `TestIndex` into the graph as **Set**
+5. Connect:
+   - `MazeWidth` → second input of `-`
 
-16. Connect the result into `Set TestIndex`
+6. Drag `TestIndex` into the graph as **Set**
 
-17. Connect the white execution pin from:
+7. Connect the subtraction result into `Set TestIndex`
 
-`Branch.True`
+8. Connect the white execution pin from:
 
-to
+   `Branch.True` (North bounds check)
 
-`Set TestIndex`
+   to
 
-#### Step 3.6.3 — Read the north cell
+   `Set TestIndex`
 
-18. Drag `MazeGrid` into the graph as **Get**
+---
 
-19. Drag from the `MazeGrid` pin
+#### Step 3.6.3 — Read the North cell
 
-20. Search for:
+1. Drag `MazeGrid` into the graph as **Get**
 
-`Get (a copy)`
+2. Drag from the `MazeGrid` pin
 
-21. Click:
+3. Search for:
 
-`Get (a copy)`
+   `Get (a copy)`
 
-22. Connect:
+4. Click:
 
-- `TestIndex` → `Index`
+   `Get (a copy)`
 
-23. Drag from the output of `Get (a copy)`
+5. Drag `TestIndex` into the graph as **Get**
 
-24. Search for:
+6. Connect:
+   - `TestIndex` → `Index` on `Get (a copy)`
 
-`Break S_MazeCell`
+7. Drag from the output of `Get (a copy)`
 
-25. Click:
+8. Search for:
 
-`Break S_MazeCell`
+   `Break S_MazeCell`
 
-#### Step 3.6.4 — Check if north is unvisited
+9. Click:
 
-26. Drag from `bVisited`
+   `Break S_MazeCell`
 
-27. Search for:
+---
 
-`NOT Boolean`
+#### Step 3.6.4 — Check if North is unvisited
 
-28. Click:
+1. Drag from the `bVisited` pin on `Break S_MazeCell`
 
-`NOT Boolean`
+2. Search for:
 
-29. Right-click in empty graph space
+   `NOT Boolean`
 
-30. Search for:
+3. Click:
 
-`Branch`
+   `NOT Boolean`
 
-31. Click:
+4. Right-click in empty graph space
 
-`Branch`
+5. Search for:
 
-32. Connect the white execution pin from:
+   `Branch`
 
-`Set TestIndex`
+6. Choose the plain:
 
-to
+   `Branch`
 
-this second `Branch`
+7. Connect the white execution pin from:
 
-33. Connect:
+   `Set TestIndex`
 
-- `NOT bVisited` → `Branch.Condition`
+   to
 
-#### Step 3.6.5 — Add the north neighbor
+   `Branch` (North visited check)
 
-34. Right-click in empty graph space
+8. Connect:
+   - `NOT Boolean` result → `Branch.Condition` (North visited check)
 
-35. Search for:
+---
 
-`Make S_NeighborInfo`
+#### Step 3.6.5 — Add the North neighbor
 
-36. Click:
+1. Right-click in empty graph space
 
-`Make S_NeighborInfo`
+2. Search for:
 
-37. Set:
+   `Make S_NeighborInfo`
 
-- `CellIndex = TestIndex` ( Drag `TestIndex` out and drop it on `CellIndex`)
-- `DeltaX = 0`
-- `DeltaY = -1`
+3. Click:
 
-38. Drag `LocalNeighbors` into the graph as **Get**
+   `Make S_NeighborInfo`
 
-39. Drag from the `LocalNeighbors` pin
+4. Drag `TestIndex` into the graph as **Get**
 
-40. Search for:
+5. Connect:
+   - `TestIndex` → `CellIndex`
 
-`Add`
+6. Set:
+   - `DeltaX = 0`
+   - `DeltaY = -1`
 
-41. Click:
+7. Drag `LocalNeighbors` into the graph as **Get**
 
-`Add`
+8. Drag from the `LocalNeighbors` pin
 
-42. Connect the white execution pin from:
+9. Search for:
 
-second `Branch.True`
+   `Add`
 
-to
+10. Click:
 
-`Add`
+    `Add`
 
-43. Connect:
+11. Connect the white execution pin from:
 
-- `Make S_NeighborInfo` → `Add.Item`
+    `Branch.True` (North visited check)
+
+    to
+
+    `Add`
+
+12. Connect:
+    - `Make S_NeighborInfo` → `Add.Item`
+
+---
+
+> The North section is now complete. The outgoing execution wires from this
+> section will be connected in the next step when the East bounds Branch
+> node has been created.
 
 ---
 
 <a href="{{ '/assets/images/blog/Part2-Step-3.6.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.6.png' | relative_url }}" style="width:100%;" alt="CurrentRow > 0 → TestIndex = CurrentIndex - MazeWidth → MazeGrid[TestIndex] → NOT bVisited → Make S_NeighborInfo (0, -1) → Add to LocalNeighbors" class="post-image">
-  </a>
+    <img src="{{ '/assets/images/blog/Part2-Step-3.6.png' | relative_url }}" style="width:100%;" alt="North comment box containing bounds Branch, TestIndex calculation, MazeGrid Get, Break S_MazeCell, visited Branch, Make S_NeighborInfo, and Add to LocalNeighbors" class="post-image">
+</a>
 
 ---
 
@@ -962,12 +1150,14 @@ to
 
 Use this pattern for East:
 
-CurrentCol < MazeWidth - 1  
-→ TestIndex = CurrentIndex + 1  
-→ MazeGrid[TestIndex]  
-→ NOT bVisited  
-→ Make S_NeighborInfo (1, 0)  
+```
+CurrentCol < MazeWidth - 1
+→ TestIndex = CurrentIndex + 1
+→ MazeGrid[TestIndex]
+→ NOT bVisited
+→ Make S_NeighborInfo (DeltaX=1, DeltaY=0)
 → Add to LocalNeighbors
+```
 
 ---
 
@@ -984,201 +1174,152 @@ then it is added as a valid movement option.
 
 ---
 
-## IMPORTANT — Execution Flow
+Place all nodes for this section **inside the East comment box**.
 
-Just like North:
+#### Step 3.7.1 — Check east bounds
 
-- DO NOT use a Sequence node
-- execution must continue whether East is valid or not
+1. Right-click in empty graph space **inside the East comment box**
 
----
+2. Search for:
 
-### Step 3.7.1 — Check east bounds
+   `Branch`
 
-1. Drag `CurrentCol` into the graph as **Get**
+3. Choose the plain:
 
-2. Drag from the `CurrentCol` pin
+   `Branch`
 
-3. Search for:
+4. Connect the white execution pin from:
+
+   `Branch.False` (North **bounds** check, inside the **North** comment box)
+
+   to
+
+   `Branch` (inside the **East** comment box)
+
+5. Connect the white execution pin from:
+
+   `Branch.False` (North **visited** check, inside the **North** comment box)
+
+   to
+
+   `Branch` (inside the **East** comment box)
+
+6. Connect the white execution pin from:
+
+   `Add` exec output (inside the **North** comment box)
+
+   to
+
+   `Branch` (inside the **East** comment box)
+
+7. Drag `CurrentCol` into the graph as **Get**
+
+8. Drag from the `CurrentCol` pin
+
+9. Search for:
 
    `<`
 
-4. Choose:
+10. Choose:
 
-   `Integer < Integer`
+    `Less`
 
----
+11. Drag `MazeWidth` into the graph as **Get**
 
-5. Drag `MazeWidth` into the graph as **Get**
+12. Drag from the `MazeWidth` pin
 
-6. Drag from `MazeWidth`
+13. Search for:
 
-7. Search for:
+    `-`
 
-   `Integer - Integer`
+14. Choose:
 
-8. Set the second input to:
+    `Subtract`
 
-   `1`
+15. Set the second input to:
 
----
+    `1`
 
-9. Connect:
+16. Connect:
+    - `(MazeWidth - 1)` result → second input of `<`
 
-- `MazeWidth` → first input
-- `1` → second input
-
----
-
-10. Connect:
-
-- `CurrentCol` → first input of `<`
-- `(MazeWidth - 1)` → second input of `<`
-
----
-
-11. Right-click in empty graph space
-
-12. Search for:
-
-`Branch`
-
-13. Click:
-
-`Branch`
-
----
-
-14. Connect execution into this Branch
-
-You must connect TWO wires from the previous (North) section:
-
-- Connect `Branch.False` (from the North bounds check) → this Branch (Exec)
-
-- Connect the **execution output of the Add node** (the last step of the North success path) → this Branch (Exec)
-
----
-
-## Why this is required
-
-Execution must continue to the East section no matter what:
-
-- If North is NOT valid → it flows through the False pin → goes to East
-
-- If North IS valid → it runs the logic → adds the neighbor → THEN goes to East
-
----
-
-## Important
-
-Do NOT connect `Branch.True` directly to the next section.
-
-The True path must go through the full North logic first, and only then continue forward.
-
----
-
-15. Connect:
-
-- `CurrentCol < MazeWidth - 1` → Branch.Condition
+17. Connect:
+    - `CurrentCol < MazeWidth - 1` → `Branch.Condition` (East bounds check)
 
 ---
 
 <a href="{{ '/assets/images/blog/Part2-Step-3.7.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.7.1a.png' | relative_url }}" style="width:100%;" alt="Exec pin connections from North to East and Branch node checking if CurrentCol is less than MazeWidth minus one to confirm an East neighbor exists within the grid bounds." class="post-image">
-  </a>
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.1.png' | relative_url }}" style="width:100%;" alt="Showing Step 14, Step 15, and Step 16 connections to the first East branch" class="post-image">
+</a>
 
 ---
 
-## Why this matters
+#### Step 3.7.2 — Calculate TestIndex
 
-If `CurrentCol` is already at the far right edge:
-
-- there is NO East neighbor
-- we must skip this section
-
----
-
-### Step 3.7.2 — Calculate TestIndex
-
-1. Drag from the **function entry node**:
+1. From the **function entry node**, drag from:
 
    `CurrentIndex`
 
 2. Search for:
 
-   `Integer + Integer`
+   `+`
 
-3. Set second value to:
+3. Choose:
+
+   `Add`
+
+4. Set the second input to:
 
    `1`
 
----
+5. Drag `TestIndex` into the graph as **Set**
 
-4. Drag `TestIndex` into the graph as **Set**
+6. Connect the addition result into `Set TestIndex`
 
-5. Connect the result into `Set TestIndex`
+7. Connect the white execution pin from:
 
----
+   `Branch.True` (East bounds check)
 
-6. Connect execution:
+   to
 
-- `Branch.True` → `Set TestIndex`
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.7.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.7.2.png' | relative_url }}" style="width:100%;" alt="Adding one to CurrentIndex to calculate TestIndex for the East neighbor position in the MazeGrid array." class="post-image">
-  </a>
+   `Set TestIndex`
 
 ---
 
-## Why this matters
-
-Adding 1 moves one position to the right in the grid.
-
----
-
-### Step 3.7.3 — Read the east cell
+#### Step 3.7.3 — Read the East cell
 
 1. Drag `MazeGrid` into the graph as **Get**
 
-2. Drag from the pin
+2. Drag from the `MazeGrid` pin
 
 3. Search for:
 
    `Get (a copy)`
 
-4. Click it
+4. Click:
 
----
+   `Get (a copy)`
 
-5. Connect:
+5. Drag `TestIndex` into the graph as **Get**
 
-- `TestIndex` → Index
+6. Connect:
+   - `TestIndex` → `Index` on `Get (a copy)`
 
----
+7. Drag from the output of `Get (a copy)`
 
-6. Drag from the output
-
-7. Search for:
-
-   `Break S_MazeCell`
-
-8. Click:
+8. Search for:
 
    `Break S_MazeCell`
 
----
+9. Click:
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.7.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.7.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the MazeCell at TestIndex and breaking the struct to access properties like bVisited for the East neighbor." class="post-image">
-  </a>
+   `Break S_MazeCell`
 
 ---
 
-### Step 3.7.4 — Check if east is unvisited
+#### Step 3.7.4 — Check if East is unvisited
 
-1. Drag from `bVisited`
+1. Drag from the `bVisited` pin on `Break S_MazeCell`
 
 2. Search for:
 
@@ -1188,37 +1329,30 @@ Adding 1 moves one position to the right in the grid.
 
    `NOT Boolean`
 
----
+4. Right-click in empty graph space
 
-4. Right-click → search:
-
-   `Branch`
-
-5. Click:
+5. Search for:
 
    `Branch`
 
+6. Choose the plain:
+
+   `Branch`
+
+7. Connect the white execution pin from:
+
+   `Set TestIndex`
+
+   to
+
+   `Branch` (East visited check)
+
+8. Connect:
+   - `NOT Boolean` result → `Branch.Condition` (East visited check)
+
 ---
 
-6. Connect:
-
-- `Set TestIndex` → Branch (Exec)
-
-7. Connect:
-
-- `NOT bVisited` → Branch.Condition
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.7.4.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.7.4.png' | relative_url }}" style="width:100%;" alt="Branch node verifying the East neighbor has not been visited before allowing it to be added to the neighbor list." class="post-image">
-  </a>
-
----
-
-### Step 3.7.5 — Add the east neighbor
-
-#### Step 3.7.5.1 — Create the struct
+#### Step 3.7.5 — Add the East neighbor
 
 1. Right-click in empty graph space
 
@@ -1230,126 +1364,61 @@ Adding 1 moves one position to the right in the grid.
 
    `Make S_NeighborInfo`
 
----
-
-#### Step 3.7.5.2 — Set CellIndex
-
-1. Drag `TestIndex` into the graph as **Get**
-
-2. Connect:
-
-- `TestIndex` → `CellIndex`
-
----
-
-#### Step 3.7.5.3 — Set direction values
-
-Set:
-
-- `DeltaX = 1`
-- `DeltaY = 0`
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.7.5A.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.7.5A.png' | relative_url }}" style="width:100%;" alt="Make S_NeighborInfo node configured with CellIndex from TestIndex and DeltaX set to one and DeltaY set to zero to represent East movement." class="post-image">
-  </a>
-
----
-
-#### Step 3.7.5.4 — Add to LocalNeighbors
-
-1. Drag `LocalNeighbors` into the graph as **Get**
-
-2. Drag from the pin
-
-3. Search for:
-
-   `Add`
-
-4. Click:
-
-   `Add`
-
----
+4. Drag `TestIndex` into the graph as **Get**
 
 5. Connect:
+   - `TestIndex` → `CellIndex`
 
-- Branch.True → Add (Exec)
+6. Set:
+   - `DeltaX = 1`
+   - `DeltaY = 0`
 
-6. Connect:
+7. Drag `LocalNeighbors` into the graph as **Get**
 
-- Make S_NeighborInfo → Add.Item
+8. Drag from the `LocalNeighbors` pin
 
----
+9. Search for:
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.7.5B.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.7.5B.png' | relative_url }}" style="width:100%;" alt="Adding the East neighbor struct to the LocalNeighbors array when it passes both bounds and unvisited checks." class="post-image">
-  </a>
+   `Add`
 
----
+10. Click:
 
-### Step 3.7.6 — Continue execution
+    `Add`
 
-CRITICAL:
+11. Connect the white execution pin from:
 
-Execution must continue regardless of result.
+    `Branch.True` (East visited check)
 
----
+    to
 
-Connect BOTH:
+    `Add`
 
-- Branch.False → South section
-- End of Add → South section
+12. Connect:
+    - `Make S_NeighborInfo` → `Add.Item`
 
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.7.6.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.7.6.png' | relative_url }}" style="width:100%;" alt="Execution wiring showing both successful and failed East checks continuing forward to the South neighbor section." class="post-image">
-  </a>
-
----
-
-## Expected Result
-
-If East is valid and unvisited:
-
-- it gets added to `LocalNeighbors`
-
-Otherwise:
-
-- it is skipped and execution continues
+> The East section is now complete. The outgoing execution wires from this
+> section will be connected in the next step when the South bounds Branch
+> node has been created.
 
 ---
 
-## Common Mistakes
-
-❌ Using `CurrentIndex - 1`  
-✔️ East uses `+ 1`
-
----
-
-❌ Forgetting `MazeWidth - 1`  
-✔️ Needed for correct bounds
+<a href="{{ '/assets/images/blog/Part2-Step-3.7.5.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.7.5.png' | relative_url }}" style="width:100%;" alt="East comment box containing the bounds Branch node with three incoming execution wires from the North section, TestIndex calculation, MazeGrid Get, Break S_MazeCell, visited Branch, Make S_NeighborInfo, and Add to LocalNeighbors" class="post-image">
+</a>
 
 ---
 
-❌ Not connecting False execution  
-✔️ This breaks the chain
-
-Connect the white execution pin from the North section into the East section so the function continues cleanly.
-
----
-
-# Step 3.8 — Check the South neighbor
+### Step 3.8 — Check the South neighbor
 
 Use this pattern for South:
 
-CurrentRow < MazeHeight - 1  
-→ TestIndex = CurrentIndex + MazeWidth  
-→ MazeGrid[TestIndex]  
-→ NOT bVisited  
-→ Make S_NeighborInfo (0, 1)  
+---
+
+CurrentRow < MazeHeight - 1
+→ TestIndex = CurrentIndex + MazeWidth
+→ MazeGrid[TestIndex]
+→ NOT bVisited
+→ Make S_NeighborInfo (DeltaX=0, DeltaY=1)
 → Add to LocalNeighbors
 
 ---
@@ -1367,303 +1436,247 @@ then it is added as a valid movement option.
 
 ---
 
-## IMPORTANT — Execution Flow
+Place all nodes for this section **inside the South comment box**.
 
-Just like previous sections:
+#### Step 3.8.1 — Check south bounds
 
-- DO NOT use a Sequence node
-- execution must continue whether South is valid or not
+1. Right-click in empty graph space **inside the South comment box**
 
----
+2. Search for:
 
-### Step 3.8.1 — Check south bounds
+   `Branch`
 
-1. Drag `CurrentRow` into the graph as **Get**
+3. Choose the plain:
 
-2. Drag from the `CurrentRow` pin
+   `Branch`
 
-3. Search for:
+4. Connect the white execution pin from:
+
+   `Branch.False` (East **bounds** check, inside the **East** comment box)
+
+   to
+
+   `Branch` (inside the **South** comment box)
+
+5. Connect the white execution pin from:
+
+   `Branch.False` (East **visited** check, inside the **East** comment box)
+
+   to
+
+   `Branch` (inside the **South** comment box)
+
+6. Connect the white execution pin from:
+
+   `Add` exec output (inside the **East** comment box)
+
+   to
+
+   `Branch` (inside the **South** comment box)
+
+7. Drag `CurrentRow` into the graph as **Get**
+
+8. Drag from the `CurrentRow` pin
+
+9. Search for:
 
    `<`
 
-4. Choose:
+10. Choose:
 
-   `Integer < Integer`
+    `Less`
 
----
+11. Drag `MazeHeight` into the graph as **Get**
 
-5. Drag `MazeHeight` into the graph as **Get**
+12. Drag from the `MazeHeight` pin
 
-6. Drag from `MazeHeight`
+13. Search for:
 
-7. Search for:
+    `-`
 
-   `Integer - Integer`
+14. Choose:
 
-8. Set the second input to:
+    `Subtract`
 
-   `1`
+15. Set the second input to:
 
----
+    `1`
 
-9. Connect:
+16. Connect:
+    - `(MazeHeight - 1)` result → second input of `<`
 
-- `MazeHeight` → first input
-- `1` → second input
-
----
-
-10. Connect:
-
-- `CurrentRow` → first input of `<`
-- `(MazeHeight - 1)` → second input of `<`
+17. Connect:
+    - `CurrentRow < MazeHeight - 1` → `Branch.Condition` (South bounds check)
 
 ---
 
-11. Right-click in empty graph space
+#### Step 3.8.2 — Calculate TestIndex
 
-12. Search for:
-
-`Branch`
-
-13. Click:
-
-`Branch`
-
----
-
-14. Connect execution into this Branch
-
-You must connect TWO wires from the previous (North) section:
-
-- Connect `Branch.False` (from the North bounds check) → this Branch (Exec)
-
-- Connect the **execution output of the Add node** (the last step of the North success path) → this Branch (Exec)
-
----
-
-## Why this is required
-
-Execution must continue to the East section no matter what:
-
-- If North is NOT valid → it flows through the False pin → goes to East
-
-- If North IS valid → it runs the logic → adds the neighbor → THEN goes to East
-
----
-
-## Important
-
-Do NOT connect `Branch.True` directly to the next section.
-
-The True path must go through the full North logic first, and only then continue forward.
-
-15. Connect:
-
-- `CurrentRow < MazeHeight - 1` → Branch.Condition
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.8.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.8.1.png' | relative_url }}" style="width:100%;" alt="Exec pin connected from East to South and Branch node checking if CurrentRow is less than MazeHeight minus one to confirm a South neighbor exists within the grid bounds." class="post-image">
-  </a>
-
----
-
-### Step 3.8.2 — Calculate TestIndex
-
-1. Drag from the **function entry node**:
+1. From the **function entry node**, drag from:
 
    `CurrentIndex`
 
 2. Search for:
 
-   `Integer + Integer`
+   `+`
 
-3. Drag `MazeWidth` into the graph as **Get**
+3. Choose:
 
----
+   `Add`
 
-4. Connect:
+4. Drag `MazeWidth` into the graph as **Get**
 
-- `CurrentIndex` → first input
-- `MazeWidth` → second input
+5. Connect:
+   - `MazeWidth` → second input of `+`
 
----
+6. Drag `TestIndex` into the graph as **Set**
 
-5. Drag `TestIndex` into the graph as **Set**
+7. Connect the addition result into `Set TestIndex`
 
-6. Connect result → `Set TestIndex`
+8. Connect the white execution pin from:
 
----
+   `Branch.True` (South bounds check)
 
-7. Connect execution:
+   to
 
-- `Branch.True` → `Set TestIndex`
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.8.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.8.2.png' | relative_url }}" style="width:100%;" alt="Adding MazeWidth to CurrentIndex to calculate TestIndex for the South neighbor position in the MazeGrid array." class="post-image">
-  </a>
+   `Set TestIndex`
 
 ---
 
-## Why this matters
-
-Adding MazeWidth moves one full row down in the grid.
-
----
-
-### Step 3.8.3 — Read the south cell
+#### Step 3.8.3 — Read the South cell
 
 1. Drag `MazeGrid` into the graph as **Get**
 
-2. Drag from the pin
+2. Drag from the `MazeGrid` pin
 
 3. Search for:
 
    `Get (a copy)`
 
-4. Click it
+4. Click:
 
----
+   `Get (a copy)`
 
-5. Connect:
+5. Drag `TestIndex` into the graph as **Get**
 
-- `TestIndex` → Index
+6. Connect:
+   - `TestIndex` → `Index` on `Get (a copy)`
 
----
+7. Drag from the output of `Get (a copy)`
 
-6. Drag from output
-
-7. Search for:
+8. Search for:
 
    `Break S_MazeCell`
 
-8. Click it
+9. Click:
+
+   `Break S_MazeCell`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.8.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.8.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the MazeCell at TestIndex and breaking the struct to access the South neighbor properties including bVisited." class="post-image">
-  </a>
+#### Step 3.8.4 — Check if South is unvisited
 
----
-
-### Step 3.8.4 — Check if south is unvisited
-
-1. Drag from `bVisited`
+1. Drag from the `bVisited` pin on `Break S_MazeCell`
 
 2. Search for:
 
    `NOT Boolean`
 
-3. Click it
+3. Click:
+
+   `NOT Boolean`
+
+4. Right-click in empty graph space
+
+5. Search for:
+
+   `Branch`
+
+6. Choose the plain:
+
+   `Branch`
+
+7. Connect the white execution pin from:
+
+   `Set TestIndex`
+
+   to
+
+   `Branch` (South visited check)
+
+8. Connect:
+   - `NOT Boolean` result → `Branch.Condition` (South visited check)
 
 ---
 
-4. Add a **Branch**
+#### Step 3.8.5 — Add the South neighbor
 
----
+1. Right-click in empty graph space
 
-5. Connect:
-
-- `Set TestIndex` → Branch (Exec)
-
-6. Connect:
-
-- `NOT bVisited` → Branch.Condition
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.8.4.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.8.4.png' | relative_url }}" style="width:100%;" alt="Branch node verifying that the South neighbor has not been visited before allowing it to be added to LocalNeighbors." class="post-image">
-  </a>
-
----
-
-### Step 3.8.5 — Add the south neighbor
-
-#### Step 3.8.5.1 — Create the struct
-
-1. Right-click
-
-2. Search:
+2. Search for:
 
    `Make S_NeighborInfo`
 
----
+3. Click:
 
-#### Step 3.8.5.2 — Set CellIndex
+   `Make S_NeighborInfo`
 
-1. Drag `TestIndex` into the graph as **Get**
+4. Drag `TestIndex` into the graph as **Get**
 
-2. Connect:
+5. Connect:
+   - `TestIndex` → `CellIndex`
 
-- `TestIndex` → `CellIndex`
+6. Set:
+   - `DeltaX = 0`
+   - `DeltaY = 1`
 
----
+7. Drag `LocalNeighbors` into the graph as **Get**
 
-#### Step 3.8.5.3 — Set direction values
+8. Drag from the `LocalNeighbors` pin
 
-Set:
-
-- `DeltaX = 0`
-- `DeltaY = 1`
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.8.5A.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.8.5A.png' | relative_url }}" style="width:100%;" alt="Make S_NeighborInfo node configured with CellIndex from TestIndex and DeltaY set to one to represent South movement." class="post-image">
-  </a>
-
----
-
-#### Step 3.8.5.4 — Add to LocalNeighbors
-
-1. Drag `LocalNeighbors` as **Get**
-
-2. Search:
+9. Search for:
 
    `Add`
 
----
+10. Click:
 
-3. Connect:
+    `Add`
 
-- Branch.True → Add (Exec)
+11. Connect the white execution pin from:
 
-4. Connect:
+    `Branch.True` (South visited check)
 
-- Make S_NeighborInfo → Add.Item
+    to
 
----
+    `Add`
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.8.5B.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.8.5B.png' | relative_url }}" style="width:100%;" alt="Adding the South neighbor struct to the LocalNeighbors array after passing both bounds and unvisited checks." class="post-image">
-  </a>
+12. Connect:
+    - `Make S_NeighborInfo` → `Add.Item`
 
----
-
-### Step 3.8.6 — Continue execution
-
-CRITICAL:
-
-Execution must continue regardless of result.
+> The South section is now complete. The outgoing execution wires from this
+> section will be connected in the next step when the West bounds Branch
+> node has been created.
 
 ---
 
-# Step 3.9 — Check the West neighbor
+<a href="{{ '/assets/images/blog/Part2-Step-3.8.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.8.png' | relative_url }}" style="width:100%;" alt="South comment box containing the bounds Branch node with three incoming execution wires from the North section, TestIndex calculation, MazeGrid Get, Break S_MazeCell, visited Branch, Make S_NeighborInfo, and Add to LocalNeighbors" class="post-image">
+</a>
+
+---
+
+### Step 3.9 — Check the West neighbor
 
 Use this pattern for West:
 
-CurrentCol > 0  
-→ TestIndex = CurrentIndex - 1  
-→ MazeGrid[TestIndex]  
-→ NOT bVisited  
-→ Make S_NeighborInfo (-1, 0)  
+```
+CurrentCol > 0
+→ TestIndex = CurrentIndex - 1
+→ MazeGrid[TestIndex]
+→ NOT bVisited
+→ Make S_NeighborInfo (DeltaX=-1, DeltaY=0)
 → Add to LocalNeighbors
+```
 
 ---
 
@@ -1680,117 +1693,98 @@ then it is added as a valid movement option.
 
 ---
 
-## IMPORTANT — Execution Flow
+Place all nodes for this section **inside the West comment box**.
 
-- DO NOT use a Sequence node
-- execution must continue no matter what
+#### Step 3.9.1 — Check west bounds
 
----
+1. Right-click in empty graph space **inside the West comment box**
 
-## Step 3.9.1 — Check west bounds
+2. Search for:
 
-1. Drag `CurrentCol` into the graph as **Get**
+   `Branch`
 
-2. Drag from the `CurrentCol` pin
+3. Choose the plain:
 
-3. Search for:
+   `Branch`
+
+4. Connect the white execution pin from:
+
+   `Branch.False` (South **bounds** check, inside the **South** comment box)
+
+   to
+
+   `Branch` (inside the **West** comment box)
+
+5. Connect the white execution pin from:
+
+   `Branch.False` (South **visited** check, inside the **South** comment box)
+
+   to
+
+   `Branch` (inside the **West** comment box)
+
+6. Connect the white execution pin from:
+
+   `Add` exec output (inside the **South** comment box)
+
+   to
+
+   `Branch` (inside the **West** comment box)
+
+7. Drag `CurrentCol` into the graph as **Get**
+
+8. Drag from the `CurrentCol` pin
+
+9. Search for:
 
    `>`
 
-4. Choose:
+10. Choose:
 
-   `Integer > Integer`
+    `Greater`
 
-5. Set the second input to:
+11. Set the second input to:
 
-   `0`
+    `0`
 
----
-
-6. Right-click in empty graph space
-
-7. Search for:
-
-   `Branch`
-
-8. Click:
-
-   `Branch`
+12. Connect:
+    - `CurrentCol > 0` → `Branch.Condition` (West bounds check)
 
 ---
 
-9. Connect execution:
+#### Step 3.9.2 — Calculate TestIndex
 
-- From the **South section outputs** → Branch (Exec)
-
-IMPORTANT: You must connect BOTH:
-
-- South Branch.False → this Branch
-- South Add (end of success path) → this Branch
-
----
-
-10. Connect:
-
-- `CurrentCol > 0` → Branch.Condition
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.9.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.9.1.png' | relative_url }}" style="width:100%;" alt="Execution wiring showing both successful and failed South checks continuing forward into the West neighbor section. Branch node checking if CurrentCol is greater than zero to confirm a West neighbor exists within the maze bounds." class="post-image">
-  </a>
-
----
-
-## Why this matters
-
-If `CurrentCol` is 0, you are already on the left edge and cannot go West.
-
----
-
-## Step 3.9.2 — Calculate TestIndex
-
-1. Drag from the **function entry node**:
+1. From the **function entry node**, drag from:
 
    `CurrentIndex`
 
 2. Search for:
 
-   `Integer - Integer`
+   `-`
 
-3. Set the second input to:
+3. Choose:
+
+   `Subtract`
+
+4. Set the second input to:
 
    `1`
 
----
+5. Drag `TestIndex` into the graph as **Set**
 
-4. Drag `TestIndex` into the graph as **Set**
+6. Connect the subtraction result into `Set TestIndex`
 
-5. Connect:
+7. Connect the white execution pin from:
 
-- subtraction result → `Set TestIndex`
+   `Branch.True` (West bounds check)
 
----
+   to
 
-6. Connect execution:
-
-- `Branch.True` → `Set TestIndex`
+   `Set TestIndex`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.9.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.9.2.png' | relative_url }}" style="width:100%;" alt="Subtracting one from CurrentIndex to calculate TestIndex for the West neighbor location in the MazeGrid array." class="post-image">
-  </a>
-
----
-
-## Why this matters
-
-Subtracting 1 moves one cell to the left in the grid.
-
----
-
-## Step 3.9.3 — Read the west cell
+#### Step 3.9.3 — Read the West cell
 
 1. Drag `MazeGrid` into the graph as **Get**
 
@@ -1804,35 +1798,26 @@ Subtracting 1 moves one cell to the left in the grid.
 
    `Get (a copy)`
 
----
+5. Drag `TestIndex` into the graph as **Get**
 
-5. Connect:
+6. Connect:
+   - `TestIndex` → `Index` on `Get (a copy)`
 
-- `TestIndex` → Index
+7. Drag from the output of `Get (a copy)`
 
----
-
-6. Drag from the output of `Get (a copy)`
-
-7. Search for:
+8. Search for:
 
    `Break S_MazeCell`
 
-8. Click:
+9. Click:
 
    `Break S_MazeCell`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.9.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.9.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the MazeCell at TestIndex from MazeGrid and breaking the struct to access the West neighbor properties including bVisited." class="post-image">
-  </a>
+#### Step 3.9.4 — Check if West is unvisited
 
----
-
-## Step 3.9.4 — Check if west is unvisited
-
-1. Drag from `bVisited`
+1. Drag from the `bVisited` pin on `Break S_MazeCell`
 
 2. Search for:
 
@@ -1842,41 +1827,30 @@ Subtracting 1 moves one cell to the left in the grid.
 
    `NOT Boolean`
 
----
-
 4. Right-click in empty graph space
 
 5. Search for:
 
    `Branch`
 
-6. Click:
+6. Choose the plain:
 
    `Branch`
 
----
+7. Connect the white execution pin from:
 
-7. Connect execution:
+   `Set TestIndex`
 
-- `Set TestIndex` → Branch (Exec)
+   to
 
----
+   `Branch` (West visited check)
 
 8. Connect:
-
-- `NOT bVisited` → Branch.Condition
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.9.4.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.9.4.png' | relative_url }}" style="width:100%;" alt="Branch checking NOT bVisited to ensure the West neighbor has not already been visited before adding it to LocalNeighbors." class="post-image">
-  </a>
+   - `NOT Boolean` result → `Branch.Condition` (West visited check)
 
 ---
 
-## Step 3.9.5 — Add the west neighbor
-
-### Step 3.9.5.1 — Create the struct
+#### Step 3.9.5 — Add the West neighbor
 
 1. Right-click in empty graph space
 
@@ -1888,148 +1862,132 @@ Subtracting 1 moves one cell to the left in the grid.
 
    `Make S_NeighborInfo`
 
+4. Drag `TestIndex` into the graph as **Get**
+
+5. Connect:
+   - `TestIndex` → `CellIndex`
+
+6. Set:
+   - `DeltaX = -1`
+   - `DeltaY = 0`
+
+7. Drag `LocalNeighbors` into the graph as **Get**
+
+8. Drag from the `LocalNeighbors` pin
+
+9. Search for:
+
+   `Add`
+
+10. Click:
+
+    `Add`
+
+11. Connect the white execution pin from:
+
+    `Branch.True` (West visited check)
+
+    to
+
+    `Add`
+
+12. Connect:
+    - `Make S_NeighborInfo` → `Add.Item`
+
 ---
 
-### Step 3.9.5.2 — Set CellIndex
+### Step 3.10 — Return the result
 
-1. Drag `TestIndex` into the graph as **Get**
+#### Step 3.10.1 — Connect LocalNeighbors to the Return Node
 
-2. Connect:
-
-- `TestIndex` → `CellIndex`
-
----
-
-### Step 3.9.5.3 — Set direction values
-
-Set:
-
-- `DeltaX = -1`
-- `DeltaY = 0`
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-3.9.5A.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.9.5A.png' | relative_url }}" style="width:100%;" alt="Make S_NeighborInfo node configured with CellIndex from TestIndex and direction values DeltaX negative one and DeltaY zero to represent movement to the West." class="post-image">
-  </a>
-
----
-
-### Step 3.9.5.4 — Add to LocalNeighbors
+The **Return Node** is automatically placed at the end of the function graph. Scroll to find it. Do not add a new one.
 
 1. Drag `LocalNeighbors` into the graph as **Get**
 
-2. Drag from the pin
+2. Connect:
+   - `LocalNeighbors` → `Neighbors` on the Return Node
 
-3. Search for:
+3. Connect the white execution pin from:
 
-   `Add`
+   `Branch.False` (West **bounds** check, inside the **West** comment box)
 
-4. Click:
+   to
 
-   `Add`
+   the **Return Node**
 
----
+4. Connect the white execution pin from:
 
-5. Connect execution:
+   `Branch.False` (West **visited** check, inside the **West** comment box)
 
-- `Branch.True` → Add (Exec)
+   to
 
----
+   the **Return Node**
 
-6. Connect:
+5. Connect the white execution pin from:
 
-- `Make S_NeighborInfo` → `Add.Item`
+   `Add` exec output (inside the **West** comment box)
 
----
+   to
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.9.5B.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.9.5B.png' | relative_url }}" style="width:100%;" alt="Adding the West neighbor struct into the LocalNeighbors array when it passes both bounds and unvisited checks." class="post-image">
-  </a>
-
----
-
-### Step 3.10 — Return the LocalNeighbors array
-
-#### Step 3.10.1 — Connect the return value
-
-1. Drag your **Return Node** into view
-
-2. Drag `LocalNeighbors` into the graph as **Get**
-
-3. Connect:
-
-- `LocalNeighbors` → `Neighbors` on the Return Node
-
-4. Connect the white execution pin from the final West section into the Return Node
-
-This is the final direction.
-
-Execution must now go to the Return Node.
+   the **Return Node**
 
 ---
 
-Connect BOTH:
-
-- Branch.False → Return Node
-- Add (exec output) → Return Node
-
----
-
-## Final Result
-
-Your West section now:
-
-- correctly checks bounds
-- reads the correct neighbor
-- verifies it has not been visited
-- adds it to the neighbor list
-- continues execution properly
+<a href="{{ '/assets/images/blog/Part2-Step-3.9.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-3.9.png' | relative_url }}" style="width:100%;" alt="West comment box containing the bounds Branch node with three incoming execution wires from the South section, TestIndex calculation, MazeGrid Get, Break S_MazeCell, visited Branch, Make S_NeighborInfo, Add to LocalNeighbors and Return Node" class="post-image">
+</a>
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-3.10.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.10.1.png' | relative_url }}" style="width:100%;" alt="Final execution flow showing both successful and failed West checks connecting into the Return Node to complete the function." class="post-image">
-  </a>
----
+### Step 3.11 — Review the full execution flow
 
-### Step 3.11 — Final execution pattern
+When all four directions are connected, the full function flows like this:
 
-#### Step 3.11.1 — Review the full branch chain
+```
+Set CurrentRow
+→ Set CurrentCol
+→ [North comment box] Branch: CurrentRow > 0
+→ [East comment box]  Branch: CurrentCol < MazeWidth - 1
+→ [South comment box] Branch: CurrentRow < MazeHeight - 1
+→ [West comment box]  Branch: CurrentCol > 0
+→ Return Node
+```
 
-When all four directions are connected, the full function should flow like this:
+Within each comment box, if the bounds check passes:
 
-`Set CurrentCol  
-→ [Branch: CurrentRow > 0] (North Bounds)  
-→ [Branch: CurrentCol < MazeWidth - 1] (East Bounds)  
-→ [Branch: CurrentRow < MazeHeight - 1] (South Bounds)  
-→ [Branch: CurrentCol > 0] (West Bounds)  
-→ Return Node`
+```
+Branch.True → Set TestIndex → Branch: NOT bVisited → Add to LocalNeighbors → next section
+Branch.False → next section
+```
 
-If a direction is valid, its internal logic runs before execution continues to the next direction.
+> Both paths from every Branch node must eventually reach the next section. If any wire is missing, the function will silently stop at that point.
 
 ---
 
 <a href="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="width:100%;" alt="Full GetUnvisitedNeighbors directional branch chain showing North, East, South, and West sections connected in order" class="post-image">
-  </a>
+    <img src="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="width:100%;" alt="Full GetUnvisitedNeighbors graph showing all four comment boxes connected in sequence with execution flowing through North, East, South, and West into the Return Node" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
-`GetUnvisitedNeighbors → Set CurrentRow → Set CurrentCol → Check North → Check East → Check South → Check West → Return`
+**Execution flow:**
+`GetUnvisitedNeighbors → Set CurrentRow → Set CurrentCol → North → East → South → West → Return Node`
+
+**Within each direction:**
+`Bounds Branch.True → Set TestIndex → Visited Branch.True → Add to LocalNeighbors`
 
 **Data flow:**
 
 - `CurrentIndex / MazeWidth` → `CurrentRow`
 - `CurrentIndex % MazeWidth` → `CurrentCol`
-- Neighbor index formulas → `TestIndex`
+- Direction index formula → `TestIndex`
 - `MazeGrid[TestIndex]` → `Break S_MazeCell`
-- Valid unvisited neighbor data → `Make S_NeighborInfo`
+- `NOT bVisited` → visited Branch condition
+- `TestIndex` + direction deltas → `Make S_NeighborInfo`
 - `Make S_NeighborInfo` → `LocalNeighbors.Add`
-- `LocalNeighbors` → Return value `Neighbors`
+- `LocalNeighbors` → Return Node `Neighbors` output
 
 ---
 
@@ -2040,7 +1998,7 @@ This function is how the maze generator finds possible next moves.
 It prevents the algorithm from:
 
 - going outside the maze
-- revisiting old cells
+- revisiting already visited cells
 - choosing invalid directions
 
 > Without this function, the generator has no idea where it can go.
@@ -2049,29 +2007,39 @@ It prevents the algorithm from:
 
 ## Common mistakes
 
-❌ Forgetting the bounds checks  
-✔️ Always make sure the neighbor is inside the maze first
+❌ Forgetting the bounds check  
+✔️ Always check the neighbor is inside the maze before reading from `MazeGrid`
 
 ---
 
-❌ Reading the current cell instead of the neighbor cell  
-✔️ Use `TestIndex` to read the neighbor from `MazeGrid`
+❌ Only connecting one wire into each direction's Branch node  
+✔️ Both `Branch.False` and `Add` exec output must connect forward
+
+---
+
+❌ Reading the wrong cell  
+✔️ Always use `TestIndex` to read the neighbor, not `CurrentIndex`
 
 ---
 
 ❌ Forgetting to negate `bVisited`  
-✔️ You want unvisited neighbors only
+✔️ You want `NOT bVisited` — unvisited neighbors only
 
 ---
 
-❌ Returning nothing  
-✔️ `LocalNeighbors` must connect into the Return Node
+❌ Adding a second Return Node  
+✔️ The Return Node already exists — scroll right to find it
 
 ---
 
 ## Expected result
 
-Your `GetUnvisitedNeighbors` function now returns all valid unvisited neighbors for any current cell.
+Your `GetUnvisitedNeighbors` function now:
+
+- correctly calculates the position of each neighbor
+- checks all four directions
+- filters out out-of-bounds and already visited cells
+- returns a clean array of valid next moves
 
 ---
 
@@ -2095,15 +2063,36 @@ this function removes the correct wall from both cells.
 
 ---
 
+## How this function works
+
+When the maze algorithm moves from one cell to a neighbor, a wall exists between them on both sides. Both cells must agree the wall is gone:
+
+| Direction           | Current Cell loses | Neighbor Cell loses |
+| ------------------- | ------------------ | ------------------- |
+| North (DeltaY = -1) | bWallNorth         | bWallSouth          |
+| East (DeltaX = 1)   | bWallEast          | bWallWest           |
+| South (DeltaY = 1)  | bWallSouth         | bWallNorth          |
+| West (DeltaX = -1)  | bWallWest          | bWallEast           |
+
+> Because `MazeGrid` stores structs by value, any changes must be written back into the array explicitly. This function handles that.
+
+---
+
 ## Instructions
 
 ### Step 4.1 — Create the function
 
 #### Step 4.1.1 — Add the function
 
-1. Create a new function named:
+1. In the **My Blueprint** panel, find **Functions**
+
+2. Click the **+** button next to **Functions**
+
+3. Name the function:
 
    `RemoveWallBetween`
+
+4. Press **Enter**
 
 ---
 
@@ -2111,7 +2100,9 @@ this function removes the correct wall from both cells.
 
 #### Step 4.2.1 — Add function inputs
 
-Add these inputs:
+1. In the **Details** panel for the function, find **Inputs**
+
+2. Click the **+** button and add the following one at a time:
 
 - `CurrentIndex` (Integer)
 - `NeighborIndex` (Integer)
@@ -2120,64 +2111,74 @@ Add these inputs:
 
 ---
 
+<a href="{{ '/assets/images/blog/Part2-Step-4.2.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.2.1.png' | relative_url }}" style="width:100%;" alt="RemoveWallBetween function Details panel showing four inputs: CurrentIndex, NeighborIndex, DeltaX, and DeltaY all typed as Integer" class="post-image">
+</a>
+
+---
+
 ### Step 4.3 — Add local variables
 
-#### Step 4.3.1 — Create local cell variables
+Local variables only exist inside this function. They are added differently from regular Blueprint variables.
 
-Create these **Local Variables**:
+#### Step 4.3.1 — Find the Local Variables section
+
+1. Look in the **My Blueprint** panel
+
+2. Find the section labeled:
+
+   **Local Variables**
+
+> This section only appears when you are inside a function graph. If you do not see it, make sure you have the `RemoveWallBetween` graph open.
+
+#### Step 4.3.2 — Add the local variables
+
+3. Click the **+** button next to **Local Variables**
+
+4. Add the following one at a time:
 
 - `CurrentCell` (`S_MazeCell`)
 - `NeighborCell` (`S_MazeCell`)
 
 ---
 
-<div>
-<a href="{{ '/assets/images/blog/Part2-Step-4.2.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="width:100%;" alt="RemoveWallBetween function showing inputs" class="post-image">
-  </a>
-
-  <a href="{{ '/assets/images/blog/Part2-Step-4.3.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-3.11.png' | relative_url }}" style="width:100%;" alt="RemoveWallBetween fuction showing local variables" class="post-image">
-  </a>
-  </div>
+<a href="{{ '/assets/images/blog/Part2-Step-4.3.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.3.2.png' | relative_url }}" style="width:100%;" alt="RemoveWallBetween Local Variables section showing CurrentCell and NeighborCell both typed as S_MazeCell" class="post-image">
+</a>
 
 ---
 
-### Step 4.4 — Read the current cell
+### Step 4.4 — Read the current cell from MazeGrid
 
-#### Step 4.4.1 — Read from MazeGrid
+#### Step 4.4.1 — Get the cell at CurrentIndex
 
-1. Drag `MazeGrid` into the graph as **Get**
-
-2. Drag from the `MazeGrid` pin
-
-3. Search for:
-
-   `Get (a copy)`
-
-4. Click:
-
-   `Get (a copy)`
-
-5. From the **function entry node**, drag from the input pin:
+1. From the **function entry node**, drag from the input pin:
 
    `CurrentIndex`
 
-6. Connect:
+2. Search for:
 
-- `CurrentIndex` → `Index` on `Get (a copy)`
+   `Get (a copy)`
 
-#### Step 4.4.2 — Store the cell in CurrentCell
+3. Click:
 
-7. Drag `CurrentCell` into the graph as **Set**
+   `Get (a copy)`
 
-8. Connect:
+4. Drag `MazeGrid` into the graph as **Get**
 
-- output of `Get (a copy)` → value input on `Set CurrentCell`
+5. Connect:
+   - `MazeGrid` → **Target Array** on `Get (a copy)`
 
-9. Connect the white execution pin from:
+#### Step 4.4.2 — Store the result in CurrentCell
 
-   `RemoveWallBetween`
+6. Drag `CurrentCell` into the graph as **Set**
+
+7. Connect:
+   - output of `Get (a copy)` → value input on `Set CurrentCell`
+
+8. Connect the white execution pin from:
+
+   `RemoveWallBetween` (function entry node)
 
    to
 
@@ -2185,59 +2186,54 @@ Create these **Local Variables**:
 
 ---
 
-   <a href="{{ '/assets/images/blog/Part2-Step-4.4.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.4.2.png' | relative_url }}" style="width:100%;" alt="Get the cell from the MazeGrid array at CurrentIndex and store it in the CurrentCell variable after RemoveWallBetween executes." class="post-image">
-  </a>
-  </div>
+<a href="{{ '/assets/images/blog/Part2-Step-4.4.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.4.2.png' | relative_url }}" style="width:100%;" alt="MazeGrid Get (a copy) node using CurrentIndex connected into Set CurrentCell, wired from the RemoveWallBetween entry node" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `RemoveWallBetween → Set CurrentCell`
 
 **Data flow:**
 
+- `CurrentIndex` → `Get (a copy).Index`
 - `MazeGrid` → `Get (a copy).Target Array`
-- `CurrentIndex` (function input) → `Get (a copy).Index`
 - `Get (a copy)` output → `Set CurrentCell`
 
 ---
 
-### Step 4.5 — Read the neighbor cell
+### Step 4.5 — Read the neighbor cell from MazeGrid
 
-#### Step 4.5.1 — Read from MazeGrid
+#### Step 4.5.1 — Get the cell at NeighborIndex
 
-1. Drag `MazeGrid` into the graph as **Get**
-
-2. Drag from the `MazeGrid` pin
-
-3. Search for:
-
-   `Get (a copy)`
-
-4. Click:
-
-   `Get (a copy)`
-
-5. From the **function entry node**, drag from the input pin:
+1. From the **function entry node**, drag from the input pin:
 
    `NeighborIndex`
 
-6. Connect:
+2. Search for:
 
-- `NeighborIndex` → `Index` on `Get (a copy)`
+   `Get (a copy)`
 
-#### Step 4.5.2 — Store the cell in NeighborCell
+3. Click:
 
-7. Drag `NeighborCell` into the graph as **Set**
+   `Get (a copy)`
 
-8. Connect:
+4. Drag `MazeGrid` into the graph as **Get** (it's fine to use the `MazeGrid` form the last step)
 
-- output of `Get (a copy)` → value input on `Set NeighborCell`
+5. Connect:
+   - `MazeGrid` → **Target Array** on `Get (a copy)`
 
-9. Connect the white execution pin from:
+#### Step 4.5.2 — Store the result in NeighborCell
+
+6. Drag `NeighborCell` into the graph as **Set**
+
+7. Connect:
+   - output of `Get (a copy)` → value input on `Set NeighborCell`
+
+8. Connect the white execution pin from:
 
    `Set CurrentCell`
 
@@ -2248,23 +2244,27 @@ Create these **Local Variables**:
 ---
 
 <a href="{{ '/assets/images/blog/Part2-Step-4.5.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.5.2.png' | relative_url }}" style="width:100%;" alt="Retrieve a cell from MazeGrid using the NeighborIndex and store it in the NeighborCell variable immediately after CurrentCell is set" class="post-image">
-  </a>
+    <img src="{{ '/assets/images/blog/Part2-Step-4.5.2.png' | relative_url }}" style="width:100%;" alt="MazeGrid Get (a copy) node using NeighborIndex connected into Set NeighborCell, chained after Set CurrentCell" class="post-image">
+</a>
+
+---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `Set CurrentCell → Set NeighborCell`
 
 **Data flow:**
 
+- `NeighborIndex` → `Get (a copy).Index`
 - `MazeGrid` → `Get (a copy).Target Array`
-- `NeighborIndex` (function input) → `Get (a copy).Index`
 - `Get (a copy)` output → `Set NeighborCell`
 
 ---
 
 ### Step 4.6 — Add the Sequence node
+
+The Sequence node lets each direction check run independently from its own output pin, rather than chaining them together.
 
 #### Step 4.6.1 — Add and connect Sequence
 
@@ -2286,40 +2286,81 @@ Create these **Local Variables**:
 
    `Sequence`
 
-This creates separate execution outputs:
+The Sequence node starts with two outputs: `Then 0` and `Then 1`.
 
-- `Then 0`
-- `Then 1`
-- `Then 2`
-- `Then 3`
+You need five outputs total. Add three more:
 
-We will use them like this:
+5. Click **Add pin +** on the Sequence node three times
 
-- `Then 0` → North
-- `Then 1` → East
-- `Then 2` → South
-- `Then 3` → West
+You should now have:
+
+- `Then 0` → North check
+- `Then 1` → East check
+- `Then 2` → South check
+- `Then 3` → West check
+- `Then 4` → Write-back to MazeGrid
 
 ---
 
 <a href="{{ '/assets/images/blog/Part2-Step-4.6.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.6.1.png' | relative_url }}" style="width:100%;" alt="Sequence node connected after Set NeighborCell with Then 0, Then 1, Then 2, and Then 3 visible" class="post-image">
-  </a>
+    <img src="{{ '/assets/images/blog/Part2-Step-4.6.1.png' | relative_url }}" style="width:100%;" alt="Sequence node connected after Set NeighborCell showing five outputs: Then 0 through Then 4" class="post-image">
+</a>
 
 ---
 
-### Step 4.7 — Check direction: North
+## Why this matters
 
-If `DeltaY == -1`, then:
+Using a Sequence node means:
 
-- the **current cell loses its North wall**
-- the **neighbor cell loses its South wall**
+- each direction gets its own clean execution path
+- no direction needs to chain into the next
+- the write-back in `Then 4` always runs after all direction checks are complete
 
-For North, we will use:
+> This is much easier to manage than forcing all direction checks into one long branch chain.
 
-- `Sequence → Then 0`
+---
 
-#### Step 4.7.1 — Check if the direction is North
+### Step 4.7 — Add comment boxes
+
+Before placing any direction nodes, set up comment boxes to keep the graph organized.
+
+#### Step 4.7.1 — Add the direction comment boxes
+
+1. Left-click and drag in empty graph space to select an area
+
+2. Press **C**
+
+3. A comment box will appear
+
+4. Name it:
+
+   `North (DeltaY = -1)`
+
+5. Repeat this process four more times, placing each box to the right of or below the previous one
+
+6. Name them:
+
+- `East (DeltaX = 1)`
+- `South (DeltaY = 1)`
+- `West (DeltaX = -1)`
+- `Write-back to MazeGrid`
+
+> The delta values in the label make it easy to verify at a glance that each direction block uses the correct comparison value.
+
+---
+
+### Step 4.8 — Check direction: North
+
+This check runs from `Sequence → Then 0`.
+
+If `DeltaY == -1`:
+
+- the current cell loses its **North** wall
+- the neighbor cell loses its **South** wall
+
+Place all nodes for this section **inside the `North (DeltaY = -1)` comment box**.
+
+#### Step 4.8.1 — Check if the direction is North
 
 1. From the **function entry node**, drag from the input pin:
 
@@ -2331,9 +2372,9 @@ For North, we will use:
 
 3. Choose:
 
-   `Integer == Integer`
+   `Equal (==)`
 
-4. Set the second input value to:
+4. Set the second input to:
 
    `-1`
 
@@ -2353,154 +2394,126 @@ For North, we will use:
 
    to
 
-   `Branch`
+   `Branch` (inside the **North** comment box)
 
 9. Connect:
+   - `DeltaY == -1` → `Branch.Condition`
 
-- `DeltaY == -1` → `Branch.Condition`
+---
 
-#### Step 4.7.2 — If True, remove the North wall from the Current Cell
+#### Step 4.8.2 — Remove the North wall from CurrentCell
 
 10. Right-click in empty graph space
 
 11. Search for:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
 12. Click:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
-13. Connect:
+13. Drag `CurrentCell` into the graph as **Get**
 
-- `CurrentCell` → struct input (left side of the node)
+14. Connect:
+    - `CurrentCell` → struct input (left side of `Set Members in S_MazeCell`)
 
-14. In the **Details panel**, enable only:
+15. Click on `Set Members in S_MazeCell`. In the **Details** panel, enable **only**:
 
-- `bWallNorth`
+    ✔️ `bWallNorth`
 
-15. Set:
+    > Leave all other checkboxes unchecked. Enabled fields are the only ones this node will modify.
 
-- `bWallNorth = False`
+16. Set:
+    - `bWallNorth = False` (unchecked)
 
-16. Connect the white execution pin from:
+17. Connect the white execution pin from:
 
-`Branch.True`
+    `Branch.True` (North bounds check)
 
-to
+    to
 
-`Set Members in S_MazeCell` (CurrentCell)
+    `Set Members in S_MazeCell` (CurrentCell North)
 
-#### Step 4.7.3 — Remove the South wall from the Neighbor Cell
+18. Drag `CurrentCell` into the graph as **Set**
 
-17. Right-click in empty graph space
+19. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set CurrentCell`
 
-18. Search for:
-
-`Set Members in S_MazeCell`
-
-19. Click:
-
-`Set Members in S_MazeCell`
-
-20. Connect:
-
-- `NeighborCell` → struct input (left side of the node)
-
-21. In the **Details panel**, enable only:
-
-- `bWallSouth`
-
-22. Set:
-
-- `bWallSouth = False`
-
-23. Connect the white execution pin from:
-
-`Set Members in S_MazeCell` (CurrentCell)
-
-to
-
-`Set Members in S_MazeCell` (NeighborCell)
+> This writes the modified struct back into the local variable. Without this connection the change is lost.
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-4.7.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.7.3.png' | relative_url }}" style="width:100%;" alt="If DeltaY equals -1, the execution branch sets bWallNorth to false for the CurrentCell and then sets bWallSouth to false for the NeighborCell" class="post-image">
-  </a>
+#### Step 4.8.3 — Remove the South wall from NeighborCell
+
+20. Right-click in empty graph space
+
+21. Search for:
+
+    `Set Members in S_MazeCell`
+
+22. Click:
+
+    `Set Members in S_MazeCell`
+
+23. Drag `NeighborCell` into the graph as **Get**
+
+24. Connect:
+    - `NeighborCell` → struct input (left side of `Set Members in S_MazeCell`)
+
+25. In the **Details** panel, enable **only**:
+
+    ✔️ `bWallSouth`
+
+26. Set:
+    - `bWallSouth = False` (unchecked)
+
+27. Connect the white execution pin from:
+
+    `Set CurrentCell` (inside the **North** comment box)
+
+    to
+
+    `Set Members in S_MazeCell` (NeighborCell South)
+
+28. Drag `NeighborCell` into the graph as **Set**
+
+29. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set NeighborCell`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-4.8.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.8.png' | relative_url }}" style="width:100%;" alt="North comment box showing DeltaY == -1 Branch, Set Members removing bWallNorth from CurrentCell written back via Set CurrentCell, then Set Members removing bWallSouth from NeighborCell written back via Set NeighborCell" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
-`Set NeighborCell → Sequence → Then 0 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+**Execution flow:**
+`Sequence → Then 0 → Branch → Set Members (CurrentCell North) → Set CurrentCell → Set Members (NeighborCell South) → Set NeighborCell`
 
 **Data flow:**
 
-- `DeltaY` (function input) → `Integer == Integer`
 - `DeltaY == -1` → `Branch.Condition`
-- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallNorth = False`)
-- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallSouth = False`)
+- `CurrentCell` → `Set Members` → `Set CurrentCell`
+- `NeighborCell` → `Set Members` → `Set NeighborCell`
 
 ---
 
-## Why this matters
+### Step 4.9 — Check direction: East
 
-Using a `Sequence` node lets each direction check run from its own execution output.
+This check runs from `Sequence → Then 1`.
 
-That means:
+If `DeltaX == 1`:
 
-- North does not need to chain into East
-- East does not need to chain into South
-- South does not need to chain into West
+- the current cell loses its **East** wall
+- the neighbor cell loses its **West** wall
 
-Each direction gets its own clean path.
+Place all nodes for this section **inside the `East (DeltaX = 1)` comment box**.
 
-> This is much easier to manage than trying to force all direction checks into one long branch chain.
-
----
-
-## Common mistakes
-
-❌ Connecting North directly from `Set NeighborCell` without a `Sequence`  
-✔️ Use `Sequence → Then 0`
-
----
-
-❌ Trying to connect the end of North into East  
-✔️ Each direction should start from its own `Sequence` output
-
----
-
-❌ Forgetting that `Set Members in S_MazeCell` only updates the local struct variable  
-✔️ You still need to write `CurrentCell` and `NeighborCell` back into `MazeGrid` later with `Set Array Elem`
-
----
-
-## Expected result
-
-Your North direction check now runs from the `Sequence` node and correctly updates:
-
-- `CurrentCell.bWallNorth = False`
-- `NeighborCell.bWallSouth = False`
-
-when `DeltaY == -1`.
-
----
-
-### Step 4.8 — Check direction: East
-
-If `DeltaX == 1`, then:
-
-- the **current cell loses its East wall**
-- the **neighbor cell loses its West wall**
-
-For East, we will use:
-
-- `Sequence → Then 1`
-
-#### Step 4.8.1 — Check if the direction is East
+#### Step 4.9.1 — Check if the direction is East
 
 1. From the **function entry node**, drag from the input pin:
 
@@ -2512,9 +2525,9 @@ For East, we will use:
 
 3. Choose:
 
-   `Integer == Integer`
+   `Equal (==)`
 
-4. Set the second input value to:
+4. Set the second input to:
 
    `1`
 
@@ -2534,159 +2547,122 @@ For East, we will use:
 
    to
 
-   `Branch`
+   `Branch` (inside the **East** comment box)
 
 9. Connect:
+   - `DeltaX == 1` → `Branch.Condition`
 
-- `DeltaX == 1` → `Branch.Condition`
+---
 
-#### Step 4.8.2 — If True, remove the East wall from the Current Cell
+#### Step 4.9.2 — Remove the East wall from CurrentCell
 
 10. Right-click in empty graph space
 
 11. Search for:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
 12. Click:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
-13. Connect:
+13. Drag `CurrentCell` into the graph as **Get**
 
-- `CurrentCell` → struct input (left side of the node)
+14. Connect:
+    - `CurrentCell` → struct input (left side of `Set Members in S_MazeCell`)
 
-14. In the **Details panel**, enable only:
+15. In the **Details** panel, enable **only**:
 
-- `bWallEast`
+    ✔️ `bWallEast`
 
-15. Set:
+16. Set:
+    - `bWallEast = False` (unchecked)
 
-- `bWallEast = False`
+17. Connect the white execution pin from:
 
-16. Connect the white execution pin from:
+    `Branch.True` (East bounds check)
 
-`Branch.True`
+    to
 
-to
+    `Set Members in S_MazeCell` (CurrentCell East)
 
-`Set Members in S_MazeCell` (CurrentCell)
+18. Drag `CurrentCell` into the graph as **Set**
 
-#### Step 4.8.3 — Remove the West wall from the Neighbor Cell
-
-17. Right-click in empty graph space
-
-18. Search for:
-
-`Set Members in S_MazeCell`
-
-19. Click:
-
-`Set Members in S_MazeCell`
-
-20. Connect:
-
-- `NeighborCell` → struct input (left side of the node)
-
-21. In the **Details panel**, enable only:
-
-- `bWallWest`
-
-22. Set:
-
-- `bWallWest = False`
-
-23. Connect the white execution pin from:
-
-`Set Members in S_MazeCell` (CurrentCell)
-
-to
-
-`Set Members in S_MazeCell` (NeighborCell)
+19. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set CurrentCell`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-4.8.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.8.3.png' | relative_url }}" style="width:100%;" alt="If DeltaX equals 1, the execution branch sets bWallEast to false for the CurrentCell and then sets bWallWest to false for the NeighborCell" class="post-image">
-  </a>
+#### Step 4.9.3 — Remove the West wall from NeighborCell
+
+20. Right-click in empty graph space
+
+21. Search for:
+
+    `Set Members in S_MazeCell`
+
+22. Click:
+
+    `Set Members in S_MazeCell`
+
+23. Drag `NeighborCell` into the graph as **Get**
+
+24. Connect:
+    - `NeighborCell` → struct input (left side of `Set Members in S_MazeCell`)
+
+25. In the **Details** panel, enable **only**:
+
+    ✔️ `bWallWest`
+
+26. Set:
+    - `bWallWest = False` (unchecked)
+
+27. Connect the white execution pin from:
+
+    `Set CurrentCell` (inside the **East** comment box)
+
+    to
+
+    `Set Members in S_MazeCell` (NeighborCell West)
+
+28. Drag `NeighborCell` into the graph as **Set**
+
+29. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set NeighborCell`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-4.9.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.9.png' | relative_url }}" style="width:100%;" alt="East comment box showing DeltaX == 1 Branch, Set Members removing bWallEast from CurrentCell written back via Set CurrentCell, then Set Members removing bWallWest from NeighborCell written back via Set NeighborCell" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
-`Set NeighborCell → Sequence → Then 1 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+**Execution flow:**
+`Sequence → Then 1 → Branch → Set Members (CurrentCell East) → Set CurrentCell → Set Members (NeighborCell West) → Set NeighborCell`
 
 **Data flow:**
 
-- `DeltaX` (function input) → `Integer == Integer`
 - `DeltaX == 1` → `Branch.Condition`
-- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallEast = False`)
-- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallWest = False`)
+- `CurrentCell` → `Set Members` → `Set CurrentCell`
+- `NeighborCell` → `Set Members` → `Set NeighborCell`
 
 ---
 
-## Why this matters
+### Step 4.10 — Check direction: South
 
-This step handles the case where the chosen neighbor is to the **East** of the current cell.
+This check runs from `Sequence → Then 2`.
 
-If that happens:
+If `DeltaY == 1`:
 
-- the current cell must open its **East wall**
-- the neighbor cell must open its **West wall**
+- the current cell loses its **South** wall
+- the neighbor cell loses its **North** wall
 
-> Both cells must agree that the wall between them is gone.
+Place all nodes for this section **inside the `South (DeltaY = 1)` comment box**.
 
----
-
-## Common mistakes
-
-❌ Connecting East from the end of the North block  
-✔️ East should start from `Sequence → Then 1`
-
----
-
-❌ Using `DeltaY` instead of `DeltaX`  
-✔️ East and West use `DeltaX`
-
----
-
-❌ Setting the wrong wall values  
-✔️ For East, use:
-
-- `CurrentCell.bWallEast = False`
-- `NeighborCell.bWallWest = False`
-
----
-
-❌ Forgetting that these are still local struct changes  
-✔️ You still need to write `CurrentCell` and `NeighborCell` back into `MazeGrid` later with `Set Array Elem`
-
----
-
-## Expected result
-
-When `DeltaX == 1`, this step now updates:
-
-- `CurrentCell.bWallEast = False`
-- `NeighborCell.bWallWest = False`
-
-using the East path from the `Sequence` node.
-
----
-
-### Step 4.9 — Check direction: South
-
-If `DeltaY == 1`, then:
-
-- the **current cell loses its South wall**
-- the **neighbor cell loses its North wall**
-
-For South, we will use:
-
-- `Sequence → Then 2`
-
-#### Step 4.9.1 — Check if the direction is South
+#### Step 4.10.1 — Check if the direction is South
 
 1. From the **function entry node**, drag from the input pin:
 
@@ -2698,9 +2674,9 @@ For South, we will use:
 
 3. Choose:
 
-   `Integer == Integer`
+   `Equal (==)`
 
-4. Set the second input value to:
+4. Set the second input to:
 
    `1`
 
@@ -2720,121 +2696,122 @@ For South, we will use:
 
    to
 
-   `Branch`
+   `Branch` (inside the **South** comment box)
 
 9. Connect:
+   - `DeltaY == 1` → `Branch.Condition`
 
-- `DeltaY == 1` → `Branch.Condition`
+---
 
-#### Step 4.9.2 — If True, remove the South wall from the Current Cell
+#### Step 4.10.2 — Remove the South wall from CurrentCell
 
 10. Right-click in empty graph space
 
 11. Search for:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
 12. Click:
 
-`Set Members in S_MazeCell`
+    `Set Members in S_MazeCell`
 
-13. Connect:
+13. Drag `CurrentCell` into the graph as **Get**
 
-- `CurrentCell` → struct input (left side of the node)
+14. Connect:
+    - `CurrentCell` → struct input (left side of `Set Members in S_MazeCell`)
 
-14. In the **Details panel**, enable only:
+15. In the **Details** panel, enable **only**:
 
-- `bWallSouth`
+    ✔️ `bWallSouth`
 
-15. Set:
+16. Set:
+    - `bWallSouth = False` (unchecked)
 
-- `bWallSouth = False`
+17. Connect the white execution pin from:
 
-16. Connect the white execution pin from:
+    `Branch.True` (South bounds check)
 
-`Branch.True`
+    to
 
-to
+    `Set Members in S_MazeCell` (CurrentCell South)
 
-`Set Members in S_MazeCell` (CurrentCell)
+18. Drag `CurrentCell` into the graph as **Set**
 
-#### Step 4.9.3 — Remove the North wall from the Neighbor Cell
-
-17. Right-click in empty graph space
-
-18. Search for:
-
-`Set Members in S_MazeCell`
-
-19. Click:
-
-`Set Members in S_MazeCell`
-
-20. Connect:
-
-- `NeighborCell` → struct input (left side of the node)
-
-21. In the **Details panel**, enable only:
-
-- `bWallNorth`
-
-22. Set:
-
-- `bWallNorth = False`
-
-23. Connect the white execution pin from:
-
-`Set Members in S_MazeCell` (CurrentCell)
-
-to
-
-`Set Members in S_MazeCell` (NeighborCell)
+19. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set CurrentCell`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-4.9.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.9.3.png' | relative_url }}" style="width:100%;" alt="If DeltaX equals 1, the execution branch sets bWallEast to false for the CurrentCell and then sets bWallWest to false for the NeighborCell" class="post-image">
-  </a>
+#### Step 4.10.3 — Remove the North wall from NeighborCell
+
+20. Right-click in empty graph space
+
+21. Search for:
+
+    `Set Members in S_MazeCell`
+
+22. Click:
+
+    `Set Members in S_MazeCell`
+
+23. Drag `NeighborCell` into the graph as **Get**
+
+24. Connect:
+    - `NeighborCell` → struct input (left side of `Set Members in S_MazeCell`)
+
+25. In the **Details** panel, enable **only**:
+
+    ✔️ `bWallNorth`
+
+26. Set:
+    - `bWallNorth = False` (unchecked)
+
+27. Connect the white execution pin from:
+
+    `Set CurrentCell` (inside the **South** comment box)
+
+    to
+
+    `Set Members in S_MazeCell` (NeighborCell North)
+
+28. Drag `NeighborCell` into the graph as **Set**
+
+29. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set NeighborCell`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-4.10.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.10.png' | relative_url }}" style="width:100%;" alt="South comment box showing DeltaY == 1 Branch, Set Members removing bWallSouth from CurrentCell written back via Set CurrentCell, then Set Members removing bWallNorth from NeighborCell written back via Set NeighborCell" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
-`Set NeighborCell → Sequence → Then 2 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+**Execution flow:**
+`Sequence → Then 2 → Branch → Set Members (CurrentCell South) → Set CurrentCell → Set Members (NeighborCell North) → Set NeighborCell`
 
 **Data flow:**
 
-- `DeltaY` (function input) → `Integer == Integer`
 - `DeltaY == 1` → `Branch.Condition`
-- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallSouth = False`)
-- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallNorth = False`)
+- `CurrentCell` → `Set Members` → `Set CurrentCell`
+- `NeighborCell` → `Set Members` → `Set NeighborCell`
 
 ---
 
-## Why this matters
+### Step 4.11 — Check direction: West
 
-This step handles the case where the chosen neighbor is **below (South)** of the current cell.
+This check runs from `Sequence → Then 3`.
 
-If that happens:
+If `DeltaX == -1`:
 
-- the current cell must open its **South wall**
-- the neighbor cell must open its **North wall**
+- the current cell loses its **West** wall
+- the neighbor cell loses its **East** wall
 
----
+Place all nodes for this section **inside the `West (DeltaX = -1)` comment box**.
 
-### Step 4.10 — Check direction: West
-
-If `DeltaX == -1`, then:
-
-- the **current cell loses its West wall**
-- the **neighbor cell loses its East wall**
-
-For West, we will use:
-
-- `Sequence → Then 3`
-
-#### Step 4.10.1 — Check if the direction is West
+#### Step 4.11.1 — Check if the direction is West
 
 1. From the **function entry node**, drag from the input pin:
 
@@ -2846,9 +2823,9 @@ For West, we will use:
 
 3. Choose:
 
-   `Integer == Integer`
+   `Equals (==)`
 
-4. Set the second input value to:
+4. Set the second input to:
 
    `-1`
 
@@ -2868,13 +2845,14 @@ For West, we will use:
 
    to
 
-   `Branch`
+   `Branch` (inside the **West** comment box)
 
 9. Connect:
+   - `DeltaX == -1` → `Branch.Condition`
 
-- `DeltaX == -1` → `Branch.Condition`
+---
 
-#### Step 4.10.2 — If True, remove the West wall from the Current Cell
+#### Step 4.11.2 — Remove the West wall from CurrentCell
 
 10. Right-click in empty graph space
 
@@ -2886,173 +2864,283 @@ For West, we will use:
 
     `Set Members in S_MazeCell`
 
-13. Connect:
+13. Drag `CurrentCell` into the graph as **Get**
 
-- `CurrentCell` → struct input (left side of the node)
+14. Connect:
+    - `CurrentCell` → struct input (left side of `Set Members in S_MazeCell`)
 
-14. In the **Details panel**, enable only:
+15. In the **Details** panel, enable **only**:
 
-- `bWallWest`
+    ✔️ `bWallWest`
 
-15. Set:
+16. Set:
+    - `bWallWest = False` (unchecked)
 
-- `bWallWest = False`
+17. Connect the white execution pin from:
 
-16. Connect the white execution pin from:
-
-    `Branch.True`
-
-    to
-
-    `Set Members in S_MazeCell` (CurrentCell)
-
-#### Step 4.10.3 — Remove the East wall from the Neighbor Cell
-
-17. Right-click in empty graph space
-
-18. Search for:
-
-    `Set Members in S_MazeCell`
-
-19. Click:
-
-    `Set Members in S_MazeCell`
-
-20. Connect:
-
-- `NeighborCell` → struct input (left side of the node)
-
-21. In the **Details panel**, enable only:
-
-- `bWallEast`
-
-22. Set:
-
-- `bWallEast = False`
-
-23. Connect the white execution pin from:
-
-    `Set Members in S_MazeCell` (CurrentCell)
+    `Branch.True` (West bounds check)
 
     to
 
-    `Set Members in S_MazeCell` (NeighborCell)
+    `Set Members in S_MazeCell` (CurrentCell West)
+
+18. Drag `CurrentCell` into the graph as **Set**
+
+19. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set CurrentCell`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-4.10.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.10.3.png' | relative_url }}" style="width:100%;" alt="If DeltaX equals -1, the execution branch sets bWallWest to false for the CurrentCell and then sets bWallEast to false for the NeighborCell" class="post-image">
-  </a>
+#### Step 4.11.3 — Remove the East wall from NeighborCell
+
+20. Right-click in empty graph space
+
+21. Search for:
+
+    `Set Members in S_MazeCell`
+
+22. Click:
+
+    `Set Members in S_MazeCell`
+
+23. Drag `NeighborCell` into the graph as **Get**
+
+24. Connect:
+    - `NeighborCell` → struct input (left side of `Set Members in S_MazeCell`)
+
+25. In the **Details** panel, enable **only**:
+
+    ✔️ `bWallEast`
+
+26. Set:
+    - `bWallEast = False` (unchecked)
+
+27. Connect the white execution pin from:
+
+    `Set CurrentCell` (inside the **West** comment box)
+
+    to
+
+    `Set Members in S_MazeCell` (NeighborCell East)
+
+28. Drag `NeighborCell` into the graph as **Set**
+
+29. Connect:
+    - output struct pin of `Set Members in S_MazeCell` → value input on `Set NeighborCell`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-4.11.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.11.png' | relative_url }}" style="width:100%;" alt="West comment box showing DeltaX == -1 Branch, Set Members removing bWallWest from CurrentCell written back via Set CurrentCell, then Set Members removing bWallEast from NeighborCell written back via Set NeighborCell" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:** `Sequence → Then 3 → Branch → Set Members in S_MazeCell (CurrentCell) → Set Members in S_MazeCell (NeighborCell)`
+**Execution flow:**
+`Sequence → Then 3 → Branch → Set Members (CurrentCell West) → Set CurrentCell → Set Members (NeighborCell East) → Set NeighborCell`
 
 **Data flow:**
 
-- `DeltaX` (function input) → `Integer == Integer`
 - `DeltaX == -1` → `Branch.Condition`
-- `CurrentCell` → `Set Members in S_MazeCell` (sets `bWallWest = False`)
-- `NeighborCell` → `Set Members in S_MazeCell` (sets `bWallEast = False`)
+- `CurrentCell` → `Set Members` → `Set CurrentCell`
+- `NeighborCell` → `Set Members` → `Set NeighborCell`
 
 ---
 
-## Why this matters
+### Step 4.12 — Write updated cells back into MazeGrid
 
-This step handles the case where the chosen neighbor is to the **Left (West)** of the current cell.
+This runs from `Sequence → Then 4`.
 
-To create a passage:
+Place all nodes for this section **inside the `Write-back to MazeGrid` comment box**.
 
-- the current cell must open its **West wall**
-- the neighbor cell (the one on the left) must open its **East wall**
+The local `CurrentCell` and `NeighborCell` variables now hold the correct wall states. This step writes them permanently back into `MazeGrid`.
 
----
+#### Step 4.12.1 — Add Set Array Elem for CurrentCell
 
-### Step 4.11 — Write the updated CurrentCell back into MazeGrid
+1. Right-click in empty graph space
 
-In previous steps, we modified the **CurrentCell** variable. However, because this variable is just a local copy, we must formally save those changes back into the actual **MazeGrid** array to update the maze structure.
+2. Search for:
 
-For this final save process, we will use:
+   `Set Array Elem`
 
-- `Sequence → Then 4`
+3. Click:
 
-#### Step 4.11.1 — Set the element for CurrentCell
+   `Set Array Elem`
 
-1.  From the **Variables** panel, drag `MazeGrid` into the graph and choose:
-    `Get MazeGrid`
-2.  Drag off the `MazeGrid` pin and search for:
-    `Set Array Elem`
-3.  Connect the white execution pin from:
+4. Drag `MazeGrid` into the graph as **Get**
+
+5. Connect:
+   - `MazeGrid` → **Target Array** on `Set Array Elem`
+
+6. Drag `CurrentCell` into the graph as **Get**
+
+7. Connect:
+   - `CurrentCell` → **Item** on `Set Array Elem`
+
+8. From the **function entry node**, drag from the input pin:
+
+   `CurrentIndex`
+
+9. Connect:
+   - `CurrentIndex` → **Index** on `Set Array Elem`
+
+10. Connect the white execution pin from:
+
     `Sequence → Then 4`
+
     to
-    `Set Array Elem`
-4.  Connect:
-    - `CurrentCell` → **Item**
-    - `CurrentIndex` → **Index**
-5.  **Important:** Ensure **Size to Fit** is **unchecked** in the node details.
 
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-4.11.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.11.png' | relative_url }}" style="width:100%;" alt="Writing the updated CurrentCell back into MazeGrid using Set Array Elem and CurrentIndex." class="post-image">
-</a>
-
----
-
-### Step 4.12 — Write the updated NeighborCell back into MazeGrid
-
-Just like the CurrentCell, the **NeighborCell** needs its wall updates committed to the main grid array so the passage is fully opened.
-
-#### Step 4.12.1 — Set the element for NeighborCell
-
-1.  Add another:
-    `Set Array Elem`
-2.  Connect the white execution pin from:
     `Set Array Elem` (CurrentCell)
+
+11. In the **Details** panel for `Set Array Elem`, confirm:
+
+    ☐ **Size to Fit** is **unchecked**
+
+> **Size to Fit** would expand the array automatically if the index is out of range. Since `MazeGrid` is already fully populated, leave this unchecked to avoid unintended array growth.
+
+---
+
+#### Step 4.12.2 — Add Set Array Elem for NeighborCell
+
+1. Right-click in empty graph space
+
+2. Search for:
+
+   `Set Array Elem`
+
+3. Click:
+
+   `Set Array Elem`
+
+4. Drag `MazeGrid` into the graph as **Get**
+
+5. Connect:
+   - `MazeGrid` → **Target Array** on `Set Array Elem`
+
+6. Drag `NeighborCell` into the graph as **Get**
+
+7. Connect:
+   - `NeighborCell` → **Item** on `Set Array Elem`
+
+8. From the **function entry node**, drag from the input pin:
+
+   `NeighborIndex`
+
+9. Connect:
+   - `NeighborIndex` → **Index** on `Set Array Elem`
+
+10. Connect the white execution pin from:
+
+    `Set Array Elem` (CurrentCell)
+
     to
+
     `Set Array Elem` (NeighborCell)
-3.  Connect:
-    - `MazeGrid` → **Target Array**
-    - `NeighborCell` → **Item**
-    - `NeighborIndex` → **Index**
+
+11. Confirm **Size to Fit** is **unchecked**
 
 ---
 
 <a href="{{ '/assets/images/blog/Part2-Step-4.12.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.12.png' | relative_url }}" style="width:100%;" alt="Writing the updated NeighborCell back into MazeGrid using Set Array Elem and NeighborIndex." class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.12.png' | relative_url }}" style="width:100%;" alt="Write-back to MazeGrid comment box showing two Set Array Elem nodes, the first using CurrentCell and CurrentIndex, the second using NeighborCell and NeighborIndex, chained from Sequence Then 4" class="post-image">
 </a>
+
+---
+
+### Connections recap
+
+**Execution flow:**
+`Sequence → Then 4 → Set Array Elem (CurrentCell) → Set Array Elem (NeighborCell)`
+
+**Data flow:**
+
+- `MazeGrid` → Target Array (both nodes)
+- `CurrentCell` + `CurrentIndex` → `Set Array Elem` (CurrentCell)
+- `NeighborCell` + `NeighborIndex` → `Set Array Elem` (NeighborCell)
 
 ---
 
 ### Step 4.13 — Full function overview
 
-Your `RemoveWallBetween` function is now complete. By using the **Sequence** node, the function determines which walls to flip on the local variables first (Steps 4.7–4.10), and then performs a final "commit" to the array.
+Your `RemoveWallBetween` function is now complete.
+
+The full execution flow is:
+
+```
+RemoveWallBetween
+→ Set CurrentCell
+→ Set NeighborCell
+→ Sequence
+   → Then 0: DeltaY == -1 → remove North/South walls
+   → Then 1: DeltaX == 1  → remove East/West walls
+   → Then 2: DeltaY == 1  → remove South/North walls
+   → Then 3: DeltaX == -1 → remove West/East walls
+   → Then 4: write CurrentCell and NeighborCell back into MazeGrid
+```
+
+Only one direction branch will fire per call — whichever matches the actual `DeltaX` / `DeltaY` values passed in. The write-back in `Then 4` always runs regardless of which direction fired.
 
 ---
 
 <a href="{{ '/assets/images/blog/Part2-Step-4.13.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-4.13.png' | relative_url }}" style="width:100%;" alt="Complete RemoveWallBetween function showing all direction checks and final updates to MazeGrid." class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-4.13.png' | relative_url }}" style="width:100%;" alt="Complete RemoveWallBetween function showing all four direction checks branching from the Sequence node and the write-back path in Then 4" class="post-image">
 </a>
-
----
-
-### Connections recap
-
-**Execution flow:** `Sequence → Then 4 → Set Array Elem (CurrentCell) → Set Array Elem (NeighborCell)`
-
-**Data flow:**
-
-- `MazeGrid` → `Target Array` (on both nodes)
-- `CurrentCell` + `CurrentIndex` → `Set Array Elem` (Current)
-- `NeighborCell` + `NeighborIndex` → `Set Array Elem` (Neighbor)
 
 ---
 
 ## Why this matters
 
-In Unreal Engine, when you "Break" a struct or "Get" an array element, you are often working with a temporary local copy. Using **Sequence → Then 4** to save the data at the very end is a clean way to ensure that no matter which direction was chosen, the modified data is always written back to the **MazeGrid**. Without these steps, your walls would never actually disappear in the game world.
+In Unreal Engine, array elements that are structs are always returned as copies. Any changes made to a local struct variable are not automatically saved back to the array. The write-back steps in `Then 4` ensure that the wall changes are permanently stored in `MazeGrid`.
+
+Without the write-back:
+
+- the walls would appear to change locally
+- but `MazeGrid` would still show all walls intact
+- the maze would never actually be carved
+
+---
+
+## Common mistakes
+
+❌ Forgetting to connect the `Set Members` output back into `Set CurrentCell` or `Set NeighborCell`
+✔️ The output struct pin must feed back into the local variable or the change is lost
+
+---
+
+❌ Not clicking **Add pin +** on the Sequence node  
+✔️ You need five outputs — `Then 0` through `Then 4`
+
+---
+
+❌ Enabling multiple checkboxes in `Set Members in S_MazeCell`  
+✔️ Enable only the one wall being removed — other enabled fields will overwrite data unexpectedly
+
+---
+
+❌ Leaving **Size to Fit** checked on `Set Array Elem`  
+✔️ This can cause unintended array growth if an index is ever out of range
+
+---
+
+❌ Forgetting the write-back entirely  
+✔️ `MazeGrid` stores structs by value — local changes must be explicitly written back with `Set Array Elem`
+
+---
+
+## Expected result
+
+Your `RemoveWallBetween` function now:
+
+- reads the current and neighbor cells from `MazeGrid`
+- determines which walls to remove based on the direction
+- updates both local cell variables correctly
+- writes both cells back into `MazeGrid`
+
+When called by the maze algorithm, this function permanently carves a passage between any two adjacent cells.
+
+---
 
 # Step 5 — Create the `GenerateMaze` Function
 
@@ -3075,25 +3163,62 @@ This function:
 
 ---
 
+## How this function works
+
+This function uses a **stack-based depth-first search**. Unlike true recursion, a stack array never overflows — it is safe to use in Unreal Engine Blueprints regardless of maze size.
+
+The algorithm works like this:
+
+1. Pick a random starting cell and mark it visited
+2. Push it onto the stack
+3. While the stack is not empty:
+   - Look at the top of the stack (the current cell)
+   - If it has unvisited neighbors → choose one randomly, remove the wall, mark it visited, push it onto the stack
+   - If it has no unvisited neighbors → remove it from the stack (backtrack)
+
+> Backtracking is what allows the algorithm to finish the maze instead of stopping at the first dead end.
+
+---
+
 ## Instructions
 
 ### Step 5.1 — Create the function
 
 #### Step 5.1.1 — Add the function
 
-1. Create a new function named:
+1. In the **My Blueprint** panel, find **Functions**
+
+2. Click the **+** button next to **Functions**
+
+3. Name the function:
 
    `GenerateMaze`
+
+4. Press **Enter**
 
 ---
 
 ### Step 5.2 — Add local variables
 
-#### Step 5.2.1 — Create local variables
+Local variables only exist inside this function.
 
-Create these **Local Variables**:
+#### Step 5.2.1 — Find the Local Variables section
 
-- `Stack` (Integer Array)
+1. Look in the **My Blueprint** panel
+
+2. Find the section labeled:
+
+   **Local Variables**
+
+> This section only appears when you are inside a function graph. If you do not see it, make sure you have the `GenerateMaze` graph open.
+
+#### Step 5.2.2 — Add the local variables
+
+3. Click the **+** button next to **Local Variables**
+
+4. Add the following one at a time:
+
+- `Stack` (Array of Integer)
 - `CurrentIndex` (Integer)
 - `Neighbors` (Array of `S_NeighborInfo`)
 - `ChosenNeighbor` (`S_NeighborInfo`)
@@ -3104,130 +3229,163 @@ Create these **Local Variables**:
 
 <div>
 <a href="{{ '/assets/images/blog/Part2-Step-5.2.1a.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1a.png' | relative_url }}" style="width:100%;" alt="Local variable Stack" class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1a.png' | relative_url }}" style="width:100%;" alt="Local Variables panel showing Stack as an Array of Integer" class="post-image">
 </a>
 
 <a href="{{ '/assets/images/blog/Part2-Step-5.2.1b.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1b.png' | relative_url }}" style="width:100%;" alt="Local variable CurrentIndex" class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1b.png' | relative_url }}" style="width:100%;" alt="Local Variables panel showing CurrentIndex as an Integer" class="post-image">
 </a>
 
 <a href="{{ '/assets/images/blog/Part2-Step-5.2.1c.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1c.png' | relative_url }}" style="width:100%;" alt="Local variable Neighbors" class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1c.png' | relative_url }}" style="width:100%;" alt="Local Variables panel showing Neighbors as an Array of S_NeighborInfo" class="post-image">
 </a>
 
 <a href="{{ '/assets/images/blog/Part2-Step-5.2.1d.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1d.png' | relative_url }}" style="width:100%;" alt="Local variable ChosenNeighbor" class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1d.png' | relative_url }}" style="width:100%;" alt="Local Variables panel showing ChosenNeighbor as S_NeighborInfo" class="post-image">
 </a>
 
 <a href="{{ '/assets/images/blog/Part2-Step-5.2.1e.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1e.png' | relative_url }}" style="width:100%;" alt="Local variable StackTopIndex" class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1e.png' | relative_url }}" style="width:100%;" alt="Local Variables panel showing StackTopIndex as an Integer" class="post-image">
 </a>
 
 <a href="{{ '/assets/images/blog/Part2-Step-5.2.1f.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1f.png' | relative_url }}" style="width:100%;" alt="Local variable RandomNeighborIndex" class="post-image">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.2.1f.png' | relative_url }}" style="width:100%;" alt="Local Variables panel showing RandomNeighborIndex as an Integer" class="post-image">
 </a>
 </div>
 
 ---
 
-### Step 5.3 — Choose the starting cell
+### Step 5.3 — Add comment boxes
 
-#### Step 5.3.1 — Calculate the max index
+Before placing any nodes, set up comment boxes to keep the graph organised.
 
-1. Drag `MazeWidth` into the graph as **Get**
+#### Step 5.3.1 — Add the comment boxes
 
-2. Drag `MazeHeight` into the graph as **Get**
+1. Left-click and drag in empty graph space to select an area
 
-3. Multiply them using:
+2. Press **C**
 
-   `Integer * Integer`
+3. A comment box will appear
 
-4. Subtract `1` using:
+4. Name it:
 
-   `Integer - Integer`
+   `Setup`
 
-#### Step 5.3.2 — Pick a random starting index
+5. Repeat this process three more times
 
-5. Drag `RandomStream` into the graph as **Get**
+6. Name them:
 
-6. Right-click and search for:
+- `Loop Body`
+- `Has Neighbors`
+- `Backtrack`
 
-   `Random Integer in Range from Stream`
-
-7. Connect:
-
-- `Min = 0`
-- `Max = MazeWidth * MazeHeight - 1`
-- `Stream = RandomStream`
-
-#### Step 5.3.3 — Store the starting index
-
-8. Drag `CurrentIndex` into the graph as **Set**
-
-9. Connect the random result into `Set CurrentIndex`
-
-10. Connect the white execution pin from:
-
-`GenerateMaze`
-
-to
-
-`Set CurrentIndex`
+> You can resize and reposition comment boxes at any time by dragging their edges or title bar.
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.3.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.3.2.png' | relative_url }}" style="width:100%;" alt="Calculating the total grid size minus one to determine the maximum index, then using a Random Stream to pick and store a starting value in CurrentIndex" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-5.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.3.png' | relative_url }}" style="width:100%;" alt="Four comment boxes labeled Setup, Loop Body, Has Neighbors, and Backtrack arranged in the Blueprint graph" class="post-image">
 </a>
+
+---
+
+### Step 5.4 — Choose the starting cell
+
+Place all nodes for this section **inside the `Setup` comment box**.
+
+#### Step 5.4.1 — Calculate the max valid index
+
+1. Drag `MazeWidth` into the graph as **Get**
+
+2. Drag from the `MazeWidth` pin
+
+3. Search for:
+
+   `*`
+
+4. Choose:
+
+   `Multiply`
+
+5. Drag `MazeHeight` into the graph as **Get**
+
+6. Connect:
+   - `MazeHeight` → second input of `*`
+
+7. Drag from the multiply result
+
+8. Search for:
+
+   `-`
+
+9. Choose:
+
+   `Subtract`
+
+10. Set the second input to:
+
+    `1`
+
+#### Step 5.4.2 — Pick a random starting index
+
+11. Drag `RandomStream` into the graph as **Get**
+
+12. Drag from the subtract result
+
+13. Search for:
+
+    `Random Integer in Range from Stream`
+
+14. Click:
+
+    `Random Integer in Range from Stream`
+
+15. Connect:
+    - subtract result → `Max`
+    - `RandomStream` → `Stream`
+
+16. Set:
+    - `Min = 0`
+
+#### Step 5.4.3 — Store the starting index
+
+17. Drag `CurrentIndex` into the graph as **Set**
+
+18. Connect:
+    - random result → value input on `Set CurrentIndex`
+
+19. Connect the white execution pin from:
+
+    `GenerateMaze` (function entry node)
+
+    to
+
+    `Set CurrentIndex`
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `GenerateMaze → Set CurrentIndex`
 
 **Data flow:**
 
-- `MazeWidth × MazeHeight - 1` → max random index
-- `RandomStream` → random selection
+- `MazeWidth × MazeHeight - 1` → `Max`
+- `RandomStream` → `Stream`
 - random result → `CurrentIndex`
 
 ---
 
-## Why this matters
+### Step 5.5 — Mark the starting cell as visited
 
-The maze generator needs somewhere to begin.
+Still inside the **`Setup`** comment box.
 
-Using a seeded random start keeps the maze reproducible while still feeling random.
+#### Step 5.5.1 — Read the starting cell from MazeGrid
 
----
+1. Drag `CurrentIndex` into the graph as **Get**
 
-## Common mistakes
-
-❌ Forgetting to subtract `1` from total cell count  
-✔️ Arrays are zero-based, so the last valid index is total cells minus one
-
----
-
-❌ Using a normal random node instead of the stream version  
-✔️ Use `Random Integer in Range from Stream`
-
----
-
-## Expected result
-
-You now have a valid random starting cell stored in `CurrentIndex`.
-
----
-
-### Step 5.4 — Mark the starting cell as visited
-
-#### Step 5.4.1 — Read the starting cell
-
-1. Drag `MazeGrid` into the graph as **Get**
-
-2. Drag from the `MazeGrid` pin
+2. Drag from the `CurrentIndex` pin
 
 3. Search for:
 
@@ -3237,110 +3395,90 @@ You now have a valid random starting cell stored in `CurrentIndex`.
 
    `Get (a copy)`
 
-5. Connect:
+5. Drag `MazeGrid` into the graph as **Get**
 
-- `CurrentIndex` → `Index`
+6. Connect:
+   - `MazeGrid` → **Target Array** on `Get (a copy)`
 
-#### Step 5.4.2 — Set bVisited to True
+#### Step 5.5.2 — Set bVisited to True
 
-6. Drag from the output struct
+7. Drag from the output of `Get (a copy)`
 
-7. Search for:
-
-   `Set Members in S_MazeCell`
-
-8. Click:
+8. Search for:
 
    `Set Members in S_MazeCell`
 
-9. In the node details, enable only:
+9. Click:
 
-- `bVisited`
+   `Set Members in S_MazeCell`
 
-10. Set:
+10. In the **Details** panel, enable **only**:
 
-- `bVisited = True`
+    ✔️ `bVisited`
 
-#### Step 5.4.3 — Write the updated cell back
+11. Set:
+    - `bVisited = True` (checked)
 
-11. Drag `MazeGrid` into the graph as **Get**
+#### Step 5.5.3 — Write the updated cell back into MazeGrid
 
-12. Drag from the `MazeGrid` pin
+12. Right-click in empty graph space
 
 13. Search for:
 
-`Set Array Elem`
+    `Set Array Elem`
 
 14. Click:
 
-`Set Array Elem`
+    `Set Array Elem`
 
-15. Connect:
+15. Drag `MazeGrid` into the graph as **Get**
 
-- `MazeGrid` → `Target Array`
-- `CurrentIndex` → `Index`
-- output of `Set Members in S_MazeCell` → `Item`
+16. Connect:
+    - `MazeGrid` → **Target Array** on `Set Array Elem`
+    - output of `Set Members in S_MazeCell` → **Item** on `Set Array Elem`
+    - `CurrentIndex` → **Index** on `Set Array Elem`
 
-16. Connect the white execution pin from:
+17. Confirm **Size to Fit** is **unchecked**
 
-`Set CurrentIndex`
+18. Connect the white execution pin from:
 
-to
+    `Set CurrentIndex`
 
-`Set Members in S_MazeCell`
+    to
 
-17. Then connect the white execution pin from:
+    `Set Members in S_MazeCell`
 
-`Set Members in S_MazeCell`
+19. Connect the white execution pin from:
 
-to
+    `Set Members in S_MazeCell`
 
-`Set Array Elem`
+    to
 
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-5.4.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.4.3.png' | relative_url }}" style="width:100%;" alt="Retrieving the starting cell from MazeGrid using CurrentIndex, setting bVisited to true, and writing the updated cell back into the array with proper execution flow through Set Members and Set Array Elem" class="post-image">
-</a>
+    `Set Array Elem`
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `Set CurrentIndex → Set Members in S_MazeCell → Set Array Elem`
 
 **Data flow:**
 
-- `CurrentIndex` → `MazeGrid.Get`
-- returned cell → `Set Members in S_MazeCell`
-- updated cell → `Set Array Elem`
+- `CurrentIndex` → `Get (a copy).Index`
+- `MazeGrid` → `Get (a copy).Target Array`
+- `Get (a copy)` output → `Set Members in S_MazeCell`
+- `Set Members` output → `Set Array Elem.Item`
 - `CurrentIndex` → `Set Array Elem.Index`
+- `MazeGrid` → `Set Array Elem.Target Array`
 
 ---
 
-## Why this matters
+### Step 5.6 — Add the starting cell to the Stack
 
-If the starting cell is not marked visited, the algorithm may treat it as unvisited later and break the maze logic.
+Still inside the **`Setup`** comment box.
 
----
-
-## Common mistakes
-
-❌ Changing `bVisited` but forgetting to write the struct back into `MazeGrid`  
-✔️ Use `Set Array Elem`
-
----
-
-## Expected result
-
-The starting cell is now marked as visited in `MazeGrid`.
-
----
-
-### Step 5.5 — Add the starting cell to the Stack
-
-#### Step 5.5.1 — Add the stack entry
+#### Step 5.6.1 — Push the starting index onto the Stack
 
 1. Drag `Stack` into the graph as **Get**
 
@@ -3354,7 +3492,12 @@ The starting cell is now marked as visited in `MazeGrid`.
 
    `Add`
 
-5. Connect the white execution pin from:
+5. Drag `CurrentIndex` into the graph as **Get**
+
+6. Connect:
+   - `CurrentIndex` → **Item** on `Add`
+
+7. Connect the white execution pin from:
 
    `Set Array Elem`
 
@@ -3362,54 +3505,32 @@ The starting cell is now marked as visited in `MazeGrid`.
 
    `Add`
 
-6. Connect:
-
-- `CurrentIndex` → `Add.Item`
-- `Stack` Array → `Add` Array
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-5.5.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.5.1.png' | relative_url }}" style="width:100%;" alt="Adding the starting CurrentIndex to the Stack array using the Add node to begin the maze generation process" class="post-image">
-</a>
-
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `Set Array Elem → Stack.Add`
 
 **Data flow:**
 
-- `CurrentIndex` → `Stack.Add`
+- `CurrentIndex` → `Stack.Add.Item`
 
 ---
 
 ## Why this matters
 
-The stack is what allows the algorithm to move forward and backtrack correctly.
-
-Without it, this would not be a depth-first search.
+The stack is what allows the algorithm to move forward and backtrack correctly. Without the starting cell on the stack, the While Loop has nothing to work with and will never run.
 
 ---
 
-## Common mistakes
+### Step 5.7 — Add the While Loop
 
-❌ Forgetting to add the start cell to the stack  
-✔️ The loop depends on the stack having its first entry
+The While Loop is the heart of the maze algorithm. It runs once per cell visit or backtrack until the entire maze has been carved.
 
----
+Place the While Loop **between the `Setup` comment box and the `Loop Body` comment box** so it is clearly visible as the entry point to the loop.
 
-## Expected result
-
-The starting cell is now the first item in `Stack`.
-
----
-
-### Step 5.6 — Add the While Loop
-
-#### Step 5.6.1 — Add the While Loop node
+#### Step 5.7.1 — Add the While Loop node
 
 1. Right-click in empty graph space
 
@@ -3421,17 +3542,15 @@ The starting cell is now the first item in `Stack`.
 
    `While Loop`
 
-#### Step 5.6.2 — Connect execution flow
-
 4. Connect the white execution pin from:
 
-   `Add` on `Stack`
+   `Stack.Add`
 
    to
 
    `While Loop`
 
-#### Step 5.6.3 — Set the condition
+#### Step 5.7.2 — Set the loop condition
 
 5. Drag `Stack` into the graph as **Get**
 
@@ -3441,35 +3560,38 @@ The starting cell is now the first item in `Stack`.
 
    `Length`
 
-8. Drag from the `Length` result
+8. Click:
 
-9. Search for:
+   `Array Length`
 
-   `>`
+9. Drag from the `Length` result
 
-10. Choose:
+10. Search for:
 
-`Integer > Integer`
+    `>`
 
-11. Set the second input to:
+11. Choose:
 
-`0`
+    `Greater`
 
-12. Connect the result into:
+12. Set the second input to:
 
-`While Loop.Condition`
+    `0`
+
+13. Connect:
+    - `Stack.Length > 0` → `While Loop.Condition`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.6.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.6.1.png' | relative_url }}" style="width:100%;" alt="A While Loop conditioned to run as long as the Stack Length is greater than 0" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-5.7.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.7.png' | relative_url }}" style="width:100%;" alt="Full Setup comment box" class="post-image">
 </a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `Stack.Add → While Loop`
 
 **Data flow:**
@@ -3480,33 +3602,31 @@ The starting cell is now the first item in `Stack`.
 
 ## Why this matters
 
-This is the main control loop for the whole maze algorithm.
-
-It continues until there is nowhere left to go.
+The loop continues as long as there are cells on the stack. When the stack empties, every reachable cell has been visited and the maze is complete.
 
 ---
 
 ## Common mistakes
 
-❌ Leaving the condition disconnected  
-✔️ The `While Loop` must know when to stop
+❌ Using `>= 0` instead of `> 0`
+✔️ A length of 0 means the stack is empty — the loop must stop
 
 ---
 
-❌ Using `>= 0` instead of `> 0`  
-✔️ A length of 0 means the stack is empty and generation is finished
+❌ Leaving the condition disconnected
+✔️ The While Loop must know when to stop or it will run forever
+
+> **Warning:** If the editor freezes when you first test this function, the most likely cause is that `bVisited` is not being written back to `MazeGrid` correctly. Go back and verify Steps 5.5 and 5.12.
 
 ---
 
-## Expected result
+### Step 5.8 — Find the top of the Stack
 
-Your maze generator now has a loop that runs while there are still cells in the stack.
+Place all nodes for this section **inside the `Loop Body` comment box**.
 
----
+Each time the loop runs, we need to know which cell we are currently working on. The top of the stack is always the current cell.
 
-### Step 5.7 — Find the top of the Stack
-
-#### Step 5.7.1 — Calculate StackTopIndex
+#### Step 5.8.1 — Calculate StackTopIndex
 
 1. Drag `Stack` into the graph as **Get**
 
@@ -3516,77 +3636,84 @@ Your maze generator now has a loop that runs while there are still cells in the 
 
    `Length`
 
-4. Drag from the `Length` result
+4. Click:
 
-5. Search for:
+   `Array Length`
+
+5. Drag from the `Length` result
+
+6. Search for:
 
    `-`
 
-6. Choose:
+7. Choose:
 
-   `Integer - Integer`
+   `Subtract`
 
-7. Set the second input to:
+8. Set the second input to:
 
    `1`
 
-8. Drag `StackTopIndex` into the graph as **Set**
+9. Drag `StackTopIndex` into the graph as **Set**
 
-9. Connect the subtraction result into:
+10. Connect:
+    - subtraction result → value input on `Set StackTopIndex`
 
-   `Set StackTopIndex`
+11. Connect the white execution pin from:
 
-10. Connect the white execution pin from:
+    `While Loop.Loop Body`
 
-`While Loop.Loop Body`
+    to
 
-to
-
-`Set StackTopIndex`
-
-#### Step 5.7.2 — Read the current stack value
-
-11. Drag `Stack` into the graph as **Get**
-
-12. Drag from the `Stack` pin
-
-13. Search for:
-
-`Get (a copy)`
-
-14. Click:
-
-`Get (a copy)`
-
-15. Connect:
-
-- `StackTopIndex` → `Index`
-
-16. Drag `CurrentIndex` into the graph as **Set**
-
-17. Connect the result of `Get (a copy)` into:
-
-`Set CurrentIndex`
-
-18. Connect the white execution pin from:
-
-`Set StackTopIndex`
-
-to
-
-`Set CurrentIndex`
+    `Set StackTopIndex`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.7.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.7.2.png' | relative_url }}" style="width:100%;" alt="The While Loop body calculates the last index of the Stack (Length - 1), stores it in StackTopIndex, and uses it to update CurrentIndex with the top value from the stack" class="post-image">
+#### Step 5.8.2 — Read the current cell index from the Stack
+
+12. Drag `Stack` into the graph as **Get**
+
+13. Drag from the `Stack` pin
+
+14. Search for:
+
+    `Get (a copy)`
+
+15. Click:
+
+    `Get (a copy)`
+
+16. Drag `StackTopIndex` into the graph as **Get**
+
+17. Connect:
+    - `StackTopIndex` → **Index** on `Get (a copy)`
+
+18. Drag `CurrentIndex` into the graph as **Set**
+
+19. Connect:
+    - result of `Get (a copy)` → value input on `Set CurrentIndex`
+
+20. Connect the white execution pin from:
+
+    `Set StackTopIndex`
+
+    to
+
+    `Set CurrentIndex`
+
+> This does not remove the entry from the stack — it only reads it. The stack entry is only removed during backtracking in Step 5.14. This is intentional: the current cell stays on the stack until it becomes a dead end.
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.8.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.8.2.png' | relative_url }}" style="width:100%;" alt="Loop Body comment box showing Stack Length minus one stored in StackTopIndex then Stack Get a copy at StackTopIndex stored in CurrentIndex" class="post-image">
 </a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `While Loop.Loop Body → Set StackTopIndex → Set CurrentIndex`
 
 **Data flow:**
@@ -3596,28 +3723,18 @@ to
 
 ---
 
-## Why this matters
-
-The top of the stack represents the cell we are currently exploring.
-
----
-
 ## Common mistakes
 
-❌ Using index `0` instead of the last index  
-✔️ This would break the depth-first search behavior
+❌ Using index `0` instead of `StackTopIndex`
+✔️ The top of the stack is always the last entry, not the first
 
 ---
 
-## Expected result
+### Step 5.9 — Get unvisited neighbors for the current cell
 
-At the start of each loop pass, `CurrentIndex` now holds the current active cell.
+Still inside the **`Loop Body`** comment box.
 
----
-
-### Step 5.8 — Get the current cell’s unvisited neighbors
-
-#### Step 5.8.1 — Call the helper function
+#### Step 5.9.1 — Call GetUnvisitedNeighbors
 
 1. Right-click in empty graph space
 
@@ -3625,23 +3742,33 @@ At the start of each loop pass, `CurrentIndex` now holds the current active cell
 
    `GetUnvisitedNeighbors`
 
-3. Click the function call
+3. Click:
 
-4. Connect:
+   `GetUnvisitedNeighbors`
 
-- `CurrentIndex` → function input
+4. Drag `CurrentIndex` into the graph as **Get**
 
-#### Step 5.8.2 — Store the result
+5. Connect:
+   - `CurrentIndex` → `CurrentIndex` input on `GetUnvisitedNeighbors`
 
-5. Drag `Neighbors` into the graph as **Set**
-
-6. Connect the return value of `GetUnvisitedNeighbors` into:
-
-   `Set Neighbors`
-
-7. Connect the white execution pin from:
+6. Connect the white execution pin from:
 
    `Set CurrentIndex`
+
+   to
+
+   `GetUnvisitedNeighbors`
+
+#### Step 5.9.2 — Store the result
+
+7. Drag `Neighbors` into the graph as **Set**
+
+8. Connect:
+   - return value of `GetUnvisitedNeighbors` → value input on `Set Neighbors`
+
+9. Connect the white execution pin from:
+
+   `GetUnvisitedNeighbors`
 
    to
 
@@ -3649,46 +3776,28 @@ At the start of each loop pass, `CurrentIndex` now holds the current active cell
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.8.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.8.2.png' | relative_url }}" style="width:100%;" alt="Calling GetUnvisitedNeighbors with the CurrentIndex and storing the resulting array in the Neighbors variable" class="post-image">
-</a>
-
----
-
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `Set CurrentIndex → GetUnvisitedNeighbors → Set Neighbors`
 
 **Data flow:**
 
-- `CurrentIndex` → `GetUnvisitedNeighbors`
-- returned neighbor array → `Neighbors`
+- `CurrentIndex` → `GetUnvisitedNeighbors.CurrentIndex`
+- returned array → `Neighbors`
 
 ---
 
-## Why this matters
+### Step 5.10 — Check whether any neighbors exist
 
-The algorithm can only move if valid unvisited neighbors exist.
+Still inside the **`Loop Body`** comment box.
 
----
+This is the main decision point of the algorithm:
 
-## Common mistakes
+- **True** → move forward into a neighbor
+- **False** → backtrack by removing the top stack entry
 
-❌ Forgetting to store the returned array  
-✔️ Save it into `Neighbors`
-
----
-
-## Expected result
-
-You now have all valid unvisited neighbor options for the current cell.
-
----
-
-### Step 5.9 — Check whether any neighbors exist
-
-#### Step 5.9.1 — Check the length
+#### Step 5.10.1 — Check the neighbor count
 
 1. Drag `Neighbors` into the graph as **Get**
 
@@ -3698,55 +3807,58 @@ You now have all valid unvisited neighbor options for the current cell.
 
    `Length`
 
-4. Drag from the `Length` result
+4. Click:
 
-5. Search for:
+   `Array Length`
+
+5. Drag from the `Length` result
+
+6. Search for:
 
    `>`
 
-6. Choose:
+7. Choose:
 
-   `Integer > Integer`
+   `Greater`
 
-7. Set the second value to:
+8. Set the second input to:
 
    `0`
 
-#### Step 5.9.2 — Add the Branch
+#### Step 5.10.2 — Add the Branch node
 
-8. Right-click in empty graph space
+9. Right-click in empty graph space
 
-9. Search for:
+10. Search for:
 
-   `Branch`
+    `Branch`
 
-10. Click:
+11. Click:
 
-`Branch`
+    `Branch`
 
-11. Connect the white execution pin from:
+12. Connect the white execution pin from:
 
-`Set Neighbors`
+    `Set Neighbors`
 
-to
+    to
 
-`Branch`
+    `Branch`
 
-12. Connect:
-
-- `Length(Neighbors) > 0` → `Branch.Condition`
+13. Connect:
+    - `Neighbors.Length > 0` → `Branch.Condition`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.9.2.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.9.2.png' | relative_url }}" style="width:100%;" alt="Calling GetUnvisitedNeighbors with the CurrentIndex and storing the resulting array in the Neighbors variable" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-5.10.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.10.2.png' | relative_url }}" style="width:100%;" alt="Full loop boidy comment box" class="post-image">
 </a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `Set Neighbors → Branch`
 
 **Data flow:**
@@ -3759,30 +3871,16 @@ to
 
 This is the main decision point in the algorithm.
 
-- **True** = move forward
-- **False** = backtrack
+- **True** = at least one unvisited neighbor exists → move forward
+- **False** = no unvisited neighbors → backtrack
 
 ---
 
-## Common mistakes
+### Step 5.11 — If neighbors exist, choose one randomly
 
-❌ Forgetting this branch  
-✔️ The algorithm must decide between progressing and backtracking
+Place all nodes for this section **inside the `Has Neighbors` comment box**.
 
----
-
-## Expected result
-
-Your function now splits into two paths:
-
-- **True** → choose a neighbor
-- **False** → remove the top stack entry
-
----
-
-### Step 5.10 — If neighbors exist, choose one randomly
-
-#### Step 5.10.1 — Calculate the max neighbor index
+#### Step 5.11.1 — Calculate the max neighbor index
 
 1. Drag `Neighbors` into the graph as **Get**
 
@@ -3792,292 +3890,196 @@ Your function now splits into two paths:
 
    `Length`
 
-4. Drag from the `Length` result
+4. Click:
 
-5. Search for:
+   `Array Length`
+
+5. Drag from the `Length` result
+
+6. Search for:
 
    `-`
 
-6. Choose:
+7. Choose:
 
-   `Integer - Integer`
+   `Subtract`
 
-7. Set the second input to:
+8. Set the second input to:
 
    `1`
 
-#### Step 5.10.2 — Pick a random neighbor index
+#### Step 5.11.2 — Pick a random neighbor index
 
-8. Drag `RandomStream` into the graph as **Get**
+9. Drag `RandomStream` into the graph as **Get**
 
-9. Right-click in empty graph space
+10. Drag from the subtract result
 
-10. Search for:
+11. Search for:
 
-`Random Integer in Range from Stream`
+    `Random Integer in Range from Stream`
 
-11. Click:
+12. Click:
 
-`Random Integer in Range from Stream`
+    `Random Integer in Range from Stream`
 
-12. Connect:
+13. Connect:
+    - subtract result → `Max`
+    - `RandomStream` → `Stream`
 
-- `Min = 0`
-- `Length(Neighbors) - 1` → `Max`
-- `RandomStream` → `Stream`
+14. Set:
+    - `Min = 0`
 
-13. Drag `RandomNeighborIndex` into the graph as **Set**
+15. Drag `RandomNeighborIndex` into the graph as **Set**
 
-14. Connect the result of the random node into:
+16. Connect:
+    - random result → value input on `Set RandomNeighborIndex`
 
-`Set RandomNeighborIndex`
+17. Connect the white execution pin from:
 
-15. Connect the white execution pin from:
+    `Branch.True` (at the end of the loop body comment box)
 
-`Branch.True`
+    to
 
-to
+    `Set RandomNeighborIndex`
 
-`Set RandomNeighborIndex`
+#### Step 5.11.3 — Read the chosen neighbor
 
-#### Step 5.10.3 — Read the chosen neighbor
+18. Drag `Neighbors` into the graph as **Get**
 
-16. Drag `Neighbors` into the graph as **Get**
+19. Drag from the `Neighbors` pin
 
-17. Drag from the `Neighbors` pin
+20. Search for:
 
-18. Search for:
+    `Get (a copy)`
 
-`Get (a copy)`
+21. Click:
 
-19. Click:
+    `Get (a copy)`
 
-`Get (a copy)`
+22. Drag `RandomNeighborIndex` into the graph as **Get**
 
-20. Connect:
+23. Connect:
+    - `RandomNeighborIndex` → **Index** on `Get (a copy)`
 
-- `RandomNeighborIndex` → `Index`
+24. Drag `ChosenNeighbor` into the graph as **Set**
 
-21. Drag `ChosenNeighbor` into the graph as **Set**
+25. Connect:
+    - result of `Get (a copy)` → value input on `Set ChosenNeighbor`
 
-22. Connect the returned struct into:
+26. Connect the white execution pin from:
 
-`Set ChosenNeighbor`
+    `Set RandomNeighborIndex`
 
-23. Connect the white execution pin from:
+    to
 
-`Set RandomNeighborIndex`
-
-to
-
-`Set ChosenNeighbor`
+    `Set ChosenNeighbor`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.10.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.10.32.png' | relative_url }}" style="width:100%;" alt="Calculating a random index based on the Neighbors array length, picking a random neighbor from the stream, and storing it in ChosenNeighbor" class="post-image">
+### Connections recap
+
+**Execution flow:**
+`Branch.True → Set RandomNeighborIndex → Set ChosenNeighbor`
+
+**Data flow:**
+
+- `Neighbors.Length - 1` → `Max`
+- `RandomStream` → `Stream`
+- random result → `RandomNeighborIndex`
+- `Neighbors[RandomNeighborIndex]` → `ChosenNeighbor`
+
+---
+
+## Common mistakes
+
+❌ Using `Neighbors.Length` as the Max value
+✔️ Use `Neighbors.Length - 1` — arrays are zero-based
+
+---
+
+### Step 5.12 — Remove the wall between the current cell and the chosen neighbor
+
+Still inside the **`Has Neighbors`** comment box.
+
+#### Step 5.12.1 — Break the ChosenNeighbor struct
+
+Before calling `RemoveWallBetween`, you need to extract the values stored inside `ChosenNeighbor`. You will reuse this Break node's outputs in Steps 5.12, 5.13, and 5.14, so place it in a clear position.
+
+1. Drag `ChosenNeighbor` into the graph as **Get**
+
+2. Drag from the `ChosenNeighbor` pin
+
+3. Search for:
+
+   `Break S_NeighborInfo`
+
+4. Click:
+
+   `Break S_NeighborInfo`
+
+This gives you three output pins:
+
+- `CellIndex` — the array index of the neighbor cell
+- `DeltaX` — the horizontal direction
+- `DeltaY` — the vertical direction
+
+> You will use all three of these outputs across the next three steps. Do not create additional Break nodes — reuse the output pins from this one.
+
+#### Step 5.12.2 — Call RemoveWallBetween
+
+5. Right-click in empty graph space
+
+6. Search for:
+
+   `RemoveWallBetween`
+
+7. Click:
+
+   `RemoveWallBetween`
+
+8. Drag `CurrentIndex` into the graph as **Get**
+
+9. Connect:
+   - `CurrentIndex` → `CurrentIndex` on `RemoveWallBetween`
+   - `CellIndex` (from `Break S_NeighborInfo`) → `NeighborIndex` on `RemoveWallBetween`
+   - `DeltaX` (from `Break S_NeighborInfo`) → `DeltaX` on `RemoveWallBetween`
+   - `DeltaY` (from `Break S_NeighborInfo`) → `DeltaY` on `RemoveWallBetween`
+
+10. Connect the white execution pin from:
+
+    `Set ChosenNeighbor`
+
+    to
+
+    `RemoveWallBetween`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-5.12.2.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.12.2.png' | relative_url }}" style="width:100%;" alt="Break S_NeighborInfo node splitting ChosenNeighbor into CellIndex DeltaX and DeltaY with all three connected into RemoveWallBetween alongside CurrentIndex" class="post-image">
 </a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
-`Branch.True → Set RandomNeighborIndex → Set ChosenNeighbor`
-
-**Data flow:**
-
-- `Neighbors.Length - 1` → max random neighbor index
-- `RandomStream` → random neighbor selection
-- random result → `RandomNeighborIndex`
-- `Neighbors[RandomNeighborIndex]` → `ChosenNeighbor`
-
----
-
-## Why this matters
-
-If more than one valid neighbor exists, the algorithm must choose one randomly to create maze variation.
-
----
-
-## Common mistakes
-
-❌ Using `Neighbors.Length` as the max value  
-✔️ Use `Neighbors.Length - 1`
-
----
-
-❌ Forgetting to store the chosen neighbor  
-✔️ Save it into `ChosenNeighbor`
-
----
-
-## Expected result
-
-You now have one random valid neighbor stored in `ChosenNeighbor`.
-
----
-
-### Step 5.11 — Remove the wall between the Current Cell and the ChosenNeighbor
-
-#### Step 5.11.1 — Call `RemoveWallBetween`
-
-Now we will call the helper function that actually opens the wall between the current cell and the chosen neighbor.
-
-This step is important because selecting a neighbor is not enough by itself.  
-You must also remove the wall between the two cells, or the maze will still remain closed.
-
----
-
-##### Step 5.11.1.1 — Add the function call node
-
-1. Right-click in empty graph space
-
-2. Search for:
-
-   `RemoveWallBetween`
-
-3. Click the function call
-
-You should now see a `RemoveWallBetween` node with these inputs:
-
-- `CurrentIndex`
-- `NeighborIndex`
-- `DeltaX`
-- `DeltaY`
-
-And it should also have white execution pins.
-
----
-
-##### Step 5.11.1.2 — Connect the CurrentIndex input
-
-4. Drag `CurrentIndex` into the graph as **Get**
-
-5. Connect:
-
-- `CurrentIndex` → `CurrentIndex` on `RemoveWallBetween`
-
-This tells the function which cell you are currently standing on.
-
----
-
-##### Step 5.11.1.3 — Connect the chosen neighbor index
-
-6. Drag `ChosenNeighbor` into the graph as **Get**
-
-7. Drag from the `ChosenNeighbor` pin
-
-8. Search for:
-
-   `Break S_NeighborInfo`
-
-9. Click:
-
-   `Break S_NeighborInfo`
-
-This lets you access the values stored inside `ChosenNeighbor`.
-
-10. Connect:
-
-- `CellIndex` from `Break S_NeighborInfo` → `NeighborIndex` on `RemoveWallBetween`
-
-This tells the function which neighboring cell was selected.
-
----
-
-##### Step 5.11.1.4 — Connect the direction values
-
-11. Connect:
-
-- `DeltaX` from `Break S_NeighborInfo` → `DeltaX` on `RemoveWallBetween`
-- `DeltaY` from `Break S_NeighborInfo` → `DeltaY` on `RemoveWallBetween`
-
-These two values tell the function which wall to remove.
-
-For example:
-
-- East neighbor = `DeltaX = 1`, `DeltaY = 0`
-- North neighbor = `DeltaX = 0`, `DeltaY = -1`
-
-Without these values, the function would not know which side of each cell to open.
-
----
-
-##### Step 5.11.1.5 — Connect execution flow
-
-12. Connect the white execution pin from:
-
-`Set ChosenNeighbor`
-
-to
-
-`RemoveWallBetween`
-
-This makes sure the wall is removed only after the chosen neighbor has been selected and stored.
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-5.11.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.11.1.png' | relative_url }}" style="width:100%;" alt="Calling RemoveWallBetween with CurrentIndex and ChosenNeighbor values by breaking the S_NeighborInfo struct and connecting CellIndex DeltaX and DeltaY into the function inputs." class="post-image">
-  </a>
-
----
-
-#### Connections recap
-
-**Execution flow:**  
+**Execution flow:**
 `Set ChosenNeighbor → RemoveWallBetween`
 
 **Data flow:**
 
 - `CurrentIndex` → `RemoveWallBetween.CurrentIndex`
-- `ChosenNeighbor` → `Break S_NeighborInfo`
 - `Break S_NeighborInfo.CellIndex` → `RemoveWallBetween.NeighborIndex`
 - `Break S_NeighborInfo.DeltaX` → `RemoveWallBetween.DeltaX`
 - `Break S_NeighborInfo.DeltaY` → `RemoveWallBetween.DeltaY`
 
 ---
 
-## Why this matters
+### Step 5.13 — Mark the chosen neighbor as visited
 
-This is the step where the path is actually carved into the maze.
+Still inside the **`Has Neighbors`** comment box.
 
-Before this step:
-
-- you know which neighbor was chosen
-
-After this step:
-
-- the wall between the two cells is removed
-- the maze path becomes real in your data
-
----
-
-## Common mistakes
-
-❌ Forgetting to break `ChosenNeighbor`  
-✔️ You need `Break S_NeighborInfo` to access `CellIndex`, `DeltaX`, and `DeltaY`
-
----
-
-❌ Connecting `ChosenNeighbor` directly into `NeighborIndex`  
-✔️ `NeighborIndex` needs only the `CellIndex` value
-
----
-
-❌ Forgetting to connect the execution wire  
-✔️ `RemoveWallBetween` must be part of the white execution chain
-
----
-
-## Expected result
-
-The wall between the current cell and the chosen neighbor is now removed correctly based on the direction stored in `ChosenNeighbor`.
-
-### Step 5.12 — Mark the ChosenNeighbor as visited
-
-#### Step 5.12.1 — Read the chosen cell
+#### Step 5.13.1 — Read the neighbor cell from MazeGrid
 
 1. Drag `MazeGrid` into the graph as **Get**
 
@@ -4091,141 +4093,100 @@ The wall between the current cell and the chosen neighbor is now removed correct
 
    `Get (a copy)`
 
-5. Drag `ChosenNeighbor` into the graph as **Get**
+5. Connect:
+   - `CellIndex` (from `Break S_NeighborInfo` in Step 5.12.1) → **Index** on `Get (a copy)`
 
-6. Drag from the `ChosenNeighbor` pin
+#### Step 5.13.2 — Set bVisited to True
+
+6. Drag from the output of `Get (a copy)`
 
 7. Search for:
 
-   `Break S_NeighborInfo`
+   `Set Members in S_MazeCell`
 
 8. Click:
 
-   `Break S_NeighborInfo`
-
-9. Connect:
-
-- `CellIndex` → `Index` on `Get (a copy)`
-
----
-
-#### Step 5.12.2 — Set bVisited to True
-
-1. Drag from the output of `Get (a copy)`
-
-2. Search for:
-
    `Set Members in S_MazeCell`
 
-3. Click:
+9. In the **Details** panel, enable **only**:
 
-   `Set Members in S_MazeCell`
+   ✔️ `bVisited`
 
-4. Connect:
+10. Set:
+    - `bVisited = True` (checked)
 
-- output of `Get (a copy)` → struct input on `Set Members in S_MazeCell`
+#### Step 5.13.3 — Write the updated cell back into MazeGrid
 
-5. Enable only:
+11. Right-click in empty graph space
 
-- `bVisited`
+12. Search for:
 
-6. Set:
+    `Set Array Elem`
 
-- `bVisited = True`
+13. Click:
 
----
+    `Set Array Elem`
 
-#### Step 5.12.3 — Write the updated cell back
+14. Drag `MazeGrid` into the graph as **Get**
 
-1. Drag `MazeGrid` into the graph as **Get**
+15. Connect:
+    - `MazeGrid` → **Target Array** on `Set Array Elem`
+    - output of `Set Members in S_MazeCell` → **Item** on `Set Array Elem`
+    - `CellIndex` (from `Break S_NeighborInfo` in Step 5.12.1) → **Index** on `Set Array Elem`
 
-2. Drag from the `MazeGrid` pin
+16. Confirm **Size to Fit** is **unchecked**
 
-3. Search for:
+17. Connect the white execution pin from:
 
-   `Set Array Elem`
+    `RemoveWallBetween`
 
-4. Click:
+    to
 
-   `Set Array Elem`
+    `Set Members in S_MazeCell`
 
-5. Connect:
+18. Connect the white execution pin from:
 
-- `MazeGrid` → `Target Array`
-- `CellIndex` (from `Break S_NeighborInfo`) → `Index`
-- output of `Set Members in S_MazeCell` → `Item`
+    `Set Members in S_MazeCell`
 
-6. Connect the white execution pin from:
+    to
 
-`RemoveWallBetween`
-
-to
-
-`Set Members in S_MazeCell`
-
-7. Then connect the white execution pin from:
-
-`Set Members in S_MazeCell`
-
-to
-
-`Set Array Elem`
+    `Set Array Elem`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.12.3.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.12.3.png' | relative_url }}" style="width:100%;" alt="Breaking ChosenNeighbor to access CellIndex, retrieving the cell from MazeGrid, setting bVisited to true, and writing the updated struct back using Set Members and Set Array Elem with proper execution flow." class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-5.13.3.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.13.3.png' | relative_url }}" style="width:100%;" alt="MazeGrid Get a copy using CellIndex from Break S_NeighborInfo feeding into Set Members with bVisited True then into Set Array Elem writing back to MazeGrid at CellIndex" class="post-image">
 </a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+**Execution flow:**
 `RemoveWallBetween → Set Members in S_MazeCell → Set Array Elem`
 
 **Data flow:**
 
-- `ChosenNeighbor` → `Break S_NeighborInfo`
-- `CellIndex` → `MazeGrid.Get`
-- returned cell → `Set Members in S_MazeCell`
-- updated cell → `Set Array Elem`
-- `CellIndex` → `Set Array Elem.Index`
+- `CellIndex` (reused from Break in Step 5.12.1) → `Get (a copy).Index`
+- `MazeGrid` → `Get (a copy).Target Array`
+- `Get (a copy)` output → `Set Members in S_MazeCell`
+- `Set Members` output → `Set Array Elem.Item`
+- `CellIndex` (reused from Break in Step 5.12.1) → `Set Array Elem.Index`
+- `MazeGrid` → `Set Array Elem.Target Array`
 
 ---
 
 ## Why this matters
 
-Once the algorithm enters a cell, that cell must be marked as visited to prevent revisiting and breaking the maze logic.
+Once the algorithm enters a cell, that cell must be marked visited immediately. If it is not, `GetUnvisitedNeighbors` will return it as a valid option again and the maze logic will break.
 
 ---
 
-## Common mistakes
+### Step 5.14 — Push the chosen neighbor onto the Stack
 
-❌ Forgetting to break `ChosenNeighbor`  
-✔️ Use `Break S_NeighborInfo` to access `CellIndex`
+Still inside the **`Has Neighbors`** comment box.
 
----
-
-❌ Not connecting the struct into `Set Members`  
-✔️ Always connect the output of `Get (a copy)`
-
----
-
-❌ Skipping the execution path through `Set Members`  
-✔️ Execution must flow through every modifying node
-
----
-
-## Expected result
-
-The chosen neighbor is now marked as visited in `MazeGrid`.
-
----
-
-### Step 5.13 — Push the ChosenNeighbor onto the Stack
-
-#### Step 5.13.1 — Add the chosen neighbor to Stack
+#### Step 5.14.1 — Add the neighbor to the Stack
 
 1. Drag `Stack` into the graph as **Get**
 
@@ -4239,44 +4200,49 @@ The chosen neighbor is now marked as visited in `MazeGrid`.
 
    `Add`
 
-5. Drag `ChosenNeighbor` into the graph as **Get**
+5. Connect:
+   - `CellIndex` (reused from `Break S_NeighborInfo` in Step 5.12.1) → **Item** on `Add`
 
-6. Drag from the `ChosenNeighbor` pin
+6. Connect the white execution pin from:
 
-7. Search for:
+   `Set Array Elem`
 
-   `Break S_NeighborInfo`
+   to
 
-8. Click:
-
-   `Break S_NeighborInfo`
-
-9. Connect:
-
-- `Stack` → `Add.Target Array`
-- `CellIndex` → `Add.Item`
-
-10. Connect the white execution pin from:
-
-`Set Array Elem`
-
-to
-
-`Add`
+   `Add`
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.13.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.13.1.png' | relative_url }}" style="width:100%;" alt="Adding the ChosenNeighbor’s CellIndex to the Stack array after breaking its struct, continuing the execution flow from Set Array Elem" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-5.14.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.14.1.png' | relative_url }}" style="width:100%;" alt="Full HasNeighbors comment block" class="post-image">
 </a>
 
 ---
 
-### Step 5.14 — If no neighbors exist, backtrack
+### Connections recap
 
-#### Step 5.14.1 — Remove the top stack entry
+**Execution flow:**
+`Set Array Elem → Stack.Add`
 
-From the **False** output of the Branch:
+**Data flow:**
+
+- `CellIndex` (reused from Break in Step 5.12.1) → `Stack.Add.Item`
+
+---
+
+## Why this matters
+
+Pushing the chosen neighbor onto the stack is what drives the depth-first search forward. On the next loop pass, this cell becomes the new current cell.
+
+---
+
+### Step 5.15 — If no neighbors exist, backtrack
+
+Place all nodes for this section **inside the `Backtrack` comment box**.
+
+When the current cell has no unvisited neighbors it is a dead end. The algorithm backtracks by removing the current cell from the top of the stack. On the next loop pass, the previous cell becomes current again.
+
+#### Step 5.15.1 — Remove the top stack entry
 
 1. Drag `Stack` into the graph as **Get**
 
@@ -4293,9 +4259,7 @@ From the **False** output of the Branch:
 5. Drag `StackTopIndex` into the graph as **Get**
 
 6. Connect:
-
-- `Stack` → `Remove Index.Target Array`
-- `StackTopIndex` → `Remove Index.Index`
+   - `StackTopIndex` → **Index** on `Remove Index`
 
 7. Connect the white execution pin from:
 
@@ -4307,58 +4271,97 @@ From the **False** output of the Branch:
 
 ---
 
-<a href="{{ '/assets/images/blog/Part2-Step-5.14.1.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5.14.1.png' | relative_url }}" style="width:100%;" alt="Adding the ChosenNeighbor’s CellIndex to the Stack array after breaking its struct, continuing the execution flow from Set Array Elem" class="post-image">
+<a href="{{ '/assets/images/blog/Part2-Step-5.15.1.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.15.1.png' | relative_url }}" style="width:100%;" alt="Backtrack comment box showing Stack Remove Index node using StackTopIndex connected from Branch False" class="post-image">
 </a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
-`Branch.False → Stack.RemoveIndex`
+**Execution flow:**
+`Branch.False → Stack.Remove Index`
 
 **Data flow:**
 
-- `Stack` → `Remove Index.Target Array`
 - `StackTopIndex` → `Remove Index.Index`
 
 ---
 
 ## Why this matters
 
-Backtracking is what lets the algorithm finish the maze instead of stopping at the first dead end.
+Removing the top stack entry forces the algorithm to return to the previous cell and try a different direction. This is what allows the maze to be fully explored rather than stopping at the first dead end.
 
 ---
 
 ## Common mistakes
 
-❌ Removing the wrong index  
-✔️ Remove `StackTopIndex`, which is the current top of the stack
+❌ Removing index `0` instead of `StackTopIndex`
+✔️ Always remove the top entry — the last item in the array
 
 ---
 
-## Expected result
+### Step 5.16 — Full function overview
 
-When a dead end is reached, the current cell is removed from the stack so the algorithm can backtrack.
+Your `GenerateMaze` function is now complete.
+
+The full execution flow is:
+
+```
+GenerateMaze
+→ Set CurrentIndex (random start)
+→ Mark start cell visited → Write back to MazeGrid
+→ Push start onto Stack
+→ While Loop (Stack.Length > 0)
+   Loop Body:
+   → Set StackTopIndex
+   → Set CurrentIndex from Stack top
+   → GetUnvisitedNeighbors
+   → Set Neighbors
+   → Branch (Neighbors.Length > 0)
+      True → Has Neighbors:
+         → Set RandomNeighborIndex
+         → Set ChosenNeighbor
+         → Break S_NeighborInfo (reused through Steps 5.12–5.14)
+         → RemoveWallBetween
+         → Mark ChosenNeighbor visited → Write back to MazeGrid
+         → Push ChosenNeighbor.CellIndex onto Stack
+      False → Backtrack:
+         → Stack.Remove Index at StackTopIndex
+```
 
 ---
 
-### Final Connections recap for `GenerateMaze`
+<div>
+<a href="{{ '/assets/images/blog/Part2-Step-5.16A.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.16.png' | relative_url }}" style="width:100%;" alt="Full GenerateMaze function showing Setup comment box with start cell selection and stack push, While Loop, Loop Body comment box with stack top calculation and neighbor check, Has Neighbors comment box with random selection RemoveWallBetween and visited update, and Backtrack comment box with stack removal" class="post-image">
+</a>
 
-**Execution flow:**  
-`GenerateMaze → Set CurrentIndex → Mark Start Visited → Stack.Add(Start) → While Loop → Set StackTopIndex → Set CurrentIndex → Set Neighbors → Branch`
+<a href="{{ '/assets/images/blog/Part2-Step-5.16B.png' | relative_url }}" style="flex:1;">
+    <img src="{{ '/assets/images/blog/Part2-Step-5.16.png' | relative_url }}" style="width:100%;" alt="Full GenerateMaze function showing Setup comment box with start cell selection and stack push, While Loop, Loop Body comment box with stack top calculation and neighbor check, Has Neighbors comment box with random selection RemoveWallBetween and visited update, and Backtrack comment box with stack removal" class="post-image">
+</a>
+</div>
 
-**If Branch is True:**  
-`Branch.True → Set RandomNeighborIndex → Set ChosenNeighbor → RemoveWallBetween → Mark ChosenNeighbor Visited → Stack.Add(ChosenNeighbor)`
+---
 
-**If Branch is False:**  
-`Branch.False → Stack.RemoveIndex(StackTopIndex)`
+### Final Connections recap
+
+**Execution flow:**
+`GenerateMaze → Set CurrentIndex → Set Members → Set Array Elem → Stack.Add → While Loop`
+
+**Loop Body:**
+`While Loop.Loop Body → Set StackTopIndex → Set CurrentIndex → GetUnvisitedNeighbors → Set Neighbors → Branch`
+
+**Has Neighbors path:**
+`Branch.True → Set RandomNeighborIndex → Set ChosenNeighbor → RemoveWallBetween → Set Members → Set Array Elem → Stack.Add`
+
+**Backtrack path:**
+`Branch.False → Stack.Remove Index`
 
 **Data flow:**
 
-- `MazeWidth × MazeHeight - 1` → start-cell max index
-- `RandomStream` → start-cell random selection
+- `MazeWidth × MazeHeight - 1` → start cell Max index
+- `RandomStream` → start cell random selection
 - random result → `CurrentIndex`
 - `CurrentIndex` → `MazeGrid` lookup for start cell
 - updated start cell → `Set Array Elem`
@@ -4367,64 +4370,71 @@ When a dead end is reached, the current cell is removed from the stack so the al
 - `Stack[StackTopIndex]` → `CurrentIndex`
 - `CurrentIndex` → `GetUnvisitedNeighbors`
 - returned array → `Neighbors`
-- `Neighbors.Length - 1` → random neighbor max index
+- `Neighbors.Length - 1` → random neighbor Max index
 - `RandomStream` → random neighbor selection
 - random result → `RandomNeighborIndex`
 - `Neighbors[RandomNeighborIndex]` → `ChosenNeighbor`
-- `ChosenNeighbor` fields → `RemoveWallBetween`
-- `ChosenNeighbor.CellIndex` → visited update
-- `ChosenNeighbor.CellIndex` → `Stack.Add`
-- `StackTopIndex` → `Stack.RemoveIndex`
+- `Break S_NeighborInfo` outputs → `RemoveWallBetween` inputs
+- `CellIndex` → visited update and `Stack.Add`
+- `StackTopIndex` → `Stack.Remove Index`
 
 ---
 
 ## Why this matters
 
-This is the full maze generation algorithm.
+This function is the entire brain of the maze generator. Everything built in Parts 1 and 2 exists to support what happens here.
 
-It explores outward, carves passages, and backtracks when needed until the entire maze has been generated.
-
-> This is the step that makes your maze real.
+> When this function finishes, every cell in `MazeGrid` has been visited and the correct walls have been removed to form a perfect maze with no loops and no isolated areas.
 
 ---
 
 ## Common mistakes
 
-❌ Forgetting to mark the start cell visited  
-✔️ Do this before the loop begins
+❌ Forgetting to mark the start cell visited before the loop
+✔️ Do this in the Setup section before the While Loop begins
 
 ---
 
-❌ Forgetting to mark the chosen neighbor visited  
-✔️ Do this right after removing the wall
+❌ Creating multiple Break S_NeighborInfo nodes for the same ChosenNeighbor
+✔️ Place one Break node and reuse its output pins across Steps 5.12 through 5.14
 
 ---
 
-❌ Forgetting to push the chosen neighbor onto the stack  
-✔️ That is how the DFS continues
+❌ Forgetting to mark the chosen neighbor visited after removing the wall
+✔️ If this is skipped the algorithm will revisit cells and the maze will break
 
 ---
 
-❌ Removing the wrong stack entry when backtracking  
-✔️ Use `StackTopIndex`
+❌ Forgetting to push the chosen neighbor onto the stack
+✔️ Without this the depth-first search cannot continue forward
+
+---
+
+❌ Removing the wrong stack entry when backtracking
+✔️ Always remove at `StackTopIndex` — the last entry in the array
+
+---
+
+❌ Forgetting to connect the While Loop condition
+✔️ An unconnected condition will freeze the editor
 
 ---
 
 ## Expected result
 
-Your `GenerateMaze` function now generates a full maze in memory using a stack-based depth-first search system.
+Your `GenerateMaze` function now:
+
+- selects a random starting cell
+- explores the grid using depth-first search
+- carves passages by removing walls between cells
+- backtracks when dead ends are reached
+- terminates cleanly when every cell has been visited
+
+The complete maze now exists in memory inside `MazeGrid`.
 
 ---
 
-### Screenshot Placeholder
-
-<a href="{{ '/assets/images/blog/Part2-Step-5-Final.png' | relative_url }}" style="flex:1;">
-    <img src="{{ '/assets/images/blog/Part2-Step-5-Final.png' | relative_url }}" style="width:100%;" alt="Full GenerateMaze function showing start cell selection, visited update, stack initialization, While Loop execution, neighbor selection, RemoveWallBetween call, and backtracking through the stack." class="post-image">
-</a>
-
----
-
-# Step 6 — Call the functions in order
+# Step 6 — Call the Functions in Order
 
 Now we connect the completed functions back into the Construction Script.
 
@@ -4432,7 +4442,7 @@ Now we connect the completed functions back into the Construction Script.
 
 ## What this step does
 
-This puts the full maze setup in the correct order.
+This step adds the two remaining function calls to the Construction Script and connects them in the correct order so the full maze is built every time the Blueprint runs.
 
 ---
 
@@ -4440,85 +4450,122 @@ This puts the full maze setup in the correct order.
 
 ### Step 6.1 — Return to the Construction Script
 
-#### Step 6.1.1 — Open the Construction Script again
+#### Step 6.1.1 — Open the Construction Script
 
-Go back to your **Construction Script**.
+1. At the top of the Blueprint editor, click the:
+
+   **Construction Script** tab
+
+> If you do not see the tab, look in the **My Blueprint** panel under **Functions** and double-click **Construction Script**.
 
 ---
 
-### Step 6.2 — Connect the function calls
+### Step 6.2 — Add the function call nodes
 
-#### Step 6.2.1 — Add InitializeGrid and GenerateMaze
+#### Step 6.2.1 — Add InitializeGrid
 
-After `Set RandomStream`, add:
+1. Right-click in empty graph space
 
-1. `InitializeGrid`
+2. Search for:
 
-2. `GenerateMaze`
+   `InitializeGrid`
 
-#### Step 6.2.2 — Connect execution flow
+3. Click:
+
+   `InitializeGrid`
+
+#### Step 6.2.2 — Add GenerateMaze
+
+4. Right-click in empty graph space
+
+5. Search for:
+
+   `GenerateMaze`
+
+6. Click:
+
+   `GenerateMaze`
+
+---
+
+### Step 6.3 — Connect execution flow
+
+#### Step 6.3.1 — Chain the function calls
 
 Connect the white execution pins in this order:
 
-- `Set RandomStream` → `InitializeGrid`
-- `InitializeGrid` → `GenerateMaze`
+1. Connect the white execution pin from:
+
+   `Set RandomStream`
+
+   to
+
+   `InitializeGrid`
+
+2. Connect the white execution pin from:
+
+   `InitializeGrid`
+
+   to
+
+   `GenerateMaze`
+
+---
+
+<a href="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}" style="flex:1;">
+  <img src="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}" style="width:100%;" alt="Construction Script showing Set RandomStream connected to InitializeGrid then GenerateMaze completing the full execution chain" class="post-image">
+</a>
 
 ---
 
 ### Connections recap
 
-**Execution flow:**  
+This is the complete Construction Script execution chain from start to finish:
+
 `Construction Script → Clear Instances (FloorHISM) → Clear Instances (WallHISM) → Clear (MazeGrid) → Set RandomStream → InitializeGrid → GenerateMaze`
+
+> Verify that every node in this chain has a connected white execution wire with no gaps. A single missing connection will silently prevent the maze from generating.
 
 **Data flow:**
 
-- `MazeSeed` → `RandomStream`
-- `InitializeGrid` → fills `MazeGrid`
-- `GenerateMaze` → modifies `MazeGrid` by marking cells visited and removing walls
+- `MazeSeed` → `Make Random Stream` → `Set RandomStream`
+- `InitializeGrid` → fills `MazeGrid` with empty cells
+- `GenerateMaze` → marks cells visited and removes walls
 
 ---
 
 ## Why this matters
 
-The order must be correct.
+The order must be correct. Each step depends on the previous one:
 
-You cannot generate the maze until:
+- old data must be cleared before new data is written
+- the random stream must be set before `GenerateMaze` uses it
+- `InitializeGrid` must run before `GenerateMaze` so the grid exists to be modified
 
-- old data is cleared
-- the random stream is set
-- the grid has been created
-
-> If the order is wrong, the maze logic breaks.
+> If the order is wrong, the maze logic breaks silently — no errors will appear, but the maze will not generate correctly.
 
 ---
 
 ## Common mistakes
 
-❌ Calling `GenerateMaze` before `InitializeGrid`  
-✔️ The grid must exist first
+❌ Calling `GenerateMaze` before `InitializeGrid`
+✔️ The grid must exist before it can be modified
 
 ---
 
-❌ Forgetting to connect one of the function calls into the white execution chain  
-✔️ Blueprint functions only run when the execution wire reaches them
+❌ Forgetting to connect one of the function calls into the execution chain
+✔️ Blueprint functions only run when the white execution wire reaches them
+
+---
+
+❌ Adding the function calls to a function graph instead of the Construction Script
+✔️ Make sure you are in the **Construction Script** tab, not one of the function graphs
 
 ---
 
 ## Expected result
 
-Your Construction Script now builds the full maze in memory every time the Blueprint runs.
-
----
-
-### Screenshot Placeholder
-
-**[Screenshot: Construction Script showing Set RandomStream connected to InitializeGrid, then GenerateMaze]**
-
----
-
-<a href="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}" style="flex:1;">
-  <img src="{{ '/assets/images/blog/Part2-Step-6.png' | relative_url }}" style="width:100%;" alt="Construction Script calling InitializeGrid and GenerateMaze after clearing data and setting RandomStream" class="post-image">
-</a>
+Your Construction Script now builds the full maze in memory every time the Blueprint is compiled or a property is changed in the level.
 
 ---
 
@@ -4526,13 +4573,14 @@ Your Construction Script now builds the full maze in memory every time the Bluep
 
 At this point, your system can now:
 
+- clear old data on every rebuild
+- create a seeded random stream
 - create a full grid of maze cells
-- calculate row and column positions
 - find valid unvisited neighbors
 - remove walls between connected cells
-- generate a complete maze in memory using DFS with backtracking
+- generate a complete maze in memory using depth-first search with backtracking
 
-> Your maze now exists completely in memory. It just is not visible yet.
+> Your maze now exists completely in memory. It is not visible yet — that happens in Part 3.
 
 ---
 
@@ -4540,10 +4588,8 @@ At this point, your system can now:
 
 In Part 3, we will:
 
-- read the maze data
+- read the maze data from `MazeGrid`
 - convert grid coordinates into world positions
-- place visible meshes into the level
+- place floor and wall meshes using the HISM components
 
-👉 This is where the maze finally becomes visible.
-
----
+This is where the maze finally becomes visible.
