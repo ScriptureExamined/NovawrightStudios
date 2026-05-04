@@ -4,6 +4,7 @@ title: "Dungeon Quest"
 date: 2025-08-03
 author: Roberta
 categories: [Portfolio]
+published: true
 excerpt: >
   A retro-futuristic dungeon crawler meets a living maze. Dungeon Quest blends the hypnotic feel of classic screensavers with modern puzzle design and dungeon exploration.
 ---

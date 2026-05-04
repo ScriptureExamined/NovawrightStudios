@@ -4,6 +4,7 @@ title: "Designing for Player Trust (Why Fairness Matters More Than Difficulty)"
 date: 2026-04-20
 author: Roberta
 categories: [Design]
+published: true
 excerpt: >
   Difficulty doesn’t frustrate players, unfairness does. This post explores how player trust shapes game design and why clarity and consistency matter more than challenge.
 ---

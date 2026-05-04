@@ -4,6 +4,7 @@ title: "Why Small, Focused Games Are Winning the Indie Market"
 date: 2026-03-09
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   The most successful indie games aren’t the biggest—they’re the most focused. This post explores why clarity, scope control, and strong core loops consistently outperform sprawling ambition.
 ---

@@ -4,6 +4,7 @@ title: "The Most Dangerous Phase of Game Development (And How to Survive It)"
 date: 2026-03-02
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   The most dangerous phase of game development isn’t the beginning, it’s the middle. This post breaks down why projects stall there and how to push through it.
 ---

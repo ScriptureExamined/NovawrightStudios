@@ -4,6 +4,7 @@ title: "Why Players Quit Your Game (And What That Reveals About Your Design)"
 date: 2026-05-04
 author: Roberta
 categories: [Design]
+published: true
 excerpt: >
   Players rarely quit for the reasons developers expect. This post breaks down the real causes behind player drop-off and how better design decisions can keep players engaged.
 ---

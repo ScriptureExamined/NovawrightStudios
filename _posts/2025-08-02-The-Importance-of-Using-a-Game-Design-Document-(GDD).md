@@ -4,6 +4,7 @@ title: "The Importance of Using a Game Design Document (GDD)"
 date: 2025-08-02
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   Whether you're a solo indie developer or part of a larger game studio, one tool remains essential for success: the Game Design Document (GDD). It can mean the difference between a chaotic project and a well-executed game.
 ---

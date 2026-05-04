@@ -4,6 +4,7 @@ title: "Designing Puzzle Systems That Teach the Player (Without Tutorials)"
 date: 2026-04-06
 author: Roberta
 categories: [Tutorials]
+published: true
 excerpt: >
   The best puzzle games don’t explain, they teach through interaction. This post breaks down how to design systems that guide players to understanding without relying on tutorials.
 ---

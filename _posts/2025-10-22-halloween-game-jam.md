@@ -4,6 +4,7 @@ title: "GameDev.tv Halloween 2025 Game Jam"
 date: 2025-10-22
 author: Roberta
 categories: [Events]
+published: true
 excerpt: >
   A quick look at my first game jam experience and my submission, Static Souls.
 ---

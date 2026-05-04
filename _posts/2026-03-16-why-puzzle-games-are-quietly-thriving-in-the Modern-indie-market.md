@@ -4,6 +4,7 @@ title: "Why Puzzle Games Are Quietly Thriving in the Modern Indie Market"
 date: 2026-03-16
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   Puzzle games may not dominate headlines, but they consistently succeed in the indie space. This post explores why their design efficiency, clarity, and depth make them a powerful choice for developers.
 ---

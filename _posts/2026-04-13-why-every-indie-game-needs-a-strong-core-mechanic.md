@@ -4,6 +4,7 @@ title: "Why Every Indie Game Needs a Strong Core Mechanic"
 date: 2026-04-13
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   A strong core mechanic is what separates memorable indie games from forgettable ones. This post explores why it matters and how to design one that carries your entire game.
 ---

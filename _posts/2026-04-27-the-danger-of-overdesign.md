@@ -4,6 +4,7 @@ title: "The Danger of Overdesign (And Why Simplicity Wins in Games)"
 date: 2026-04-27
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   Many games fail not because they lack ideas, but because they have too many. This post explores the hidden cost of overdesign and why simplicity often leads to better player experiences.
 ---

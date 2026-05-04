@@ -4,6 +4,7 @@ title: "Why Players Quit Your Game (And What That Says About Your Design)"
 date: 2026-03-30
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   Most players don’t finish games, and many quit early. This post explores why players leave and what those moments reveal about your design.
 ---

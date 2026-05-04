@@ -4,6 +4,7 @@ title: "The Hidden Cost of “Just One More Feature” in Game Development"
 date: 2026-03-23
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   Feature creep doesn’t just make your game bigger, it quietly reshapes your entire project. Here’s why “just one more feature” is more dangerous than it sounds.
 ---

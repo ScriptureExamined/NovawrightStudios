@@ -4,6 +4,7 @@ title: "Back at It: Resetting Momentum on Project Echo"
 date: 2025-08-02
 author: Roberta
 categories: [Development]
+published: true
 excerpt: >
   It’s been a little quiet here. Not because development stopped, but because it didn’t. This post marks a reset and a commitment to building momentum through consistency.
 ---
