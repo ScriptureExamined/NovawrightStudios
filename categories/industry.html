@@ -25,7 +25,8 @@ permalink: /categories/industry.html
     </div>
 
     <div class="blog-post-list">
-      {% for post in site.categories["Industry"] %}
+      {% assign category_posts = site.categories.Industry %} {% for post in
+      category_posts %}
       <article class="post-card">
         <div class="post-meta-top">
           <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
@@ -54,6 +55,5 @@ permalink: /categories/industry.html
       </article>
       {% endfor %}
     </div>
-
   </div>
 </section>
