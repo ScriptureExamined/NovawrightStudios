@@ -2,7 +2,7 @@
 layout: post
 title: "Why Players Quit Your Game (And What That Reveals About Your Design)"
 date: 2026-05-04
-author: Roberta
+author: Stan
 categories: [Design]
 published: true
 excerpt: >

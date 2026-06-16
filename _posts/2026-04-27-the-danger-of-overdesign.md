@@ -2,7 +2,7 @@
 layout: post
 title: "The Danger of Overdesign (And Why Simplicity Wins in Games)"
 date: 2026-04-27
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

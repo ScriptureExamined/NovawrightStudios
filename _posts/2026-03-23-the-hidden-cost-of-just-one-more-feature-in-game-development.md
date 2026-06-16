@@ -2,7 +2,7 @@
 layout: post
 title: "The Hidden Cost of “Just One More Feature” in Game Development"
 date: 2026-03-23
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

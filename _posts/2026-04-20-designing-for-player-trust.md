@@ -2,7 +2,7 @@
 layout: post
 title: "Designing for Player Trust (Why Fairness Matters More Than Difficulty)"
 date: 2026-04-20
-author: Roberta
+author: Stan
 categories: [Design]
 published: true
 excerpt: >

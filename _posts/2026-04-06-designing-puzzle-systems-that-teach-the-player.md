@@ -2,7 +2,7 @@
 layout: post
 title: "Designing Puzzle Systems That Teach the Player (Without Tutorials)"
 date: 2026-04-06
-author: Roberta
+author: Stan
 categories: [Tutorials]
 published: true
 excerpt: >

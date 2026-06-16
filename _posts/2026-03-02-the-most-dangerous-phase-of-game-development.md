@@ -2,7 +2,7 @@
 layout: post
 title: "The Most Dangerous Phase of Game Development (And How to Survive It)"
 date: 2026-03-02
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

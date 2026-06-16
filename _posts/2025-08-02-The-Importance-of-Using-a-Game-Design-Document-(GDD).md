@@ -2,7 +2,7 @@
 layout: post
 title: "The Importance of Using a Game Design Document (GDD)"
 date: 2025-08-02
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

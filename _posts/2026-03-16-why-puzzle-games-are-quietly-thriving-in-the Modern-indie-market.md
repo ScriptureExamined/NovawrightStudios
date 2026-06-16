@@ -2,7 +2,7 @@
 layout: post
 title: "Why Puzzle Games Are Quietly Thriving in the Modern Indie Market"
 date: 2026-03-16
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

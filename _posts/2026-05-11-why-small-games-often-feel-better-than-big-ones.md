@@ -2,7 +2,7 @@
 layout: post
 title: "Why Small Games Often Feel Better Than Big Ones"
 date: 2026-05-11
-author: Roberta
+author: Stan
 categories: [Industry]
 published: true
 excerpt: >

@@ -2,7 +2,7 @@
 layout: post
 title: "The Hidden Cost of Infinite Content in Modern Games"
 date: 2026-05-18
-author: Roberta
+author: Stan
 categories: [Industry]
 published: true
 excerpt: >

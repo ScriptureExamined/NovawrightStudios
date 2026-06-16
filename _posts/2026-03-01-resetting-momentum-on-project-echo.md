@@ -2,7 +2,7 @@
 layout: post
 title: "Back at It: Resetting Momentum on Project Echo"
 date: 2025-08-02
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

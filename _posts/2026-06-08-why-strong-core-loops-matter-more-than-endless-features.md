@@ -2,7 +2,7 @@
 layout: post
 title: "Why Strong Core Loops Matter More Than Endless Features"
 date: 2026-06-08
-author: Roberta
+author: Stan
 categories: [Industry]
 published: true
 excerpt: >

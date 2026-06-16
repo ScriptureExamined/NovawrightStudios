@@ -2,7 +2,7 @@
 layout: post
 title: "The Return of Mid-Sized Games"
 date: 2026-06-15
-author: Roberta
+author: Stan
 categories: [Industry]
 published: true
 excerpt: >

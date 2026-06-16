@@ -2,7 +2,7 @@
 layout: post
 title: "GameDev.tv Halloween 2025 Game Jam"
 date: 2025-10-22
-author: Roberta
+author: Stan
 categories: [Events]
 published: true
 excerpt: >

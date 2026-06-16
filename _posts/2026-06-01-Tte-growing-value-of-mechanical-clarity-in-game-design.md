@@ -2,7 +2,7 @@
 layout: post
 title: "The Growing Value of Mechanical Clarity in Game Design"
 date: 2026-06-01
-author: Roberta
+author: Stan
 categories: [Industry]
 published: true
 excerpt: >

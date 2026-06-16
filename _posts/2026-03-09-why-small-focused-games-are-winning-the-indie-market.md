@@ -2,7 +2,7 @@
 layout: post
 title: "Why Small, Focused Games Are Winning the Indie Market"
 date: 2026-03-09
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

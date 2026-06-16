@@ -2,7 +2,7 @@
 layout: post
 title: "Why Constraints Still Matter in Modern Game Development"
 date: 2026-05-25
-author: Roberta
+author: Stan
 categories: [Industry]
 published: true
 excerpt: >

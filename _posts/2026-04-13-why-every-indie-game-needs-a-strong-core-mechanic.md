@@ -2,7 +2,7 @@
 layout: post
 title: "Why Every Indie Game Needs a Strong Core Mechanic"
 date: 2026-04-13
-author: Roberta
+author: Stan
 categories: [Development]
 published: true
 excerpt: >

@@ -2,7 +2,7 @@
 layout: post
 title: "Building a Procedural Maze Generator in UE5 Blueprints — Part 3 (Visualization and Final Setup)"
 date: 2026-04-22
-author: Roberta
+author: Stan
 categories: [Tutorials]
 published: false
 excerpt: >
