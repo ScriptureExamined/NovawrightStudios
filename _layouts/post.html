@@ -32,8 +32,9 @@ layout: default
           >Back to Blog</a
         >
 
-        {% assign category_name = page.categories[0] %} {% assign category_slug
-        = category_name | slugify %}
+        {% if page.categories and page.categories.size > 0 %} {% assign
+        category_name = page.categories[0] %} {% assign category_slug =
+        category_name | slugify %}
 
         <a
           href="{{ '/categories/' | append: category_slug | append: '.html' | relative_url }}"
