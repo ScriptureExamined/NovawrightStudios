@@ -4,7 +4,7 @@ title: "Building a Procedural Maze Generator in UE5 Blueprints — Part 3 (Visua
 date: 2026-04-22
 author: Stan
 categories: [Tutorials]
-published: false
+published: true
 excerpt: >
   In Part 3, we bring the maze to life. You will build the visual system using HISM components, create an entrance and exit, and finalize the Construction Script so the maze generates fully in the editor.
 ---
