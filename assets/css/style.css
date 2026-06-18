@@ -634,7 +634,7 @@ a:hover {
 
 .post-actions {
     display: flex;
-    gap: 25px;
+    gap: 35px;
 }
 
 .post-actions a {
