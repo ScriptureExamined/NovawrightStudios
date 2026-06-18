@@ -4,7 +4,8 @@ title: "Building a Procedural Maze Generator in UE5 Blueprints — Part 1 (Found
 date: 2026-04-20
 author: Stan
 categories: [Tutorials]
-published: false
+published: true
+featured: true
 excerpt: >
   In Part 1, we set up the foundation for a procedural maze generator in Unreal Engine 5. We will prepare the project, create data structures, and build the core Blueprint that will power the entire system.
 ---
