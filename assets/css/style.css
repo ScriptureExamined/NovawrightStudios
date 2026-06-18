@@ -634,7 +634,7 @@ a:hover {
 
 .post-actions {
     display: flex;
-    gap: 25px;
+    gap: 125px;
 }
 
 .post-actions a {
@@ -643,11 +643,11 @@ a:hover {
 
 /* .post-actions a {
     margin: 0 10px;
-}*/
+}
 
 .post-actions .btn:first-child {
     margin-right: 20px;
-} 
+} */
 
 /* ==========================================================================
    13. NEWSLETTER
