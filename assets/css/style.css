@@ -632,10 +632,18 @@ a:hover {
     color: #00bfff;
 }
 
-.post-actions {
+.post-actions a {
+    margin: 0 15px;
+}
+
+.post-actions .btn:first-child {
+    margin-right: 30px;
+}
+
+/* .post-actions {
     flex-wrap: wrap;
     gap: 16px;
-}
+} */
 
 /* ==========================================================================
    13. NEWSLETTER
