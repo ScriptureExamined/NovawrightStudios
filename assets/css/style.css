@@ -632,17 +632,21 @@ a:hover {
     color: #00bfff;
 }
 
+.post-actions {
+    display: flex;
+    gap: 10px;
+}
+
 .post-actions a {
+    margin: 0;
+}
+
+/* .post-actions a {
     margin: 0 10px;
 }
 
 .post-actions .btn:first-child {
     margin-right: 10px;
-}
-
-/* .post-actions {
-    flex-wrap: wrap;
-    gap: 16px;
 } */
 
 /* ==========================================================================
