@@ -4,7 +4,7 @@ title: "Building a Procedural Maze Generator in UE5 Blueprints — Part 2 (Maze 
 date: 2026-04-21
 author: Stan
 categories: [Tutorials]
-published: false
+published: true
 excerpt: >
   In Part 2, we build the full maze generation logic. By the end of this part, your maze will generate completely in memory using a stack-based depth-first search system.
 ---
