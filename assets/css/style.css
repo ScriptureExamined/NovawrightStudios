@@ -633,11 +633,11 @@ a:hover {
 }
 
 .post-actions a {
-    margin: 0 15px;
+    margin: 0 10px;
 }
 
 .post-actions .btn:first-child {
-    margin-right: 15px;
+    margin-right: 10px;
 }
 
 /* .post-actions {
