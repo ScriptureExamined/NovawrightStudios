@@ -2,7 +2,7 @@
 layout: post
 title: "The Difference Between Difficulty and Complexity in Puzzle Game Design"
 date: 2026-06-22
-author: Roberta
+author: Stan
 categories: [Game Design]
 published: true
 excerpt: >
