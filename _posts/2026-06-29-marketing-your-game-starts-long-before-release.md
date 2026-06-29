@@ -3,7 +3,7 @@ layout: post
 title: "Marketing Your Game Starts Long Before Release"
 date: 2026-06-29
 author: Stan
-categories: [Game Marketing]
+categories: [Marketing]
 published: true
 excerpt: >
   Many indie developers think marketing begins a few months before launch. In reality, effective marketing starts the moment a project has something worth sharing. Building an audience early can be just as important as writing great code.
