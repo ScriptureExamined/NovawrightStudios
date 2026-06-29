@@ -8,7 +8,7 @@ title: Marketing
     <div class="section-header centered">
       <div class="section-label">Category</div>
       <h1 class="section-title">Marketing</h1>
-      <p class="section-desc">Posts filed under Marketing.</p>
+      <p class="section-desc">Posts filed under Game Marketing.</p>
     </div>
 
     <div
@@ -24,7 +24,7 @@ title: Marketing
     </div>
 
     <div class="blog-post-list">
-      {% for post in site.categories["Marketing"] %}
+      {% for post in site.categories["Game Marketing"] %}
       <article class="post-card">
         <div class="post-meta-top">
           <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
@@ -35,7 +35,7 @@ title: Marketing
         </h2>
 
         <div class="post-meta">
-          <span class="post-category">Category: Marketing</span>
+          <span class="post-category">Category: Game Marketing</span>
           <span class="post-author"
             >Posted by: {{ post.author | default: site.author }}</span
           >
